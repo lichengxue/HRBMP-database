@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HRBMP Database Prototype</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>HRBMP Database Prototype</h1>
+    <p>Hudson River Biological Monitoring Program prototype database and dashboard.</p>
+    <nav>
+      <a href="#summary">Summary</a>
+      <a href="#stations">Stations</a>
+      <a href="#abundance">Annual Abundance</a>
+      <a href="#taxa">Taxa</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="summary">
+      <h2>Overview</h2>
+      <div class="cards">
+        <div class="card"><h3>Stations</h3><p id="count-stations">-</p></div>
+        <div class="card"><h3>Sampling Events</h3><p id="count-events">-</p></div>
+        <div class="card"><h3>Taxa</h3><p id="count-taxa">-</p></div>
+        <div class="card"><h3>Observations</h3><p id="count-observations">-</p></div>
+      </div>
+    </section>
+
+    <section id="stations">
+      <h2>Stations</h2>
+      <table>
+        <thead><tr><th>ID</th><th>Name</th><th>River Mile</th><th>Region</th><th>Latitude</th><th>Longitude</th></tr></thead>
+        <tbody id="stations-body"></tbody>
+      </table>
+    </section>
+
+    <section id="abundance">
+      <h2>Annual Total Abundance</h2>
+      <p>Chart-ready summary table.</p>
+      <table>
+        <thead><tr><th>Year</th><th>Total Abundance</th></tr></thead>
+        <tbody id="annual-body"></tbody>
+      </table>
+    </section>
+
+    <section id="taxa">
+      <h2>Taxa Summary</h2>
+      <table>
+        <thead><tr><th>Taxon ID</th><th>Scientific Name</th><th>Common Name</th><th>Group</th><th>Total Abundance</th></tr></thead>
+        <tbody id="taxa-body"></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Environmental Mean Values</h2>
+      <ul id="env-summary"></ul>
+    </section>
+
+    <section class="notice">
+      <strong>Note:</strong> Current records are fake placeholder data for prototype testing and must be replaced with official HRBMP data.
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

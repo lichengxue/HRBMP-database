@@ -1,0 +1,19 @@
+# SQLite database artifacts
+database/*.sqlite
+database/*.db
+
+# Raw and processed data files (keep README placeholders)
+data/raw/*
+!data/raw/README.md
+data/processed/*
+!data/processed/README.md
+
+# R temporary/session files
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# OS/editor clutter
+.DS_Store
+Thumbs.db
