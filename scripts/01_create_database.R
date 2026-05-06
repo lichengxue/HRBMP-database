@@ -23,7 +23,10 @@ con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db_path)
 on.exit(DBI::dbDisconnect(con), add = TRUE)
 
 schema_sql <- paste(readLines(schema_path, warn = FALSE), collapse = '\n')
-DBI::dbExecute(con, schema_sql)
+schema_statements <- trimws(strsplit(schema_sql, ';', fixed = TRUE)[[1]])
+for (statement in schema_statements[nzchar(schema_statements)]) {
+  DBI::dbExecute(con, paste0(statement, ';'))
+}
 
 message(sprintf('Database created or updated at: %s', db_path))
 message('Done.')

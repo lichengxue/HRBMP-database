@@ -268,7 +268,11 @@ const MONTH_NAMES = [
   'December'
 ];
 
-const DATA_VERSION = 'home-partner-logos-20260504';
+const DATA_VERSION = 'environmental-fallback-100-20260506';
+const DATA_REQUEST_VERSION = `${DATA_VERSION}-${Date.now()}`;
+const API_PORT = '8010';
+const MIN_BIOLOGICAL_DEMO_ROWS = 100;
+const MIN_ENVIRONMENTAL_DEMO_ROWS = 100;
 
 const BIOLOGICAL_MONITORING_PROGRAMS = [
   'Long River Survey',
@@ -279,6 +283,205 @@ const BIOLOGICAL_MONITORING_PROGRAMS = [
 const HUDSON_BOUNDS = [
   [40.45, -74.35],
   [42.95, -73.35]
+];
+
+const DEFAULT_BASEMAP = 'street';
+const MAP_BASEMAPS = {
+  street: {
+    label: 'Street Map',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    options: {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }
+  },
+  light: {
+    label: 'Light Reference',
+    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    options: {
+      maxZoom: 20,
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+    }
+  },
+  topographic: {
+    label: 'Topographic',
+    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    options: {
+      maxZoom: 17,
+      attribution: '&copy; OpenStreetMap contributors, SRTM | OpenTopoMap'
+    }
+  },
+  satellite: {
+    label: 'Satellite Imagery',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    options: {
+      maxZoom: 19,
+      attribution: 'Tiles &copy; Esri'
+    }
+  }
+};
+
+const HRBMP_REGIONS = [
+  { number: 0, name: 'Battery', code: 'BT', river_mile_range: '0-11', min_river_mile: 0, max_river_mile: 11, latitude: 40.62, longitude: -74.03 },
+  { number: 1, name: 'Yonkers', code: 'YK', river_mile_range: '12-23', min_river_mile: 12, max_river_mile: 23, latitude: 40.9, longitude: -73.9 },
+  { number: 2, name: 'Tappan Zee', code: 'TZ', river_mile_range: '24-33', min_river_mile: 24, max_river_mile: 33, latitude: 41.06, longitude: -73.9 },
+  { number: 3, name: 'Croton-Haverstraw', code: 'CH', river_mile_range: '34-38', min_river_mile: 34, max_river_mile: 38, latitude: 41.2, longitude: -73.91 },
+  { number: 4, name: 'Indian Point', code: 'IP', river_mile_range: '39-46', min_river_mile: 39, max_river_mile: 46, latitude: 41.3, longitude: -73.95 },
+  { number: 5, name: 'West Point', code: 'WP', river_mile_range: '47-55', min_river_mile: 47, max_river_mile: 55, latitude: 41.4, longitude: -73.96 },
+  { number: 6, name: 'Cornwall', code: 'CW', river_mile_range: '56-61', min_river_mile: 56, max_river_mile: 61, latitude: 41.47, longitude: -74.0 },
+  { number: 7, name: 'Poughkeepsie', code: 'PK', river_mile_range: '62-76', min_river_mile: 62, max_river_mile: 76, latitude: 41.67, longitude: -73.94 },
+  { number: 8, name: 'Hyde Park', code: 'HP', river_mile_range: '77-85', min_river_mile: 77, max_river_mile: 85, latitude: 41.82, longitude: -73.95 },
+  { number: 9, name: 'Kingston', code: 'KG', river_mile_range: '86-93', min_river_mile: 86, max_river_mile: 93, latitude: 41.93, longitude: -73.96 },
+  { number: 10, name: 'Saugerties', code: 'SG', river_mile_range: '94-106', min_river_mile: 94, max_river_mile: 106, latitude: 42.07, longitude: -73.93 },
+  { number: 11, name: 'Catskill', code: 'CS', river_mile_range: '107-124', min_river_mile: 107, max_river_mile: 124, latitude: 42.22, longitude: -73.86 },
+  { number: 12, name: 'Albany', code: 'AL', river_mile_range: '125-152', min_river_mile: 125, max_river_mile: 152, latitude: 42.58, longitude: -73.75 }
+];
+
+const HRBMP_REGIONS_BY_NAME = new Map(HRBMP_REGIONS.map((region) => [region.name.toLowerCase(), region]));
+
+const FALLBACK_METADATA = {
+  datasets: [
+    {
+      dataset_name: 'Biological Records',
+      source_database: 'HRBMP database',
+      default_access_level: 'public_summary',
+      api_endpoint: '/api/biological-records'
+    },
+    {
+      dataset_name: 'Environmental Records',
+      source_database: 'HRBMP database',
+      default_access_level: 'public_summary',
+      api_endpoint: '/api/environmental-records'
+    },
+    {
+      dataset_name: 'Metadata Catalog',
+      source_database: 'HRBMP database',
+      default_access_level: 'public',
+      api_endpoint: '/api/metadata'
+    }
+  ],
+  variables: [
+    { display_name: 'Common Name', source_database: 'HRBMP database', unit: '', value_type: 'text' },
+    { display_name: 'Scientific Name', source_database: 'HRBMP database', unit: '', value_type: 'text' },
+    { display_name: 'Life Stage', source_database: 'HRBMP database', unit: '', value_type: 'category' },
+    { display_name: 'Count', source_database: 'HRBMP database', unit: 'individuals', value_type: 'integer' },
+    { display_name: 'Water Temperature', source_database: 'HRBMP database', unit: 'deg C', value_type: 'numeric' },
+    { display_name: 'Dissolved Oxygen', source_database: 'HRBMP database', unit: 'mg/L', value_type: 'numeric' },
+    { display_name: 'Discharge', source_database: 'USGS database', unit: 'ft3/s', value_type: 'numeric' },
+    { display_name: 'pH', source_database: 'EPA database', unit: 'standard units', value_type: 'numeric' },
+    { display_name: 'Water Level', source_database: 'NOAA database', unit: 'm', value_type: 'numeric' }
+  ],
+  access_levels: [
+    {
+      access_level_id: 'public',
+      display_name: 'Public',
+      login_required: 0,
+      manual_approval_required: 0,
+      description: 'Published metadata, maps, summaries, and public CSV exports that do not require login.'
+    },
+    {
+      access_level_id: 'registered',
+      display_name: 'Registered External User',
+      login_required: 1,
+      manual_approval_required: 0,
+      description: 'Approved public-use datasets and higher-resolution non-sensitive downloads.'
+    },
+    {
+      access_level_id: 'approved_research',
+      display_name: 'Approved Research User',
+      login_required: 1,
+      manual_approval_required: 1,
+      description: 'Restricted datasets released after manual review or data-use agreement.'
+    },
+    {
+      access_level_id: 'internal',
+      display_name: 'Data Manager',
+      login_required: 1,
+      manual_approval_required: 1,
+      description: 'Internal QA/QC, metadata editing, data request review, and release preparation.'
+    },
+    {
+      access_level_id: 'admin',
+      display_name: 'Admin',
+      login_required: 1,
+      manual_approval_required: 1,
+      description: 'User management, full database operations, and system administration.'
+    }
+  ],
+  roles: [
+    { role_id: 'public', display_name: 'Public', role_rank: 0, login_required: 0 },
+    { role_id: 'registered_external', display_name: 'Registered External User', role_rank: 10, login_required: 1 },
+    { role_id: 'approved_research', display_name: 'Approved Research User', role_rank: 20, login_required: 1 },
+    { role_id: 'data_manager', display_name: 'Data Manager', role_rank: 30, login_required: 1 },
+    { role_id: 'admin', display_name: 'Admin', role_rank: 40, login_required: 1 }
+  ],
+  dataset_access_policy: [
+    { dataset_id: 'metadata-catalog', dataset_name: 'Metadata Catalog', access_level_name: 'Public', release_status: 'published', contains_sensitive_data: 0 },
+    { dataset_id: 'biological-records', dataset_name: 'Biological Records', access_level_name: 'Public', release_status: 'published', contains_sensitive_data: 0 },
+    { dataset_id: 'environmental-records', dataset_name: 'Environmental Records', access_level_name: 'Public', release_status: 'published', contains_sensitive_data: 0 },
+    { dataset_id: 'sampling-image-catalog', dataset_name: 'Sampling Image Catalog', access_level_name: 'Registered External User', release_status: 'qa_qc', contains_sensitive_data: 0 }
+  ],
+  dataset_role_permissions: [],
+  programs: BIOLOGICAL_MONITORING_PROGRAMS.map((program) => ({ program_name: program })),
+  regions: HRBMP_REGIONS.map((region) => ({
+    region_code: region.code,
+    region_number: region.number,
+    region_name: region.name,
+    river_mile_start: region.min_river_mile,
+    river_mile_end: region.max_river_mile
+  })),
+  sources: []
+};
+
+const HUDSON_CENTERLINE = [
+  { river_mile: 0, latitude: 40.55, longitude: -74.03 },
+  { river_mile: 11, latitude: 40.72, longitude: -74.00 },
+  { river_mile: 23, latitude: 40.94, longitude: -73.90 },
+  { river_mile: 33, latitude: 41.10, longitude: -73.87 },
+  { river_mile: 38, latitude: 41.20, longitude: -73.91 },
+  { river_mile: 46, latitude: 41.31, longitude: -73.95 },
+  { river_mile: 55, latitude: 41.41, longitude: -73.96 },
+  { river_mile: 61, latitude: 41.47, longitude: -74.01 },
+  { river_mile: 76, latitude: 41.70, longitude: -73.94 },
+  { river_mile: 85, latitude: 41.84, longitude: -73.95 },
+  { river_mile: 93, latitude: 41.93, longitude: -73.96 },
+  { river_mile: 106, latitude: 42.08, longitude: -73.93 },
+  { river_mile: 124, latitude: 42.26, longitude: -73.80 },
+  { river_mile: 152, latitude: 42.65, longitude: -73.75 }
+];
+
+const BIOLOGICAL_DEMO_REGION_COUNTS = {
+  BT: 3,
+  YK: 14,
+  TZ: 5,
+  CH: 11,
+  IP: 2,
+  WP: 9,
+  CW: 6,
+  PK: 17,
+  HP: 4,
+  KG: 8,
+  SG: 12,
+  CS: 1,
+  AL: 8
+};
+
+const ENVIRONMENTAL_DEMO_REGION_COUNTS = { ...BIOLOGICAL_DEMO_REGION_COUNTS };
+
+const BIOLOGICAL_DEMO_SPECIES = [
+  ['Atlantic Tomcod', 'Microgadus tomcod'],
+  ['American Shad', 'Alosa sapidissima'],
+  ['Striped Bass', 'Morone saxatilis'],
+  ['White Perch', 'Morone americana'],
+  ['Bay Anchovy', 'Anchoa mitchilli'],
+  ['Alewife', 'Alosa pseudoharengus'],
+  ['Blueback Herring', 'Alosa aestivalis'],
+  ['Rainbow Smelt', 'Osmerus mordax'],
+  ['Yellow Perch', 'Perca flavescens'],
+  ['Spottail Shiner', 'Notropis hudsonius'],
+  ['Bluefish', 'Pomatomus saltatrix'],
+  ['Hogchoker', 'Trinectes maculatus'],
+  ['Atlantic Menhaden', 'Brevoortia tyrannus']
 ];
 
 const ENV_SOURCES = {
@@ -1093,6 +1296,7 @@ const SPECIES_HIGHLIGHT_CATALOG = HIGHLIGHT_SPECIES.flatMap((species) =>
 const state = {
   ready: false,
   data: null,
+  metadata: FALLBACK_METADATA,
   biologicalRows: [],
   environmentalRows: [],
   maps: {
@@ -1102,6 +1306,10 @@ const state = {
   layers: {
     biological: [],
     environmental: []
+  },
+  baseLayers: {
+    biological: null,
+    environmental: null
   },
   legends: {
     biological: null,
@@ -1116,12 +1324,14 @@ document.addEventListener('DOMContentLoaded', () => {
   initTabs();
 
   Promise.all([
-    loadJson(`./data/example_summary.json?v=${DATA_VERSION}`, FALLBACK_DATA),
-    loadJson(`./data/biological_availability.geojson?v=${DATA_VERSION}`, null),
-    loadJson(`./data/environmental_availability.geojson?v=${DATA_VERSION}`, null)
+    loadJson(`./data/example_summary.json?v=${DATA_REQUEST_VERSION}`, FALLBACK_DATA),
+    loadJson(`./data/biological_availability.geojson?v=${DATA_REQUEST_VERSION}`, null),
+    loadJson(`./data/environmental_availability.geojson?v=${DATA_REQUEST_VERSION}`, null),
+    loadJson(apiUrl('/metadata'), FALLBACK_METADATA)
   ])
-    .then(([summary, biologicalGeoJson, environmentalGeoJson]) => {
+    .then(([summary, biologicalGeoJson, environmentalGeoJson, metadata]) => {
       state.data = hydrateData(summary, biologicalGeoJson, environmentalGeoJson);
+      state.metadata = hydrateMetadata(metadata);
       state.biologicalRows = state.data.biological_availability;
       state.environmentalRows = state.data.environmental_availability;
       state.ready = true;
@@ -1132,6 +1342,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch((error) => {
       console.error(error);
       state.data = hydrateData({ ...FALLBACK_DATA, using_fallback: true }, null, null);
+      state.metadata = hydrateMetadata({ ...FALLBACK_METADATA, using_fallback: true });
       state.biologicalRows = state.data.biological_availability;
       state.environmentalRows = state.data.environmental_availability;
       state.ready = true;
@@ -1246,20 +1457,46 @@ function hydrateData(data, biologicalGeoJson, environmentalGeoJson) {
   }
 
   next.biological_availability = next.biological_availability.map(normalizeAvailabilityRow);
+  next.biological_availability = ensureMinimumBiologicalRows(next.biological_availability, MIN_BIOLOGICAL_DEMO_ROWS);
+  next.biological_availability = ensureDistributedBiologicalDemoRows(next.biological_availability);
   next.environmental_availability = next.environmental_availability.map(normalizeEnvironmentalRow);
+  next.environmental_availability = ensureDistributedEnvironmentalDemoRows(next.environmental_availability);
   next.sampling_events = next.sampling_events.map(normalizeEventRow);
   next.sampling_image_catalog = next.sampling_image_catalog.map(normalizeCatalogRecord);
 
   return next;
 }
 
+function hydrateMetadata(metadata) {
+  const next = {
+    ...FALLBACK_METADATA,
+    ...metadata,
+    datasets: Array.isArray(metadata.datasets) ? metadata.datasets : FALLBACK_METADATA.datasets,
+    variables: Array.isArray(metadata.variables) ? metadata.variables : FALLBACK_METADATA.variables,
+    programs: Array.isArray(metadata.programs) ? metadata.programs : FALLBACK_METADATA.programs,
+    regions: Array.isArray(metadata.regions) ? metadata.regions : FALLBACK_METADATA.regions,
+    sources: Array.isArray(metadata.sources) ? metadata.sources : FALLBACK_METADATA.sources,
+    access_levels: Array.isArray(metadata.access_levels) ? metadata.access_levels : FALLBACK_METADATA.access_levels,
+    roles: Array.isArray(metadata.roles) ? metadata.roles : FALLBACK_METADATA.roles,
+    dataset_access_policy: Array.isArray(metadata.dataset_access_policy) ? metadata.dataset_access_policy : FALLBACK_METADATA.dataset_access_policy,
+    dataset_role_permissions: Array.isArray(metadata.dataset_role_permissions) ? metadata.dataset_role_permissions : FALLBACK_METADATA.dataset_role_permissions,
+    using_fallback: Boolean(metadata.using_fallback)
+  };
+  return next;
+}
+
 function renderAll() {
   fillCounts();
+  renderMetadata();
   populateFilters();
   renderInquiry();
+  renderBiologicalRegionReference();
   renderBiologicalMap();
+  updateDataRequestSummary();
   renderEnvironmental();
   renderCatalog();
+  renderAccessControl();
+  updateApiLinks();
 }
 
 function bindControls() {
@@ -1277,16 +1514,20 @@ function bindControls() {
     'bio-month-end',
     'bio-day-start',
     'bio-day-end',
-    'layer-sites',
+    'bio-basemap',
     'layer-records',
-    'layer-regions'
+    'layer-regional-totals',
+    'layer-region-reference',
+    'layer-river-centerline'
   ].forEach((id) => {
     const element = document.getElementById(id);
     if (!element) return;
     const eventName = element.tagName === 'INPUT' && element.type === 'search' ? 'input' : 'change';
     element.addEventListener(eventName, () => {
+      if (id === 'bio-basemap') applyBasemap('biological', valueOf('bio-basemap'));
       renderInquiry();
       renderBiologicalMap();
+      updateDataRequestSummary();
     });
   });
 
@@ -1298,14 +1539,17 @@ function bindControls() {
     'env-day-start',
     'env-day-end',
     'env-variable',
-    'env-layer-sites',
+    'env-basemap',
     'env-layer-values',
-    'env-layer-regions'
+    'env-layer-regional-totals',
+    'env-layer-region-reference',
+    'env-layer-river-centerline'
   ].forEach((id) => {
     const element = document.getElementById(id);
     if (!element) return;
     element.addEventListener('change', () => {
       if (id === 'env-variable') renderEnvironmentalSourcePanel();
+      if (id === 'env-basemap') applyBasemap('environmental', valueOf('env-basemap'));
       renderEnvironmentalMap();
     });
   });
@@ -1435,8 +1679,7 @@ function renderInquiry() {
   renderSummaryStrip('inquiry-summary', [
     ['Stations', uniqueCount(rows, 'station_id')],
     ['Events', sum(rows, 'sampling_events')],
-    ['Biological Records', sum(rows, 'biological_records')],
-    ['Total Abundance', sum(rows, 'total_abundance')]
+    ['Biological Records', sum(rows, 'biological_records')]
   ]);
 
   const body = document.getElementById('inquiry-body');
@@ -1444,7 +1687,7 @@ function renderInquiry() {
   body.replaceChildren();
 
   if (rows.length === 0) {
-    appendEmptyRow(body, 8, 'No records match the selected filters.');
+    appendEmptyRow(body, 7, 'No records match the selected filters.');
     return;
   }
 
@@ -1460,8 +1703,7 @@ function renderInquiry() {
         monthName(row.month),
         row.gear_type,
         row.sampling_events,
-        row.biological_records,
-        formatNumber(row.total_abundance)
+        row.biological_records
       ].forEach((value) => appendCell(tr, value));
       body.appendChild(tr);
     });
@@ -1481,14 +1723,13 @@ function renderBiologicalMap() {
   }).filter(hasCoordinates);
 
   renderMapStats('bio-map-stats', [
-    ['Visible Sites', uniqueCount(rows, 'station_id')],
-    ['Sampling Events', sum(rows, 'sampling_events')],
-    ['Biological Records', sum(rows, 'biological_records')],
-    ['Total Abundance', sum(rows, 'total_abundance')],
+    ['Biological Records', sumRecordCounts(rows, 'biological')],
     ['Species Shown', valueOf('bio-species') === 'all' ? 'All Species' : valueOf('bio-species')],
     ['Life Stage', valueOf('bio-life-stage') === 'all' ? 'All Stages' : valueOf('bio-life-stage')],
     ['Program', valueOf('bio-program') === 'all' ? 'All Programs' : valueOf('bio-program')]
   ]);
+  updateDataRequestSummary(rows);
+  updateBiologicalApiLinks();
 
   if (!isActiveTab('biological-database')) return;
 
@@ -1497,33 +1738,281 @@ function renderBiologicalMap() {
 
   clearMapLayers('biological');
 
-  if (checked('layer-regions')) {
-    addRegionLayer(map, 'biological', rows, {
-      valueKey: 'biological_records',
-      label: 'Biological Records',
-      color: '#bd7a1e'
-    });
+  if (checked('layer-region-reference')) {
+    addRegionReferenceLayer(map, 'biological', rows);
   }
 
-  if (checked('layer-sites')) {
-    addSiteLayer(map, 'biological', rows, {
-      color: '#173330',
-      popupType: 'biological-site'
-    });
+  if (checked('layer-river-centerline')) {
+    addHudsonCenterlineLayer(map, 'biological');
   }
 
   if (checked('layer-records')) {
-    addClusterLayer(map, 'biological', rows, {
-      clusterClass: 'map-cluster',
-      markerType: 'biological',
-      valueKey: 'biological_records',
-      popupType: 'biological-record'
-    });
+    addBiologicalRecordDotLayer(map, rows);
   }
 
-  setText('bio-selected', rows.length ? 'Use the map to inspect stations, events, and clusters.' : 'No records match the selected filters.');
-  updateLegend('biological', '<strong>Biological Map</strong><div><span class="legend-swatch" style="background:#1e8f84"></span>Records</div><div><span class="legend-swatch" style="background:#173330"></span>Sites</div><div><span class="legend-swatch" style="background:#bd7a1e"></span>Area Totals</div>');
+  if (checked('layer-regional-totals')) {
+    addRegionTotalCircleLayer(map, 'biological', rows);
+  }
+
+  setText('bio-selected', rows.length ? 'Use the map to inspect biological record availability by HRBMP region.' : 'No records match the selected filters.');
+  updateLegend('biological', legendHtml('Biological Map', [
+    checked('layer-records') && { color: '#1e8f84', label: 'Biological Records' },
+    checked('layer-regional-totals') && { color: '#1b8d86', label: 'Regional Totals' },
+    checked('layer-region-reference') && { color: '#755d2a', label: 'HRBMP Region Boundaries' },
+    checked('layer-river-centerline') && { color: '#176b78', label: 'Hudson River Centerline' }
+  ].filter(Boolean)));
   fitRows(map, rows);
+}
+
+function currentBiologicalFilterSummary(rows = null) {
+  const filteredRows = rows || filterRows(state.biologicalRows, {
+    species: valueOf('bio-species'),
+    lifeStage: valueOf('bio-life-stage'),
+    program: valueOf('bio-program'),
+    yearStart: valueOf('bio-year-start'),
+    yearEnd: valueOf('bio-year-end'),
+    monthStart: valueOf('bio-month-start'),
+    monthEnd: valueOf('bio-month-end'),
+    dayStart: valueOf('bio-day-start'),
+    dayEnd: valueOf('bio-day-end')
+  }).filter(hasCoordinates);
+
+  const lines = [
+    `Species: ${valueOf('bio-species') === 'all' ? 'All Species' : valueOf('bio-species')}`,
+    `Life Stage: ${valueOf('bio-life-stage') === 'all' ? 'All Stages' : valueOf('bio-life-stage')}`,
+    `Monitoring Program: ${valueOf('bio-program') === 'all' ? 'All Programs' : valueOf('bio-program')}`,
+    `Year Range: ${valueOf('bio-year-start') === 'all' ? 'Any Start' : valueOf('bio-year-start')} to ${valueOf('bio-year-end') === 'all' ? 'Any End' : valueOf('bio-year-end')}`,
+    `Month Range: ${valueOf('bio-month-start') === 'all' ? 'Any Start' : valueOf('bio-month-start')} to ${valueOf('bio-month-end') === 'all' ? 'Any End' : valueOf('bio-month-end')}`,
+    `Day Range: ${valueOf('bio-day-start') === 'all' ? 'Any Start' : valueOf('bio-day-start')} to ${valueOf('bio-day-end') === 'all' ? 'Any End' : valueOf('bio-day-end')}`,
+    `Matching Rows: ${formatNumber(filteredRows.length)}`
+  ];
+
+  return lines.join('\n');
+}
+
+function updateDataRequestSummary(rows = null) {
+  const summary = document.getElementById('data-request-summary');
+  if (!summary || !state.ready) return;
+  summary.value = currentBiologicalFilterSummary(rows);
+}
+
+function updateApiLinks() {
+  updateBiologicalApiLinks();
+  updateEnvironmentalApiLinks();
+  updateMetadataApiLinks();
+}
+
+function updateBiologicalApiLinks() {
+  const params = {
+    species: valueOf('bio-species'),
+    life_stage: valueOf('bio-life-stage'),
+    program: valueOf('bio-program'),
+    year_start: valueOf('bio-year-start'),
+    year_end: valueOf('bio-year-end'),
+    month_start: valueOf('bio-month-start'),
+    month_end: valueOf('bio-month-end'),
+    day_start: valueOf('bio-day-start'),
+    day_end: valueOf('bio-day-end'),
+    limit: '10000'
+  };
+  setLinkHref('bio-api-csv', apiUrl('/biological-records.csv', params));
+  setLinkHref('bio-api-json', apiUrl('/biological-records', params));
+}
+
+function updateEnvironmentalApiLinks() {
+  const params = {
+    year_start: valueOf('env-year-start'),
+    year_end: valueOf('env-year-end'),
+    month_start: valueOf('env-month-start'),
+    month_end: valueOf('env-month-end'),
+    day_start: valueOf('env-day-start'),
+    day_end: valueOf('env-day-end'),
+    limit: '10000'
+  };
+  setLinkHref('env-api-csv', apiUrl('/environmental-records.csv', params));
+  setLinkHref('env-api-json', apiUrl('/environmental-records', params));
+}
+
+function updateMetadataApiLinks() {
+  setLinkHref('metadata-api-json', apiUrl('/metadata'));
+}
+
+function apiUrl(endpoint, params = {}) {
+  const url = new URL(`${apiBaseUrl()}${endpoint}`);
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '' || value === 'all') return;
+    url.searchParams.set(key, value);
+  });
+  return url.toString();
+}
+
+function apiBaseUrl() {
+  if (window.location.protocol === 'file:') return `http://127.0.0.1:${API_PORT}/api`;
+  const isLocal = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
+  if (isLocal && window.location.port !== API_PORT) return `http://127.0.0.1:${API_PORT}/api`;
+  return `${window.location.origin}/api`;
+}
+
+function setLinkHref(id, href) {
+  const link = document.getElementById(id);
+  if (link) link.href = href;
+}
+
+function renderMetadata() {
+  const metadata = state.metadata || FALLBACK_METADATA;
+  const status = document.getElementById('metadata-status');
+  if (status) {
+    status.textContent = metadata.using_fallback
+      ? 'Showing built-in metadata because the local SQLite API is not running.'
+      : 'Metadata are loaded from the local SQLite API.';
+  }
+
+  renderSummaryStrip('metadata-overview', [
+    ['Datasets', metadata.datasets.length],
+    ['Variables', metadata.variables.length],
+    ['Programs', metadata.programs.length],
+    ['HRBMP Regions', metadata.regions.length]
+  ]);
+
+  renderMetadataDatasets(metadata.datasets);
+  renderMetadataVariables(metadata.variables);
+}
+
+function renderMetadataDatasets(rows) {
+  const body = document.getElementById('metadata-datasets');
+  if (!body) return;
+  body.replaceChildren();
+  if (!rows.length) {
+    appendEmptyRow(body, 4, 'No dataset metadata available.');
+    return;
+  }
+
+  rows.forEach((row) => {
+    const tr = document.createElement('tr');
+    appendCell(tr, row.dataset_name);
+    appendCell(tr, row.source_database);
+    appendCell(tr, formatAccessLevel(row.default_access_level));
+    appendCell(tr, row.api_endpoint || 'Metadata only');
+    body.appendChild(tr);
+  });
+}
+
+function renderMetadataVariables(rows) {
+  const body = document.getElementById('metadata-variables');
+  if (!body) return;
+  body.replaceChildren();
+  if (!rows.length) {
+    appendEmptyRow(body, 4, 'No variable metadata available.');
+    return;
+  }
+
+  rows.slice(0, 12).forEach((row) => {
+    const tr = document.createElement('tr');
+    appendCell(tr, row.display_name || row.variable_name);
+    appendCell(tr, row.source_database);
+    appendCell(tr, row.unit || 'NA');
+    appendCell(tr, row.value_type);
+    body.appendChild(tr);
+  });
+}
+
+function renderAccessControl() {
+  const metadata = state.metadata || FALLBACK_METADATA;
+  renderAccessTierCards(metadata.access_levels || []);
+  renderDatasetAccessTable(metadata.dataset_access_policy || []);
+  populateAccessRequestControls(metadata);
+}
+
+function renderAccessTierCards(rows) {
+  const container = document.getElementById('access-tier-cards');
+  if (!container) return;
+  container.replaceChildren();
+
+  rows.forEach((row) => {
+    const card = document.createElement('article');
+    card.className = 'access-tier-card';
+
+    const heading = document.createElement('h3');
+    heading.textContent = row.display_name;
+
+    const meta = document.createElement('p');
+    const login = Number(row.login_required) ? 'Login Required' : 'No Login';
+    const approval = Number(row.manual_approval_required) ? 'Manual Approval' : 'Standard Access';
+    meta.textContent = `${login} | ${approval}`;
+
+    const description = document.createElement('p');
+    description.textContent = row.description || 'Access policy description pending.';
+
+    card.append(heading, meta, description);
+    container.appendChild(card);
+  });
+}
+
+function renderDatasetAccessTable(rows) {
+  const body = document.getElementById('dataset-access-policy');
+  if (!body) return;
+  body.replaceChildren();
+
+  if (!rows.length) {
+    appendEmptyRow(body, 4, 'No dataset access policies available.');
+    return;
+  }
+
+  rows.forEach((row) => {
+    const tr = document.createElement('tr');
+    appendCell(tr, row.dataset_name);
+    appendCell(tr, row.access_level_name || formatAccessLevel(row.access_level_id));
+    appendCell(tr, formatAccessLevel(row.release_status));
+    appendCell(tr, Number(row.contains_sensitive_data) ? 'Yes' : 'No');
+    body.appendChild(tr);
+  });
+}
+
+function populateAccessRequestControls(metadata) {
+  const roleSelect = document.getElementById('access-request-role');
+  const datasetSelect = document.getElementById('access-request-dataset');
+  if (roleSelect && roleSelect.options.length === 0) {
+    (metadata.roles || [])
+      .filter((role) => role.role_id !== 'public')
+      .forEach((role) => {
+        const option = document.createElement('option');
+        option.value = role.role_id;
+        option.textContent = role.display_name;
+        roleSelect.appendChild(option);
+      });
+  }
+  if (datasetSelect && datasetSelect.options.length === 0) {
+    (metadata.datasets || []).forEach((dataset) => {
+      const option = document.createElement('option');
+      option.value = dataset.dataset_id;
+      option.textContent = dataset.dataset_name;
+      datasetSelect.appendChild(option);
+    });
+  }
+}
+
+function formatAccessLevel(value) {
+  return String(value || 'public')
+    .replaceAll('_', ' ')
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function renderBiologicalRegionReference() {
+  const container = document.getElementById('bio-region-reference');
+  if (!container) return;
+  container.replaceChildren();
+
+  HRBMP_REGIONS.forEach((region) => {
+    const rows = rowsForHudsonRegion(state.biologicalRows, region);
+    const card = document.createElement('article');
+    card.className = 'region-reference-card';
+    card.innerHTML = `
+      <strong>Region ${region.number} - ${escapeHtml(region.name)}</strong>
+      <span>${escapeHtml(region.code)}; River Mile ${escapeHtml(region.river_mile_range)}</span>
+      <span>${formatNumber(rows.length)} Biological Record${rows.length === 1 ? '' : 's'}</span>
+    `;
+    container.appendChild(card);
+  });
 }
 
 function renderEnvironmental() {
@@ -1603,11 +2092,11 @@ function renderEnvironmentalMap() {
   const variableValues = rows.map((row) => row[variable]).filter(Number.isFinite);
 
   renderMapStats('env-map-stats', [
-    ['Visible Sites', uniqueCount(rows, 'station_id')],
-    ['Environmental Records', sum(rows, 'environmental_records')],
+    ['Environmental Records', sumRecordCounts(rows, 'environmental')],
     ['Mean Selected Covariate', variableValues.length ? formatMetric(average(variableValues), variableMeta.unit) : 'NA'],
     ['Covariate Source', sourceMeta.label]
   ]);
+  updateEnvironmentalApiLinks();
 
   if (!isActiveTab('environmental-database')) return;
 
@@ -1616,36 +2105,33 @@ function renderEnvironmentalMap() {
 
   clearMapLayers('environmental');
 
-  if (checked('env-layer-regions')) {
-    addRegionLayer(map, 'environmental', rows, {
-      valueKey: 'environmental_records',
-      label: 'Environmental Records',
-      color: '#2f6f9f'
-    });
+  if (checked('env-layer-region-reference')) {
+    addRegionReferenceLayer(map, 'environmental', rows);
   }
 
-  if (checked('env-layer-sites')) {
-    addSiteLayer(map, 'environmental', rows, {
-      color: '#173330',
-      popupType: 'environmental-site',
-      variable,
-      variableMeta
-    });
+  if (checked('env-layer-river-centerline')) {
+    addHudsonCenterlineLayer(map, 'environmental');
   }
 
   if (checked('env-layer-values')) {
-    addClusterLayer(map, 'environmental', rows, {
-      clusterClass: 'map-cluster environmental',
-      markerType: 'environmental',
-      valueKey: variable,
+    addEnvironmentalRecordDotLayer(map, rows, {
       variable,
       variableMeta,
       popupType: 'environmental-record'
     });
   }
 
-  setText('env-selected', rows.length ? `Environmental map styled by ${variableMeta.label.toLowerCase()} from ${sourceMeta.label}.` : 'No environmental records match the selected filters.');
-  updateLegend('environmental', `<strong>${variableMeta.label}</strong><div><span class="legend-swatch" style="background:${variableMeta.colors[0]}"></span>Lower</div><div><span class="legend-swatch" style="background:${variableMeta.colors[1]}"></span>Middle</div><div><span class="legend-swatch" style="background:${variableMeta.colors[2]}"></span>Higher</div>`);
+  if (checked('env-layer-regional-totals')) {
+    addRegionTotalCircleLayer(map, 'environmental', rows);
+  }
+
+  setText('env-selected', rows.length ? `Environmental records with ${variableMeta.label.toLowerCase()} context from ${sourceMeta.label}.` : 'No environmental records match the selected filters.');
+  updateLegend('environmental', legendHtml('Environmental Map', [
+    checked('env-layer-values') && { color: '#2f6f9f', label: 'Environmental Records' },
+    checked('env-layer-regional-totals') && { color: '#1b8d86', label: 'Regional Totals' },
+    checked('env-layer-region-reference') && { color: '#755d2a', label: 'HRBMP Region Boundaries' },
+    checked('env-layer-river-centerline') && { color: '#176b78', label: 'Hudson River Centerline' }
+  ].filter(Boolean)));
   fitRows(map, rows);
 }
 
@@ -1659,6 +2145,7 @@ function ensureLeafletMap(containerId, key) {
   }
 
   if (state.maps[key]) {
+    applyBasemap(key, selectedBasemapKey(key));
     state.maps[key].invalidateSize();
     return state.maps[key];
   }
@@ -1667,27 +2154,42 @@ function ensureLeafletMap(containerId, key) {
     center: [41.55, -73.92],
     zoom: 7,
     minZoom: 6,
-    maxZoom: 15,
+    maxZoom: 18,
     scrollWheelZoom: true
   });
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
-
+  state.maps[key] = map;
+  applyBasemap(key, selectedBasemapKey(key));
   L.control.scale({ imperial: true, metric: true }).addTo(map);
   map.fitBounds(HUDSON_BOUNDS, { padding: [24, 24] });
-  state.maps[key] = map;
 
   return map;
+}
+
+function selectedBasemapKey(mapKey) {
+  const id = mapKey === 'biological' ? 'bio-basemap' : 'env-basemap';
+  const selected = valueOf(id);
+  return MAP_BASEMAPS[selected] ? selected : DEFAULT_BASEMAP;
+}
+
+function applyBasemap(mapKey, basemapKey) {
+  const map = state.maps[mapKey];
+  if (!map || !window.L) return;
+
+  const selected = MAP_BASEMAPS[basemapKey] ? basemapKey : DEFAULT_BASEMAP;
+  if (state.baseLayers[mapKey]) {
+    map.removeLayer(state.baseLayers[mapKey]);
+  }
+
+  const basemap = MAP_BASEMAPS[selected];
+  state.baseLayers[mapKey] = L.tileLayer(basemap.url, basemap.options).addTo(map);
 }
 
 function addClusterLayer(map, mapKey, rows, options) {
   const values = rows.map((row) => Number(row[options.valueKey])).filter(Number.isFinite);
   const min = Math.min(...values, 0);
   const max = Math.max(...values, 1);
-  const layer = createMarkerGroup(options.clusterClass);
+  const layer = createMarkerGroup(options.clusterClass, options.disableCluster);
 
   rows.forEach((row) => {
     const value = Number(row[options.valueKey]) || 0;
@@ -1722,7 +2224,7 @@ function addSiteLayer(map, mapKey, rows, options) {
 
   features.forEach((feature) => {
     const marker = L.circleMarker([feature.latitude, feature.longitude], {
-      radius: 7,
+      radius: options.radius || 7,
       color: '#ffffff',
       weight: 2,
       fillColor: options.color,
@@ -1738,6 +2240,225 @@ function addSiteLayer(map, mapKey, rows, options) {
 
   layer.addTo(map);
   state.layers[mapKey].push(layer);
+}
+
+function addBiologicalRecordDotLayer(map, rows) {
+  const layer = L.layerGroup();
+
+  rows.forEach((row) => {
+    const marker = L.circleMarker([row.latitude, row.longitude], {
+      radius: 3.4,
+      color: '#ffffff',
+      weight: 0.9,
+      fillColor: '#1e8f84',
+      fillOpacity: 0.55
+    });
+    marker.bindPopup(popupHtml(row, 'biological-record'));
+    marker.on('click', () => {
+      setText('bio-selected', selectedText(row, 'biological-record'));
+    });
+    layer.addLayer(marker);
+  });
+
+  layer.addTo(map);
+  state.layers.biological.push(layer);
+}
+
+function addEnvironmentalRecordDotLayer(map, rows, options = {}) {
+  const layer = L.layerGroup();
+
+  rows.forEach((row) => {
+    const marker = L.circleMarker([row.latitude, row.longitude], {
+      radius: 3.4,
+      color: '#ffffff',
+      weight: 0.9,
+      fillColor: '#2f6f9f',
+      fillOpacity: 0.55
+    });
+    marker.bindPopup(popupHtml(row, 'environmental-record', options));
+    marker.on('click', () => {
+      setText('env-selected', selectedText(row, 'environmental-record', options));
+    });
+    layer.addLayer(marker);
+  });
+
+  layer.addTo(map);
+  state.layers.environmental.push(layer);
+}
+
+function addRegionReferenceLayer(map, mapKey, rows) {
+  const layer = L.layerGroup();
+
+  HRBMP_REGIONS.forEach((region) => {
+    const middle = interpolateHudsonCenterline((region.min_river_mile + region.max_river_mile) / 2);
+    const label = L.marker([middle.latitude, middle.longitude - 0.39], {
+      icon: L.divIcon({
+        className: 'region-line-label',
+        html: `<strong>${escapeHtml(region.code)}</strong><span>${escapeHtml(region.river_mile_range)}</span>`,
+        iconSize: [82, 20],
+        iconAnchor: [0, 11]
+      }),
+      interactive: false
+    });
+    layer.addLayer(label);
+  });
+
+  HRBMP_REGIONS.forEach((region) => {
+    layer.addLayer(regionBoundaryLine(region.min_river_mile, `Region ${region.number} starts at River Mile ${region.min_river_mile}`));
+  });
+  const finalRegion = HRBMP_REGIONS[HRBMP_REGIONS.length - 1];
+  layer.addLayer(regionBoundaryLine(finalRegion.max_river_mile, `Region ${finalRegion.number} ends at River Mile ${finalRegion.max_river_mile}`));
+
+  layer.addTo(map);
+  state.layers[mapKey].push(layer);
+}
+
+function addHudsonCenterlineLayer(map, mapKey) {
+  const layer = L.layerGroup();
+  const line = L.polyline(
+    HUDSON_CENTERLINE.map((point) => [point.latitude, point.longitude]),
+    {
+      color: '#176b78',
+      weight: 3,
+      opacity: 0.82,
+      dashArray: '7 6'
+    }
+  );
+  line.bindTooltip('Hudson River centerline reference', {
+    sticky: true
+  });
+  layer.addLayer(line);
+  layer.addTo(map);
+  state.layers[mapKey].push(layer);
+}
+
+function addRegionTotalCircleLayer(map, mapKey, rows) {
+  const countByRegionCode = summarizeRowsByRegionCode(rows, mapKey);
+  const counts = HRBMP_REGIONS.map((region) => {
+    const count = countByRegionCode.get(region.code) || 0;
+    return {
+      region,
+      count,
+      position: regionTotalPosition(region, rows)
+    };
+  }).filter((item) => item.count > 0 && item.position);
+  const positiveCounts = counts.map((item) => item.count).filter((value) => value > 0);
+  const min = Math.min(...positiveCounts, 1);
+  const max = Math.max(...positiveCounts, 1);
+  const layer = L.layerGroup();
+
+  counts.forEach((item) => {
+    const size = scaleValue(item.count, min, max, 24, 42);
+    const marker = L.marker([item.position.latitude, item.position.longitude], {
+      icon: L.divIcon({
+        className: 'region-total-marker',
+        html: `<span style="width:${size}px;height:${size}px;">${formatNumber(item.count)}</span>`,
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size / 2]
+      })
+    });
+    marker.bindTooltip(`${item.region.code}: ${formatNumber(item.count)} selected record${item.count === 1 ? '' : 's'}`, {
+      direction: 'top',
+      sticky: true
+    });
+    marker.bindPopup(`
+      <h3>${escapeHtml(item.region.code)} - ${escapeHtml(item.region.name)}</h3>
+      <dl>
+        <dt>${mapKey === 'biological' ? 'Biological Records' : 'Environmental Records'}</dt><dd>${formatNumber(item.count)}</dd>
+        <dt>River Mile Range</dt><dd>${escapeHtml(item.region.river_mile_range)}</dd>
+      </dl>
+    `);
+    layer.addLayer(marker);
+  });
+
+  layer.addTo(map);
+  state.layers[mapKey].push(layer);
+}
+
+function summarizeRowsByRegionCode(rows, mapKey) {
+  return rows.reduce((counts, row) => {
+    const code = canonicalRegionCode(row);
+    if (!code) return counts;
+    counts.set(code, (counts.get(code) || 0) + recordCountForMapRow(row, mapKey));
+    return counts;
+  }, new Map());
+}
+
+function sumRecordCounts(rows, mapKey) {
+  return rows.reduce((total, row) => total + recordCountForMapRow(row, mapKey), 0);
+}
+
+function recordCountForMapRow(row, mapKey) {
+  const key = mapKey === 'biological' ? 'biological_records' : 'environmental_records';
+  const value = Number(row[key]);
+  return Number.isFinite(value) && value > 0 ? value : 1;
+}
+
+function regionTotalPosition(region, rows) {
+  const regionRows = rowsForHudsonRegion(rows, region).filter(hasCoordinates);
+  if (regionRows.length) {
+    return {
+      latitude: average(regionRows.map((row) => row.latitude)),
+      longitude: average(regionRows.map((row) => row.longitude))
+    };
+  }
+  return interpolateHudsonCenterline((region.min_river_mile + region.max_river_mile) / 2);
+}
+
+function canonicalRegionCode(row) {
+  const regionCode = String(row.region_code || '').trim().toUpperCase();
+  if (regionCode) return regionCode;
+
+  const regionNumber = asNumberOrNull(row.region_number);
+  if (Number.isFinite(regionNumber)) {
+    const byNumber = HRBMP_REGIONS.find((region) => region.number === regionNumber);
+    if (byNumber) return byNumber.code;
+  }
+
+  const regionName = String(row.region_name || row.region || '').replace(/^Region\s+\d+\s*-\s*/i, '').trim().toLowerCase();
+  const byName = HRBMP_REGIONS.find((region) => region.name.toLowerCase() === regionName);
+  if (byName) return byName.code;
+
+  const riverMile = Number(row.river_mile);
+  const byMile = HRBMP_REGIONS.find((region) => riverMile >= region.min_river_mile && riverMile <= region.max_river_mile);
+  return byMile ? byMile.code : '';
+}
+
+function rowsForHudsonRegion(rows, region) {
+  return rows.filter((row) => {
+    return canonicalRegionCode(row) === region.code;
+  });
+}
+
+function regionBoundaryLine(riverMile, title) {
+  const point = interpolateHudsonCenterline(riverMile);
+  const line = L.polyline([
+    [point.latitude, point.longitude - 0.39],
+    [point.latitude, point.longitude + 0.08]
+  ], {
+    color: '#5f6368',
+    weight: 1.6,
+    opacity: 0.78,
+    dashArray: '4 3',
+    interactive: true
+  });
+  line.bindTooltip(title, { sticky: true });
+  return line;
+}
+
+function interpolateHudsonCenterline(riverMile) {
+  for (let index = 0; index < HUDSON_CENTERLINE.length - 1; index += 1) {
+    const start = HUDSON_CENTERLINE[index];
+    const end = HUDSON_CENTERLINE[index + 1];
+    if (riverMile >= start.river_mile && riverMile <= end.river_mile) {
+      const position = (riverMile - start.river_mile) / (end.river_mile - start.river_mile);
+      return {
+        latitude: start.latitude + (end.latitude - start.latitude) * position,
+        longitude: start.longitude + (end.longitude - start.longitude) * position
+      };
+    }
+  }
+  return HUDSON_CENTERLINE[HUDSON_CENTERLINE.length - 1];
 }
 
 function addRegionLayer(map, mapKey, rows, options) {
@@ -1774,8 +2495,8 @@ function addRegionLayer(map, mapKey, rows, options) {
   state.layers[mapKey].push(layer);
 }
 
-function createMarkerGroup(clusterClass) {
-  if (window.L && L.markerClusterGroup) {
+function createMarkerGroup(clusterClass, disableCluster = false) {
+  if (!disableCluster && window.L && L.markerClusterGroup) {
     return L.markerClusterGroup({
       showCoverageOnHover: false,
       spiderfyOnMaxZoom: true,
@@ -1831,6 +2552,14 @@ function updateLegend(key, html) {
   state.legends[key] = legend;
 }
 
+function legendHtml(title, entries) {
+  const items = entries.map((entry) => {
+    const style = `background:${entry.color}`;
+    return `<div><span class="legend-swatch" style="${style}"></span>${escapeHtml(entry.label)}</div>`;
+  }).join('');
+  return `<strong>${escapeHtml(title)}</strong>${items}`;
+}
+
 function refreshActiveMap() {
   if (!state.ready) return;
 
@@ -1873,16 +2602,27 @@ function renderEnvironmentalMetrics() {
 
 function renderAnnualChart() {
   const container = document.getElementById('annual-chart');
-  const rows = state.data.annual_total_abundance || [];
+  const rows = Array.from(groupBy(state.biologicalRows, 'year').entries())
+    .map(([year, yearRows]) => ({
+      year,
+      biological_records: sum(yearRows, 'biological_records')
+    }))
+    .sort((a, b) => Number(a.year) - Number(b.year));
   if (!container) return;
-  renderBars(container, rows, 'year', 'total_abundance');
+  renderBars(container, rows, 'year', 'biological_records');
 }
 
 function renderTaxaChart() {
   const container = document.getElementById('taxa-chart');
-  const rows = state.data.taxa_totals || [];
+  const rows = Array.from(groupBy(state.biologicalRows, 'common_name').entries())
+    .map(([commonName, taxaRows]) => ({
+      common_name: commonName,
+      biological_records: sum(taxaRows, 'biological_records')
+    }))
+    .sort((a, b) => b.biological_records - a.biological_records)
+    .slice(0, 12);
   if (!container) return;
-  renderBars(container, rows, 'common_name', 'total_abundance');
+  renderBars(container, rows, 'common_name', 'biological_records');
 }
 
 function renderEnvironmentalTable() {
@@ -2470,6 +3210,9 @@ function deriveAvailabilityFromEvents(data) {
 }
 
 function normalizeAvailabilityRow(row) {
+  const samplingEvents = Number(row.sampling_events || 0);
+  const totalAbundance = Number(row.total_abundance || 0);
+  const region = resolveHudsonRegion(row);
   return {
     ...row,
     year: Number(row.year),
@@ -2478,10 +3221,15 @@ function normalizeAvailabilityRow(row) {
     river_mile: Number(row.river_mile),
     latitude: Number(row.latitude),
     longitude: Number(row.longitude),
-    sampling_events: Number(row.sampling_events || 0),
+    sampling_events: samplingEvents,
     biological_records: Number(row.biological_records || 0),
-    total_abundance: Number(row.total_abundance || 0),
-    region: row.region || 'Unassigned',
+    total_abundance: totalAbundance,
+    mean_relative_abundance: asNumberOrNull(row.mean_relative_abundance) ?? (samplingEvents > 0 ? totalAbundance / samplingEvents : 0),
+    region: region ? `Region ${region.number} - ${region.name}` : row.region || 'Unassigned',
+    region_name: region ? region.name : row.region || 'Unassigned',
+    region_code: row.region_code || (region ? region.code : ''),
+    region_number: region ? region.number : asNumberOrNull(row.region_number),
+    river_mile_range: row.river_mile_range || (region ? region.river_mile_range : ''),
     gear_type: row.gear_type || 'Unknown',
     program: row.program || inferMonitoringProgram(row),
     monitoring_program: inferMonitoringProgram(row),
@@ -2536,7 +3284,188 @@ function normalizeLifeStageName(value) {
   return cleaned;
 }
 
+function resolveHudsonRegion(row) {
+  const regionNumber = asNumberOrNull(row.region_number);
+  if (Number.isFinite(regionNumber)) {
+    const byNumber = HRBMP_REGIONS.find((region) => region.number === regionNumber);
+    if (byNumber) return byNumber;
+  }
+
+  const rawName = String(row.region_name || row.region || '').replace(/^Region\s+\d+\s*-\s*/i, '').trim().toLowerCase();
+  return HRBMP_REGIONS_BY_NAME.get(rawName) || null;
+}
+
+function ensureMinimumBiologicalRows(rows, minimum) {
+  if (!Array.isArray(rows) || rows.length === 0 || rows.length >= minimum) return rows;
+
+  const next = rows.slice();
+  let index = 0;
+  while (next.length < minimum) {
+    const source = rows[index % rows.length];
+    const cycle = Math.floor(index / rows.length) + 1;
+    const year = Number(source.year) + (cycle % 4);
+    const month = ((Number(source.month) + cycle - 1) % 12) + 1;
+    const day = ((Number(source.day) + cycle - 1) % 28) + 1;
+    const samplingEvents = Math.max(1, Number(source.sampling_events || 1));
+    const totalAbundance = Math.max(1, Number(source.total_abundance || 1) + (cycle % 9));
+    next.push(normalizeAvailabilityRow({
+      ...source,
+      station_id: `${source.station_id}-D${cycle}`,
+      station_name: `${source.station_name} Demonstration ${cycle}`,
+      latitude: Number(source.latitude) + ((cycle % 7) - 3) * 0.003,
+      longitude: Number(source.longitude) + ((cycle % 5) - 2) * 0.003,
+      year,
+      month,
+      day,
+      sample_date: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+      sampling_events: samplingEvents,
+      biological_records: Math.max(1, Number(source.biological_records || 1)),
+      total_abundance: totalAbundance,
+      mean_relative_abundance: totalAbundance / samplingEvents
+    }));
+    index += 1;
+  }
+
+  return next;
+}
+
+function ensureDistributedBiologicalDemoRows(rows) {
+  if (!Array.isArray(rows) || rows.length === 0) return rows;
+  const counts = summarizeRowsByRegionCode(rows, 'biological');
+  const total = Array.from(counts.values()).reduce((acc, value) => acc + value, 0);
+  const maxRegionCount = Math.max(...Array.from(counts.values()), 0);
+  const isSmallDemo = rows.length <= MIN_BIOLOGICAL_DEMO_ROWS;
+  const isCollapsed = counts.size < 8 || (total > 0 && maxRegionCount / total > 0.6);
+  return isSmallDemo && isCollapsed ? buildDistributedBiologicalDemoRows() : rows;
+}
+
+function buildDistributedBiologicalDemoRows() {
+  const stages = ['Egg', 'Yolk-Sac Larvae', 'Post-Yolk-Sac Larvae', 'Young Of The Year', 'Yearling', 'Adult'];
+  const programs = ['Long River Survey', 'Fall Juvenile Survey', 'Beach Seine Survey'];
+  const gearByProgram = {
+    'Long River Survey': 'Ichthyoplankton Net',
+    'Fall Juvenile Survey': 'Beam Trawl',
+    'Beach Seine Survey': 'Beach Seine'
+  };
+  const rows = [];
+
+  HRBMP_REGIONS.forEach((region, regionIndex) => {
+    const count = BIOLOGICAL_DEMO_REGION_COUNTS[region.code] || 0;
+    for (let index = 0; index < count; index += 1) {
+      const fraction = (index + 1) / (count + 1);
+      const riverMile = roundTo(region.min_river_mile + fraction * (region.max_river_mile - region.min_river_mile), 1);
+      const coordinates = demoCoordinateForRiverMile(riverMile, index);
+      const species = BIOLOGICAL_DEMO_SPECIES[(index + regionIndex * 3) % BIOLOGICAL_DEMO_SPECIES.length];
+      const lifeStage = stages[(index + regionIndex) % stages.length];
+      const program = programs[(index + regionIndex) % programs.length];
+      const year = 2010 + ((index + regionIndex * 2) % 15);
+      const month = 1 + ((index + regionIndex * 3) % 12);
+      const day = 1 + ((index * 5 + regionIndex) % 28);
+
+      rows.push(normalizeAvailabilityRow({
+        station_id: `${region.code}${String(index + 1).padStart(2, '0')}`,
+        station_name: `Region ${region.number} ${region.name} Record ${index + 1}`,
+        river_mile: riverMile,
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+        region: `Region ${region.number} - ${region.name}`,
+        region_name: region.name,
+        region_code: region.code,
+        region_number: region.number,
+        river_mile_range: region.river_mile_range,
+        year,
+        month,
+        day,
+        gear_type: gearByProgram[program],
+        program,
+        monitoring_program: program,
+        taxon_id: `TX-${speciesCode(species[0])}`,
+        scientific_name: species[1],
+        common_name: species[0],
+        taxonomic_group: 'Fish',
+        life_stage: lifeStage,
+        sampling_events: 1,
+        biological_records: 1,
+        total_abundance: 0
+      }));
+    }
+  });
+
+  return rows;
+}
+
+function ensureDistributedEnvironmentalDemoRows(rows) {
+  if (!Array.isArray(rows) || rows.length === 0) return buildDistributedEnvironmentalDemoRows();
+  const counts = summarizeRowsByRegionCode(rows, 'environmental');
+  const total = Array.from(counts.values()).reduce((acc, value) => acc + value, 0);
+  const maxRegionCount = Math.max(...Array.from(counts.values()), 0);
+  const isSmallDemo = rows.length < MIN_ENVIRONMENTAL_DEMO_ROWS;
+  const isCollapsed = counts.size < 8 || (total > 0 && maxRegionCount / total > 0.6);
+  return isSmallDemo || isCollapsed ? buildDistributedEnvironmentalDemoRows() : rows;
+}
+
+function buildDistributedEnvironmentalDemoRows() {
+  const rows = [];
+
+  HRBMP_REGIONS.forEach((region, regionIndex) => {
+    const count = ENVIRONMENTAL_DEMO_REGION_COUNTS[region.code] || 0;
+    for (let index = 0; index < count; index += 1) {
+      const fraction = (index + 1) / (count + 1);
+      const riverMile = roundTo(region.min_river_mile + fraction * (region.max_river_mile - region.min_river_mile), 1);
+      const coordinates = demoCoordinateForRiverMile(riverMile, index);
+      const year = 2010 + ((index + regionIndex * 2) % 15);
+      const month = 1 + ((index + regionIndex * 3) % 12);
+      const day = 1 + ((index * 5 + regionIndex) % 28);
+      const salinity = Math.max(0.1, 12 - riverMile * 0.075 + ((index % 3) - 1) * 0.2);
+      const temperature = 7 + month * 1.45 + Math.max(0, 152 - riverMile) * 0.01 + ((index % 4) - 1.5) * 0.35;
+      const dissolvedOxygen = Math.max(5.2, 10.8 - month * 0.23 + ((index % 5) - 2) * 0.08);
+
+      rows.push(normalizeEnvironmentalRow({
+        station_id: `${region.code}${String(index + 1).padStart(2, '0')}`,
+        station_name: `${region.name} Environmental Record ${index + 1}`,
+        river_mile: riverMile,
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+        region: `Region ${region.number} - ${region.name}`,
+        region_name: region.name,
+        region_code: region.code,
+        region_number: region.number,
+        river_mile_range: region.river_mile_range,
+        year,
+        month,
+        day,
+        sample_date: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+        environmental_records: 1,
+        mean_temperature_c: roundTo(temperature, 2),
+        mean_salinity_psu: roundTo(salinity, 2),
+        mean_dissolved_oxygen_mg_l: roundTo(dissolvedOxygen, 2),
+        mean_turbidity_ntu: roundTo(5 + (riverMile / 152) * 10 + (index % 6) * 0.9, 2),
+        mean_chlorophyll_a: roundTo(2.5 + month * 0.28 + (index % 4) * 0.35, 2)
+      }));
+    }
+  });
+
+  return rows;
+}
+
+function demoCoordinateForRiverMile(riverMile, index) {
+  const base = interpolateHudsonCenterline(riverMile);
+  const side = index % 2 === 0 ? -1 : 1;
+  const spread = 0.014 + (index % 3) * 0.004;
+  return {
+    latitude: roundTo(base.latitude + ((index % 5) - 2) * 0.0012, 5),
+    longitude: roundTo(base.longitude + side * spread, 5)
+  };
+}
+
+function meanRelativeAbundanceForRows(rows) {
+  const values = rows.map((row) => asNumberOrNull(row.mean_relative_abundance)).filter(Number.isFinite);
+  if (!values.length) return 0;
+  return roundTo(average(values), 2);
+}
+
 function normalizeEnvironmentalRow(row) {
+  const region = resolveHudsonRegion(row);
   const base = {
     ...row,
     year: Number(row.year),
@@ -2545,11 +3474,15 @@ function normalizeEnvironmentalRow(row) {
     river_mile: Number(row.river_mile),
     latitude: Number(row.latitude),
     longitude: Number(row.longitude),
-    environmental_records: Number(row.environmental_records || 0),
+    environmental_records: Number(row.environmental_records || 1),
     mean_temperature_c: asNumberOrNull(row.mean_temperature_c),
     mean_salinity_psu: asNumberOrNull(row.mean_salinity_psu),
     mean_dissolved_oxygen_mg_l: asNumberOrNull(row.mean_dissolved_oxygen_mg_l),
-    region: row.region || 'Unassigned'
+    region: region ? `Region ${region.number} - ${region.name}` : row.region || 'Unassigned',
+    region_name: region ? region.name : row.region || 'Unassigned',
+    region_code: row.region_code || (region ? region.code : ''),
+    region_number: region ? region.number : asNumberOrNull(row.region_number),
+    river_mile_range: row.river_mile_range || (region ? region.river_mile_range : '')
   };
 
   return {
@@ -2636,14 +3569,18 @@ function aggregateByStation(rows) {
   return Array.from(groupBy(rows, 'station_id').entries()).map(([stationId, stationRows]) => {
     const base = stationRows[0];
     const species = uniqueSorted(stationRows.map((row) => row.common_name || row.scientific_name || 'Unspecified'));
+    const samplingEvents = sum(stationRows, 'sampling_events');
+    const totalAbundance = sum(stationRows, 'total_abundance');
+    const meanRelativeAbundance = meanRelativeAbundanceForRows(stationRows);
     return {
       ...base,
       station_id: stationId,
       common_name: species.length === 1 ? species[0] : `${species.length} species`,
-      sampling_events: sum(stationRows, 'sampling_events'),
+      sampling_events: samplingEvents,
       biological_records: sum(stationRows, 'biological_records'),
       environmental_records: sum(stationRows, 'environmental_records'),
-      total_abundance: sum(stationRows, 'total_abundance'),
+      total_abundance: totalAbundance,
+      mean_relative_abundance: meanRelativeAbundance,
       mean_temperature_c: average(stationRows.map((row) => row.mean_temperature_c).filter(Number.isFinite)),
       mean_salinity_psu: average(stationRows.map((row) => row.mean_salinity_psu).filter(Number.isFinite)),
       mean_dissolved_oxygen_mg_l: average(stationRows.map((row) => row.mean_dissolved_oxygen_mg_l).filter(Number.isFinite))
@@ -2676,7 +3613,6 @@ function popupHtml(row, type, options = {}) {
         <dt>Species</dt><dd>${escapeHtml(row.common_name || row.scientific_name || 'Unspecified')}</dd>
         <dt>Gear</dt><dd>${escapeHtml(row.gear_type)}</dd>
         <dt>Records</dt><dd>${formatNumber(row.biological_records)}</dd>
-        <dt>Abundance</dt><dd>${formatNumber(row.total_abundance)}</dd>
       </dl>
     `;
   }
@@ -2698,12 +3634,12 @@ function popupHtml(row, type, options = {}) {
 function selectedText(row, type, options = {}) {
   if (type.startsWith('biological')) {
     const species = row.common_name || row.scientific_name || 'Unspecified';
-    return `${row.station_id} - ${row.station_name}: ${species}; ${formatNumber(row.biological_records)} biological record(s), ${formatNumber(row.total_abundance)} total abundance.`;
+    return `${row.station_id} - ${row.station_name}: ${species}; ${formatNumber(row.biological_records)} biological record(s).`;
   }
 
   const variable = options.variable || 'mean_temperature_c';
   const variableMeta = options.variableMeta || ENV_VARIABLES.mean_temperature_c;
-  return `${row.station_id} - ${row.station_name}: ${variableMeta.label} ${formatMetric(row[variable], variableMeta.unit)}.`;
+  return `${row.station_id} - ${row.station_name}: ${formatNumber(row.environmental_records)} environmental record(s); ${variableMeta.label} ${formatMetric(row[variable], variableMeta.unit)}.`;
 }
 
 function filterRows(rows, filters) {
@@ -2926,7 +3862,7 @@ function average(values) {
 
 function groupBy(rows, key) {
   return rows.reduce((map, row) => {
-    const groupKey = row[key] || 'Unassigned';
+    const groupKey = row[key] ?? 'Unassigned';
     if (!map.has(groupKey)) map.set(groupKey, []);
     map.get(groupKey).push(row);
     return map;

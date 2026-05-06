@@ -1,16 +1,17 @@
-# HRBMP Database Prototype
+# HRBMP Data Access Portal
 
 ## Project purpose
-This repository provides a **first working prototype** for a Hudson River Biological Monitoring Program (HRBMP) data workflow. It includes a normalized SQLite database design, R scripts for database setup and data export, and a simple static web GUI.
+This repository provides a working foundation for a Hudson River Biological Monitoring Program (HRBMP) data workflow. It includes a normalized SQLite database design, R scripts for database setup and data export, and a static web GUI.
 
 ## Why this repo exists
-The goal is to make HRBMP data management reproducible and understandable before introducing more complex infrastructure. This prototype uses fake placeholder data so the full workflow can be tested without requiring official source data.
+The goal is to make HRBMP data management reproducible and understandable before introducing more complex infrastructure. The current GUI uses test records for interface review and should be replaced with validated HRBMP source data before public release.
 
 ## Folder structure
 
 - `data/` - placeholders for raw data, processed outputs, and metadata
 - `database/` - SQL schema, seed data, and example queries
 - `scripts/` - R scripts for creating/loading/exporting data
+- `api/` - lightweight SQLite-backed API server for JSON and CSV downloads
 - `gui/` - static HTML/CSS/JavaScript dashboard and exported JSON
 - `docs/` - workflow and design documentation
 
@@ -39,6 +40,69 @@ python3 -m http.server 8000
 ```
 Then visit `http://localhost:8000/gui/`.
 
+### 5) Run the SQLite API server
+The API server can serve both the GUI and filtered data-download endpoints.
+Use either the R server or the Python server. The R server is the better fit if
+you are working mainly in RStudio.
+
+R option:
+
+```bash
+Rscript api/server.R
+```
+
+On Windows, you can also double-click:
+
+```text
+scripts/start_r_api_server.bat
+```
+
+The R option requires:
+
+```r
+install.packages(c("plumber", "DBI", "RSQLite"))
+```
+
+Python option:
+
+```bash
+python api/server.py
+```
+
+Then visit `http://127.0.0.1:8010/gui/`.
+
+On Windows, this helper starts the R server when `Rscript` is available and
+falls back to Python otherwise:
+
+```text
+scripts/start_api_server.bat
+```
+
+The R-specific helper is:
+
+```text
+scripts/start_r_api_server.bat
+```
+
+Keep the server window open while using API downloads. If the browser says
+`127.0.0.1 refused to connect`, the API server is not running.
+
+Useful endpoints:
+
+- `GET /api/health`
+- `GET /api/filters`
+- `GET /api/metadata`
+- `GET /api/metadata/datasets`
+- `GET /api/metadata/variables`
+- `GET /api/metadata/programs`
+- `GET /api/metadata/regions`
+- `GET /api/metadata/sources`
+- `GET /api/access-policy`
+- `GET /api/biological-records`
+- `GET /api/biological-records.csv`
+- `GET /api/environmental-records`
+- `GET /api/environmental-records.csv`
+
 The GUI is organized like a small project website with tabs for Program
 Description, Data Inquiry, Biological Database, Environmental Database,
 Sampling Image Catalog, Issue Report, User Login, and Team / Contact.
@@ -53,10 +117,30 @@ Map filters use year, month, and day ranges. Leaving day start/end open shows
 the full selected month range. The Biological Database map also includes
 species, life-stage, and monitoring-program selectors. The species selector
 lists the 13 key species first, then the broader Hudson River species list.
+The Biological Database includes biological record totals by HRBMP region, an
+HRBMP Region 0 to Region 12 boundary-line layer, and a data request form that
+summarizes the current screening filters. The Environmental Database similarly
+focuses on environmental records and selected covariate context.
+
+The Biological Database and Environmental Database pages also include API
+download links. When the GUI is served through `api/server.py`, these links use
+the current filters to request CSV or JSON directly from SQLite.
+
+The Program Description page includes a SQLite Metadata Catalog. When the API
+server is running, this section reads dataset, variable, program, source, and
+HRBMP river-region metadata from SQLite through `/api/metadata`.
+
+To regenerate the test biological map points:
+
+```bash
+node scripts/generate_gui_test_points.js
+```
 
 The User Login tab is a static interface placeholder for future restricted
-access. Real authentication and role-based permissions should be implemented in
-a backend before restricted data are exposed.
+access. It now displays the SQLite access tiers and dataset access policy, and
+includes a request-access form placeholder. Real authentication, role checks,
+and restricted downloads must be implemented in the backend/API before
+restricted data are exposed.
 
 The Issue Report tab provides a static form for comments, issues, questions,
 and feedback that can be connected to a backend later.
@@ -69,7 +153,12 @@ species detail view includes clickable life-stage controls that update the
 Hudson River distribution bar, data availability summary, and image archive.
 
 ## Future development plan
-- Replace fake seed data with validated HRBMP source data.
+- Replace test records with validated HRBMP source data.
 - Expand Quality Assurance / Quality Control (QA/QC) checks and metadata tracking.
 - Add richer trend visualizations and map views.
 - Optionally connect the GUI to a backend API in a later phase.
+
+See `docs/github_vs_database.md` for guidance on what belongs in GitHub versus
+what should stay in a local or hosted SQLite/API environment.
+See `docs/access_control_design.md` for the planned login, role, request, and
+download-audit structure.

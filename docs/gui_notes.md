@@ -33,6 +33,10 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
   Survey, Fall Juvenile Survey, and Beach Seine Survey. The species selector
   lists the 13 key species first, then the broader Hudson River species list. If
   no day range is selected, the map shows the full selected month range.
+- Provides biological record totals by HRBMP region for the selected species,
+  life stage, program, and date filters.
+- Provides a Biological Database data request form that records the current
+  screening summary for the data management team.
 - Filters environmental map layers by year, month, and day ranges plus selected
   covariate. Environmental database tabs separate HRBMP, USGS, EPA, and NOAA
   variables. If no day range is selected, the map shows the full selected month
@@ -52,25 +56,37 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 - Provides a static User Login tab for future restricted access, including user
   name, password, forgot user name, and forgot password interface elements.
 
-## Prototype spatial structure
+## Spatial Structure
 
-The fake map data are organized around the 13 HRBMP longitudinal river regions:
+The test map data are organized around the 13 HRBMP longitudinal river regions.
+The HRBMP source material describes these as numbered regions based on river
+mile. The interface displays the region number first, followed by a readable
+place label and river-mile range:
 
-- Battery (BT)
-- Yonkers (YK)
-- Tappan Zee (TZ)
-- Croton-Haverstraw (CH)
-- Indian Point (IP)
-- West Point (WP)
-- Cornwall (CW)
-- Poughkeepsie (PK)
-- Hyde Park (HP)
-- Kingston (KG)
-- Saugerties (SG)
-- Catskill (CS)
-- Albany (AL)
+- Region 0 - Battery (BT), River Mile 1-11
+- Region 1 - Yonkers (YK), River Mile 12-23
+- Region 2 - Tappan Zee (TZ), River Mile 24-33
+- Region 3 - Croton-Haverstraw (CH), River Mile 34-38
+- Region 4 - Indian Point (IP), River Mile 39-46
+- Region 5 - West Point (WP), River Mile 47-55
+- Region 6 - Cornwall (CW), River Mile 56-61
+- Region 7 - Poughkeepsie (PK), River Mile 62-76
+- Region 8 - Hyde Park (HP), River Mile 77-85
+- Region 9 - Kingston (KG), River Mile 86-93
+- Region 10 - Saugerties (SG), River Mile 94-106
+- Region 11 - Catskill (CS), River Mile 107-124
+- Region 12 - Albany (AL), River Mile 125-152
 
-The prototype currently includes 39 demonstration stations, 3 stations per region.
+The biological availability GeoJSON currently includes 100 test records spread
+across the 13 regions so each region has a different sample count. The points
+are generated from river-mile positions along an approximate Hudson River
+centerline. The HRBMP region layer is drawn as boundary guide lines and labels,
+with biological records shown as regional total circles. Regenerate the test
+layer with:
+
+```bash
+node scripts/generate_gui_test_points.js
+```
 
 ## Current limitations
 

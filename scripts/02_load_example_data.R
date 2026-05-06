@@ -22,9 +22,24 @@ con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db_path)
 on.exit(DBI::dbDisconnect(con), add = TRUE)
 
 seed_sql <- paste(readLines(seed_path, warn = FALSE), collapse = '\n')
-DBI::dbExecute(con, seed_sql)
+seed_statements <- trimws(strsplit(seed_sql, ';', fixed = TRUE)[[1]])
+for (statement in seed_statements[nzchar(seed_statements)]) {
+  DBI::dbExecute(con, paste0(statement, ';'))
+}
 
-tables <- c('stations', 'sampling_events', 'taxa', 'observations', 'environmental_observations', 'metadata_sources')
+tables <- c(
+  'stations',
+  'sampling_events',
+  'taxa',
+  'observations',
+  'environmental_observations',
+  'metadata_sources',
+  'data_domains',
+  'monitoring_programs',
+  'hrbmp_regions',
+  'dataset_catalog',
+  'data_variables'
+)
 for (tbl in tables) {
   n <- DBI::dbGetQuery(con, sprintf('SELECT COUNT(*) AS n FROM %s', tbl))$n[[1]]
   message(sprintf('Table %-30s rows: %d', tbl, n))

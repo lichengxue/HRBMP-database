@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=formal-site-language-20260504" />
+  <link rel="stylesheet" href="style.css?v=environmental-fallback-100-20260506" />
 </head>
 <body>
   <header class="site-nav">
@@ -72,6 +72,13 @@
             </article>
           </div>
         </aside>
+
+        <aside class="home-map-card" aria-label="Hudson River geographic reference map">
+          <div class="home-map-title">
+            <p class="eyebrow">Geographic Reference</p>
+          </div>
+          <img src="assets/hudson_river_map_clean.png" alt="Hudson River geographic map with HRBMP region abbreviations and inset location map" />
+        </aside>
       </div>
 
       <section class="partner-panel data-panel" aria-label="Institutional partners and collaborators">
@@ -102,6 +109,16 @@
             </a>
           </div>
         </div>
+      </section>
+
+      <section class="homepage-disclaimer data-panel" aria-label="Development disclaimer">
+        <h2>Development Disclaimer</h2>
+        <p>
+          This portal is a development interface for reviewing HRBMP database structure,
+          metadata, data-access workflows, and map display concepts. Example records,
+          availability layers, and downloads should not be interpreted as an official
+          HRBMP data release until reviewed datasets and release rules are finalized.
+        </p>
       </section>
     </section>
 
@@ -159,6 +176,51 @@
           <p>File provenance, contacts, institutions, and date-added fields.</p>
         </article>
       </div>
+
+      <section class="data-panel metadata-panel">
+        <div class="metadata-panel-header">
+          <div>
+            <h2>SQLite Metadata Catalog</h2>
+            <p id="metadata-status">Metadata are loaded from the local API when the server is running.</p>
+          </div>
+          <a id="metadata-api-json" class="secondary-button link-button" href="#" target="_blank" rel="noopener">Open Metadata JSON</a>
+        </div>
+        <div class="summary-strip metadata-overview" id="metadata-overview"></div>
+        <div class="metadata-tables">
+          <article>
+            <h3>Datasets</h3>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Dataset</th>
+                    <th>Source</th>
+                    <th>Access</th>
+                    <th>API</th>
+                  </tr>
+                </thead>
+                <tbody id="metadata-datasets"></tbody>
+              </table>
+            </div>
+          </article>
+          <article>
+            <h3>Variables</h3>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Variable</th>
+                    <th>Database</th>
+                    <th>Unit</th>
+                    <th>Type</th>
+                  </tr>
+                </thead>
+                <tbody id="metadata-variables"></tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
     </section>
 
     <section class="tab-page" id="data-inquiry" data-tab-page="data-inquiry">
@@ -201,7 +263,6 @@
                 <th>Gear</th>
                 <th>Events</th>
                 <th>Biological Records</th>
-                <th>Total Abundance</th>
               </tr>
             </thead>
             <tbody id="inquiry-body"></tbody>
@@ -226,31 +287,31 @@
             <select id="bio-life-stage"></select>
           </label>
           <label>
-            Monitoring program
+            Monitoring Program
             <select id="bio-program"></select>
           </label>
           <label>
-            Year from
+            Year From
             <select id="bio-year-start"></select>
           </label>
           <label>
-            Year to
+            Year To
             <select id="bio-year-end"></select>
           </label>
           <label>
-            Month from
+            Month From
             <select id="bio-month-start"></select>
           </label>
           <label>
-            Month to
+            Month To
             <select id="bio-month-end"></select>
           </label>
           <label>
-            Day from
+            Day From
             <select id="bio-day-start"></select>
           </label>
           <label>
-            Day to
+            Day To
             <select id="bio-day-end"></select>
           </label>
         </div>
@@ -259,21 +320,35 @@
       <div class="map-workspace">
         <aside class="layer-panel" aria-label="Biological map layers">
           <h2>Layers</h2>
-          <label class="layer-option">
-            <input type="checkbox" id="layer-sites" checked />
-            <span>Sampling sites</span>
+          <label class="map-type-control">
+            Map Type
+            <select id="bio-basemap">
+              <option value="street">Street Map</option>
+              <option value="light">Light Reference</option>
+              <option value="topographic">Topographic</option>
+              <option value="satellite">Satellite Imagery</option>
+            </select>
           </label>
+          <h3 class="layer-subheading">GIS Layers</h3>
           <label class="layer-option">
             <input type="checkbox" id="layer-records" checked />
             <span>Biological Records</span>
           </label>
           <label class="layer-option">
-            <input type="checkbox" id="layer-regions" checked />
-            <span>Area Totals</span>
+            <input type="checkbox" id="layer-regional-totals" checked />
+            <span>Regional Totals</span>
+          </label>
+          <label class="layer-option">
+            <input type="checkbox" id="layer-region-reference" checked />
+            <span>HRBMP Region Boundaries</span>
+          </label>
+          <label class="layer-option">
+            <input type="checkbox" id="layer-river-centerline" checked />
+            <span>Hudson River Centerline</span>
           </label>
 
           <div class="layer-stats" id="bio-map-stats"></div>
-          <p class="map-help">Use the map controls to zoom. Zoomed-out markers cluster into area counts; zoomed-in markers show individual sites and events.</p>
+          <p class="map-help">Biological record totals are summarized by HRBMP region for the selected species, life stage, program, and date filters.</p>
         </aside>
 
         <section class="map-panel" aria-label="Hudson River biological availability map">
@@ -281,6 +356,65 @@
           <div class="selected-feature" id="bio-selected">No map feature selected.</div>
         </section>
       </div>
+
+      <section class="data-panel api-download-panel">
+        <div>
+          <h2>API Download</h2>
+          <p>Download the current biological screening result or open the same query as JSON.</p>
+        </div>
+        <div class="api-link-row">
+          <a id="bio-api-csv" class="primary-button link-button" href="#" target="_blank" rel="noopener">Download Biological CSV</a>
+          <a id="bio-api-json" class="secondary-button link-button" href="#" target="_blank" rel="noopener">Open Biological JSON</a>
+        </div>
+      </section>
+
+      <section class="data-panel">
+        <div>
+          <h2>HRBMP River Regions</h2>
+          <p>The biological map uses the 13 HRBMP longitudinal river regions, numbered from Battery to Albany.</p>
+        </div>
+        <div class="region-reference-grid" id="bio-region-reference"></div>
+      </section>
+
+      <section class="data-panel data-request-panel">
+        <div>
+          <h2>Data Request</h2>
+          <p>Send the current screening request to the data management team.</p>
+        </div>
+        <form class="data-request-form" onsubmit="return false">
+          <label>
+            Name
+            <input id="data-request-name" type="text" autocomplete="name" />
+          </label>
+          <label>
+            Email
+            <input id="data-request-email" type="email" autocomplete="email" />
+          </label>
+          <label>
+            Affiliation
+            <input id="data-request-affiliation" type="text" />
+          </label>
+          <label>
+            Intended Use
+            <select id="data-request-use">
+              <option>Research</option>
+              <option>Management</option>
+              <option>Education</option>
+              <option>Public Information</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <label class="full-span">
+            Request Notes
+            <textarea id="data-request-notes" rows="5"></textarea>
+          </label>
+          <label class="full-span">
+            Current Screening Summary
+            <textarea id="data-request-summary" rows="4" readonly></textarea>
+          </label>
+          <button type="button" class="primary-button">Submit Data Request</button>
+        </form>
+      </section>
     </section>
 
     <section class="tab-page" id="environmental-database" data-tab-page="environmental-database">
@@ -329,21 +463,35 @@
       <div class="map-workspace">
         <aside class="layer-panel" aria-label="Environmental map layers">
           <h2>Layers</h2>
-          <label class="layer-option">
-            <input type="checkbox" id="env-layer-sites" checked />
-            <span>Sampling sites</span>
+          <label class="map-type-control">
+            Map Type
+            <select id="env-basemap">
+              <option value="street">Street Map</option>
+              <option value="light">Light Reference</option>
+              <option value="topographic">Topographic</option>
+              <option value="satellite">Satellite Imagery</option>
+            </select>
           </label>
+          <h3 class="layer-subheading">GIS Layers</h3>
           <label class="layer-option">
             <input type="checkbox" id="env-layer-values" checked />
-            <span>Selected covariate values</span>
+            <span>Environmental Records</span>
           </label>
           <label class="layer-option">
-            <input type="checkbox" id="env-layer-regions" checked />
-            <span>Area Totals</span>
+            <input type="checkbox" id="env-layer-regional-totals" checked />
+            <span>Regional Totals</span>
+          </label>
+          <label class="layer-option">
+            <input type="checkbox" id="env-layer-region-reference" checked />
+            <span>HRBMP Region Boundaries</span>
+          </label>
+          <label class="layer-option">
+            <input type="checkbox" id="env-layer-river-centerline" checked />
+            <span>Hudson River Centerline</span>
           </label>
 
           <div class="layer-stats" id="env-map-stats"></div>
-          <p class="map-help">Use the database tabs and covariate selector to color and size stations.</p>
+          <p class="map-help">Environmental record totals are summarized by HRBMP region for the selected database, covariate, and date filters.</p>
         </aside>
 
         <section class="map-panel" aria-label="Hudson River environmental availability map">
@@ -352,15 +500,26 @@
         </section>
       </div>
 
+      <section class="data-panel api-download-panel">
+        <div>
+          <h2>API Download</h2>
+          <p>Download environmental records for the selected date range or open the same query as JSON.</p>
+        </div>
+        <div class="api-link-row">
+          <a id="env-api-csv" class="primary-button link-button" href="#" target="_blank" rel="noopener">Download Environmental CSV</a>
+          <a id="env-api-json" class="secondary-button link-button" href="#" target="_blank" rel="noopener">Open Environmental JSON</a>
+        </div>
+      </section>
+
       <div class="metric-grid environmental" id="environmental-metrics"></div>
 
       <div class="content-grid two-column">
         <section class="data-panel">
-          <h2>Annual Abundance Context</h2>
+          <h2>Annual Sampling Records</h2>
           <div id="annual-chart" class="chart-panel"></div>
         </section>
         <section class="data-panel">
-          <h2>Taxa Totals</h2>
+          <h2>Taxa Record Counts</h2>
           <div id="taxa-chart" class="chart-panel"></div>
         </section>
       </div>
@@ -507,14 +666,85 @@
         </section>
 
         <aside class="text-panel access-panel">
-          <h2>Access Levels</h2>
+          <h2>Access Model</h2>
           <p>
-            Public users can browse open summaries and availability layers. Approved
-            users can be granted deeper access for restricted records, QA/QC review,
-            metadata editing, or internal database development.
+            Public users can browse approved summaries and availability layers.
+            Registered and approved users receive dataset-specific permissions.
+            Internal management remains restricted to data managers and admins.
           </p>
+          <ul class="access-principles">
+            <li>Deny access unless a dataset policy explicitly allows it.</li>
+            <li>Keep public exports separate from restricted working data.</li>
+            <li>Log restricted downloads and data-management actions.</li>
+          </ul>
         </aside>
       </div>
+
+      <section class="data-panel access-policy-panel">
+        <div class="metadata-panel-header">
+          <div>
+            <h2>Access Tiers</h2>
+            <p>These tiers are stored in SQLite and used by the API to decide what a user can see or download.</p>
+          </div>
+          <a class="secondary-button link-button" href="http://127.0.0.1:8010/api/access-policy" target="_blank" rel="noopener">Open Access Policy JSON</a>
+        </div>
+        <div class="access-tier-grid" id="access-tier-cards"></div>
+      </section>
+
+      <section class="data-panel access-policy-panel">
+        <h2>Dataset Access Policy</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Dataset</th>
+                <th>Minimum Access</th>
+                <th>Release Status</th>
+                <th>Sensitive</th>
+              </tr>
+            </thead>
+            <tbody id="dataset-access-policy"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="data-panel access-request-panel">
+        <div>
+          <h2>Request Access</h2>
+          <p>
+            This form is a GUI placeholder for the future request workflow. In production,
+            it should write to the access request table through the API and notify the data
+            management team for review.
+          </p>
+        </div>
+        <form class="login-form access-request-form" onsubmit="return false">
+          <label>
+            Name
+            <input name="requester-name" type="text" autocomplete="name" />
+          </label>
+          <label>
+            Email
+            <input name="requester-email" type="email" autocomplete="email" />
+          </label>
+          <label>
+            Affiliation
+            <input name="requester-affiliation" type="text" autocomplete="organization" />
+          </label>
+          <label>
+            Requested Role
+            <select id="access-request-role" name="requested-role"></select>
+          </label>
+          <label>
+            Dataset
+            <select id="access-request-dataset" name="requested-dataset"></select>
+          </label>
+          <label class="full-span">
+            Project Or Use Case
+            <textarea name="request-purpose" rows="4"></textarea>
+          </label>
+          <button type="button" class="primary-button">Submit Request</button>
+        </form>
+      </section>
     </section>
 
     <section class="tab-page" id="team-contact" data-tab-page="team-contact">
@@ -553,23 +783,25 @@
           </div>
         </article>
 
-        <article class="tree-node tree-coordinator key-person">
-          <img src="https://you.stonybrook.edu/chenlab/files/2025/08/ChengxueLi-150x150.jpg" alt="Profile photo of Dr. Chengxue Li" />
-          <div>
-            <span>Database Development Lead</span>
-            <h2><strong>Dr. Chengxue Li</strong></h2>
-            <p>Organizes major tasks and leads database development.</p>
-          </div>
-        </article>
+        <div class="coordinator-row" aria-label="Project coordinators">
+          <article class="tree-node tree-coordinator key-person">
+            <img src="https://you.stonybrook.edu/chenlab/files/2025/08/ChengxueLi-150x150.jpg" alt="Profile photo of Dr. Chengxue Li" />
+            <div>
+              <span>Database Development Lead</span>
+              <h2><strong>Dr. Chengxue Li</strong></h2>
+              <p>Organizes major tasks and leads database development.</p>
+            </div>
+          </article>
 
-        <article class="tree-node tree-coordinator">
-          <img src="https://you.stonybrook.edu/chenlab/files/2024/06/Natalia-300x300.jpg" alt="Profile photo of Natalia Castro" />
-          <div>
-            <span>HRBMP Coordinator / Survey Equipment Organization</span>
-            <h2><strong>Natalia Castro</strong></h2>
-            <p>Leads survey equipment organization, logistics, and HRBMP field coordination.</p>
-          </div>
-        </article>
+          <article class="tree-node tree-coordinator">
+            <img src="https://you.stonybrook.edu/chenlab/files/2024/06/Natalia-300x300.jpg" alt="Profile photo of Natalia Castro" />
+            <div>
+              <span>HRBMP Coordinator / Survey Equipment Organization</span>
+              <h2><strong>Natalia Castro</strong></h2>
+              <p>Leads survey equipment organization, logistics, and HRBMP field coordination.</p>
+            </div>
+          </article>
+        </div>
 
         <div class="component-tree">
           <article class="component-branch featured-branch">
@@ -709,6 +941,6 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script src="app.js?v=formal-site-language-20260504"></script>
+  <script src="app.js?v=environmental-fallback-100-20260506"></script>
 </body>
 </html>

@@ -1,11 +1,11 @@
 {
-  "generated_at_utc": "2026-05-03 00:00:00 UTC",
+  "generated_at_utc": "2026-05-04 00:00:00 UTC",
   "note": "",
   "counts": {
-    "stations": 39,
-    "sampling_events": 3744,
-    "taxa": 12,
-    "observations": 14976
+    "stations": 100,
+    "sampling_events": 100,
+    "taxa": 13,
+    "observations": 100
   },
   "stations": [
     {
@@ -52856,128 +52856,98 @@
       "sampling_depth_m": 5.83
     }
   ],
-  "annual_total_abundance": [
-    {
-      "year": 2010,
-      "total_abundance": 40388.71
-    },
-    {
-      "year": 2011,
-      "total_abundance": 40587.45
-    },
-    {
-      "year": 2012,
-      "total_abundance": 40717.34
-    },
-    {
-      "year": 2013,
-      "total_abundance": 41063.78
-    },
-    {
-      "year": 2014,
-      "total_abundance": 41443.09
-    },
-    {
-      "year": 2015,
-      "total_abundance": 41826.57
-    },
-    {
-      "year": 2016,
-      "total_abundance": 42124.48
-    },
-    {
-      "year": 2017,
-      "total_abundance": 42435.58
-    },
-    {
-      "year": 2018,
-      "total_abundance": 42614.22
-    }
-  ],
+  "annual_total_abundance": [],
   "taxa_totals": [
     {
-      "taxon_id": "TX001",
-      "scientific_name": "Morone saxatilis",
-      "common_name": "Striped Bass",
-      "taxonomic_group": "Fish",
-      "total_abundance": 46087.94
-    },
-    {
-      "taxon_id": "TX008",
-      "scientific_name": "Anchoa mitchilli",
-      "common_name": "Bay Anchovy",
-      "taxonomic_group": "Fish",
-      "total_abundance": 42621.47
-    },
-    {
-      "taxon_id": "TX004",
-      "scientific_name": "Morone americana",
-      "common_name": "White Perch",
-      "taxonomic_group": "Fish",
-      "total_abundance": 39641.1
-    },
-    {
-      "taxon_id": "TX002",
-      "scientific_name": "Alosa sapidissima",
-      "common_name": "American Shad",
-      "taxonomic_group": "Fish",
-      "total_abundance": 36119.84
-    },
-    {
-      "taxon_id": "TX003",
+      "taxon_id": "TX-AT",
       "scientific_name": "Microgadus tomcod",
       "common_name": "Atlantic Tomcod",
       "taxonomic_group": "Fish",
-      "total_abundance": 31752.3
+      "biological_records": 8
     },
     {
-      "taxon_id": "TX009",
-      "scientific_name": "Menidia menidia",
-      "common_name": "Atlantic Silverside",
+      "taxon_id": "TX-AS",
+      "scientific_name": "Alosa sapidissima",
+      "common_name": "American Shad",
       "taxonomic_group": "Fish",
-      "total_abundance": 29506.78
+      "biological_records": 8
     },
     {
-      "taxon_id": "TX006",
+      "taxon_id": "TX-SB",
+      "scientific_name": "Morone saxatilis",
+      "common_name": "Striped Bass",
+      "taxonomic_group": "Fish",
+      "biological_records": 8
+    },
+    {
+      "taxon_id": "TX-WP",
+      "scientific_name": "Morone americana",
+      "common_name": "White Perch",
+      "taxonomic_group": "Fish",
+      "biological_records": 7
+    },
+    {
+      "taxon_id": "TX-BA",
+      "scientific_name": "Anchoa mitchilli",
+      "common_name": "Bay Anchovy",
+      "taxonomic_group": "Fish",
+      "biological_records": 7
+    },
+    {
+      "taxon_id": "TX-A",
       "scientific_name": "Alosa pseudoharengus",
       "common_name": "Alewife",
       "taxonomic_group": "Fish",
-      "total_abundance": 27435.08
+      "biological_records": 7
     },
     {
-      "taxon_id": "TX007",
+      "taxon_id": "TX-BH",
       "scientific_name": "Alosa aestivalis",
       "common_name": "Blueback Herring",
       "taxonomic_group": "Fish",
-      "total_abundance": 26093.05
+      "biological_records": 8
     },
     {
-      "taxon_id": "TX010",
-      "scientific_name": "Fundulus heteroclitus",
-      "common_name": "Mummichog",
+      "taxon_id": "TX-RS",
+      "scientific_name": "Osmerus mordax",
+      "common_name": "Rainbow Smelt",
       "taxonomic_group": "Fish",
-      "total_abundance": 25569.53
+      "biological_records": 8
     },
     {
-      "taxon_id": "TX005",
-      "scientific_name": "Anguilla rostrata",
-      "common_name": "American Eel",
+      "taxon_id": "TX-YP",
+      "scientific_name": "Perca flavescens",
+      "common_name": "Yellow Perch",
       "taxonomic_group": "Fish",
-      "total_abundance": 24511.97
+      "biological_records": 8
     },
     {
-      "taxon_id": "TX011",
+      "taxon_id": "TX-SS",
       "scientific_name": "Notropis hudsonius",
       "common_name": "Spottail Shiner",
       "taxonomic_group": "Fish",
-      "total_abundance": 22268.3
+      "biological_records": 8
     },
     {
-      "taxon_id": "TX012",
-      "scientific_name": "Crangon septemspinosa",
-      "common_name": "Sand Shrimp",
-      "taxonomic_group": "Invertebrate",
-      "total_abundance": 21593.86
+      "taxon_id": "TX-B",
+      "scientific_name": "Pomatomus saltatrix",
+      "common_name": "Bluefish",
+      "taxonomic_group": "Fish",
+      "biological_records": 9
+    },
+    {
+      "taxon_id": "TX-H",
+      "scientific_name": "Trinectes maculatus",
+      "common_name": "Hogchoker",
+      "taxonomic_group": "Fish",
+      "biological_records": 7
+    },
+    {
+      "taxon_id": "TX-AM",
+      "scientific_name": "Brevoortia tyrannus",
+      "common_name": "Atlantic Menhaden",
+      "taxonomic_group": "Fish",
+      "biological_records": 7
     }
   ],
   "environmental_summary": [
