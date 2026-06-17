@@ -17,6 +17,18 @@ The goal is to make HRBMP data management reproducible and understandable before
 
 ## How to run the prototype
 
+### Publish the GUI with GitHub Pages
+GitHub Pages only offers `/` and `/docs` as folder choices when publishing
+directly from a branch. This repo keeps the static web app in `gui/`, so use
+the included GitHub Actions workflow instead:
+
+1. Push the repository to GitHub.
+2. In the repository, open **Settings** > **Pages**.
+3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+4. The `Deploy GUI to GitHub Pages` workflow publishes `gui/index.html` and
+   the matching `gui/style.css`, `gui/app.js`, `gui/assets/`, and `gui/data/`
+   files as the Pages site.
+
 ### 1) Create the SQLite database
 ```bash
 Rscript scripts/01_create_database.R
