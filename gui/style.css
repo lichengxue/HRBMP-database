@@ -1892,25 +1892,12 @@ tbody tr:hover {
   background: #eef8f5;
 }
 
-.tree-person img,
-.team-avatar {
+.tree-person img {
   width: 58px;
   height: 58px;
 }
 
-.team-avatar {
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  border: 3px solid #ffffff;
-  box-shadow: 0 8px 20px rgba(18, 32, 29, 0.16);
-  background: linear-gradient(135deg, rgba(30, 143, 132, 0.16), rgba(47, 111, 159, 0.16)), #e6efeb;
-  color: var(--teal-dark);
-  font-size: 0.95rem;
-  font-weight: 900;
-}
-
-.tree-person > div:not(.team-avatar) {
+.tree-person div {
   min-width: 0;
   color: var(--ink);
   font-size: 0.92rem;
