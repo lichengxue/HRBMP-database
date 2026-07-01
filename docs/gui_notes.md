@@ -8,6 +8,8 @@ SPASAM-MSE website structure. It has a homepage and tabbed sections for:
 - Biological Database
 - Environmental Database
 - Sampling Image Catalog
+- Educational Materials
+- Photo Gallery
 - Issue Report
 - User Login
 - Team / Contact
@@ -36,7 +38,8 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 - Provides biological record totals by HRBMP region for the selected species,
   life stage, program, and date filters.
 - Provides a Biological Database data request form that records the current
-  screening summary for the data management team.
+  screening summary for the data management team and links to the official
+  HRBMP Data Sharing Policy PDF.
 - Filters environmental map layers by year, month, and day ranges plus selected
   covariate. Environmental database tabs separate HRBMP, USGS, EPA, and NOAA
   variables. If no day range is selected, the map shows the full selected month
@@ -49,8 +52,14 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
   Yearling, and Adult stages. Life-stage controls update the Hudson River
   distribution bar, data availability, and image archive in the biologically
   ordered stage sequence.
+- Provides ribbon dropdown menus under Educational Materials and Photo Gallery.
+  Each dropdown item opens its own page route for HRBMP history, current
+  research, classroom materials, outreach activities, Hudson River photos,
+  field sampling photos, sample warehouse photos, and lab sample processing
+  photos.
 - Provides a combined team/contact structure with component leads, supporting
-  team members, and survey equipment organization responsibilities.
+  team members, survey equipment organization responsibilities, and lab sample
+  processing responsibilities.
 - Provides a static Issue Report tab for comments, issues, questions, and
   feedback.
 - Provides a static User Login tab for future restricted access, including user

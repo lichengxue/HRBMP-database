@@ -1372,16 +1372,26 @@ function initTabs() {
   const links = document.querySelectorAll('[data-tab-link]');
   const pages = document.querySelectorAll('[data-tab-page]');
   const pageIds = new Set(Array.from(pages).map((page) => page.dataset.tabPage));
+  const parentByTab = new Map();
+
+  document.querySelectorAll('.nav-dropdown').forEach((dropdown) => {
+    const parentLink = Array.from(dropdown.children).find((child) => child.matches('[data-tab-link]'));
+    if (!parentLink) return;
+    dropdown.querySelectorAll('.nav-submenu [data-tab-link]').forEach((childLink) => {
+      parentByTab.set(childLink.dataset.tabLink, parentLink.dataset.tabLink);
+    });
+  });
 
   function showTab(tabId, updateHash = true) {
     const nextId = pageIds.has(tabId) ? tabId : 'home';
+    const parentId = parentByTab.get(nextId);
 
     pages.forEach((page) => {
       page.classList.toggle('active', page.dataset.tabPage === nextId);
     });
 
     links.forEach((link) => {
-      link.classList.toggle('active', link.dataset.tabLink === nextId);
+      link.classList.toggle('active', link.dataset.tabLink === nextId || link.dataset.tabLink === parentId);
     });
 
     if (updateHash && window.location.hash !== `#${nextId}`) {

@@ -119,7 +119,8 @@ Useful endpoints:
 
 The GUI is organized like a small project website with tabs for Program
 Description, Data Inquiry, Biological Database, Environmental Database,
-Sampling Image Catalog, Issue Report, User Login, and Team / Contact.
+Sampling Image Catalog, Educational Materials, Photo Gallery, Issue Report,
+User Login, and Team / Contact.
 
 The Biological Database and Environmental Database tabs use Leaflet maps with
 GeoJSON layers exported from SQLite. The Environmental Database separates HRBMP
@@ -133,8 +134,11 @@ species, life-stage, and monitoring-program selectors. The species selector
 lists the 13 key species first, then the broader Hudson River species list.
 The Biological Database includes biological record totals by HRBMP region, an
 HRBMP Region 0 to Region 12 boundary-line layer, and a data request form that
-summarizes the current screening filters. The Environmental Database similarly
-focuses on environmental records and selected covariate context.
+summarizes the current screening filters. The data request form links to the
+official HRBMP Data Sharing Policy and includes fields for applicant details,
+project abstract, specific data scope, and data use plan. The
+Environmental Database similarly focuses on environmental records and selected
+covariate context.
 
 The Biological Database and Environmental Database pages also include API
 download links. When the GUI is served through `api/server.py`, these links use
@@ -158,6 +162,12 @@ restricted data are exposed.
 
 The Issue Report tab provides a static form for comments, issues, questions,
 and feedback that can be connected to a backend later.
+
+The ribbon navigation provides dropdown menus under Educational Materials and
+Photo Gallery. Each dropdown item opens its own page route, including HRBMP
+history, current research, classroom materials, outreach activities, Hudson
+River photos, field sampling photos, sample warehouse photos, and lab sample
+processing photos.
 
 The Sampling Image Catalog starts with 13 commonly discussed key species, then
 provides an All Species browser. Selecting a species opens pseudo distribution,

@@ -23,6 +23,24 @@
         <a href="#biological-database" data-tab-link="biological-database">Biological Database</a>
         <a href="#environmental-database" data-tab-link="environmental-database">Environmental Database</a>
         <a href="#sampling-image-catalog" data-tab-link="sampling-image-catalog">Sampling Image Catalog</a>
+        <div class="nav-dropdown">
+          <a href="#educational-materials" data-tab-link="educational-materials">Educational Materials</a>
+          <div class="nav-submenu" aria-label="Educational Materials subsections">
+            <a href="#education-history" data-tab-link="education-history">History of HRBMP</a>
+            <a href="#education-current-research" data-tab-link="education-current-research">Current Research</a>
+            <a href="#education-classroom" data-tab-link="education-classroom">Classroom Materials</a>
+            <a href="#education-outreach" data-tab-link="education-outreach">Outreach Activities</a>
+          </div>
+        </div>
+        <div class="nav-dropdown">
+          <a href="#photo-gallery" data-tab-link="photo-gallery">Photo Gallery</a>
+          <div class="nav-submenu" aria-label="Photo Gallery subsections">
+            <a href="#gallery-hudson-river" data-tab-link="gallery-hudson-river">Hudson River</a>
+            <a href="#gallery-field-sampling" data-tab-link="gallery-field-sampling">Field Sampling Photos</a>
+            <a href="#gallery-sample-warehouse" data-tab-link="gallery-sample-warehouse">Sample Warehouse</a>
+            <a href="#gallery-lab-sample-processing" data-tab-link="gallery-lab-sample-processing">Lab Sample Processing</a>
+          </div>
+        </div>
         <a href="#issue-report" data-tab-link="issue-report">Issue Report</a>
         <a href="#user-login" data-tab-link="user-login">User Login</a>
         <a href="#team-contact" data-tab-link="team-contact">Team / Contact</a>
@@ -379,7 +397,15 @@
       <section class="data-panel data-request-panel">
         <div>
           <h2>Data Request</h2>
-          <p>Send the current screening request to the data management team.</p>
+          <p>Send the current screening request to the data management team after reviewing the HRBMP data sharing requirements.</p>
+        </div>
+        <div class="policy-callout">
+          <div>
+            <strong>Review the policy before requesting detailed data.</strong>
+            <p>
+              <a href="https://you.stonybrook.edu/hrbmp/files/2024/02/HRBMP_DataSharingPolicy-f253c4f473adf36f.pdf" target="_blank" rel="noopener">Click here for the HRBMP Data Sharing Policy</a>.
+            </p>
+          </div>
         </div>
         <form class="data-request-form" onsubmit="return false">
           <label>
@@ -387,8 +413,16 @@
             <input id="data-request-name" type="text" autocomplete="name" />
           </label>
           <label>
+            Title
+            <input id="data-request-title" type="text" />
+          </label>
+          <label>
             Email
             <input id="data-request-email" type="email" autocomplete="email" />
+          </label>
+          <label>
+            Phone
+            <input id="data-request-phone" type="tel" autocomplete="tel" />
           </label>
           <label>
             Affiliation
@@ -405,8 +439,20 @@
             </select>
           </label>
           <label class="full-span">
-            Request Notes
+            Other Project Members With Data Access
+            <textarea id="data-request-collaborators" rows="3"></textarea>
+          </label>
+          <label class="full-span">
+            Project Abstract
+            <textarea id="data-request-abstract" rows="4"></textarea>
+          </label>
+          <label class="full-span">
+            Specific Data Requested
             <textarea id="data-request-notes" rows="5"></textarea>
+          </label>
+          <label class="full-span">
+            Data Use Plan
+            <textarea id="data-request-use-plan" rows="4"></textarea>
           </label>
           <label class="full-span">
             Current Screening Summary
@@ -585,6 +631,594 @@
       </section>
     </section>
 
+    <section class="tab-page" id="educational-materials" data-tab-page="educational-materials">
+      <div class="page-header">
+        <p class="eyebrow">Educational Materials</p>
+        <h1>HRBMP Learning Resources</h1>
+      </div>
+    </section>
+
+    <section class="tab-page" id="education-history" data-tab-page="education-history">
+      <div class="page-header">
+        <p class="eyebrow">Educational Materials</p>
+        <h1>History of HRBMP</h1>
+      </div>
+
+      <article class="history-logo-panel">
+        <img src="https://you.stonybrook.edu/hrbmp/files/2022/03/wavelogo-corrected.png" alt="Hudson River Biological Monitoring Program logo" />
+        <div>
+          <h2>How The Program Began</h2>
+          <p>
+            HRBMP was created to improve understanding of Hudson River
+            estuary fisheries during a period of power-plant development
+            and cooling-water intake concerns. The program connects river
+            history, fishery resources, survey design, and long-term
+            monitoring records.
+          </p>
+          <div class="history-source-links">
+            <a href="https://you.stonybrook.edu/hrbmp/history/" target="_blank" rel="noopener">Official HRBMP History Page</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="tab-page" id="education-classroom" data-tab-page="education-classroom">
+      <div class="page-header">
+        <p class="eyebrow">Educational Materials</p>
+        <h1>Classroom Materials</h1>
+      </div>
+    </section>
+
+    <section class="tab-page" id="education-outreach" data-tab-page="education-outreach">
+      <div class="page-header">
+        <p class="eyebrow">Educational Materials</p>
+        <h1>Outreach Activities</h1>
+      </div>
+    </section>
+
+    <section class="tab-page" id="education-current-research" data-tab-page="education-current-research">
+      <div class="page-header">
+        <p class="eyebrow">Educational Materials</p>
+        <h1>Current Research</h1>
+      </div>
+
+      <div class="data-panel">
+        <h2>Current Research Materials</h2>
+        <p>Research summaries, project updates, and outreach-ready research materials can be added here.</p>
+      </div>
+    </section>
+
+    <section class="tab-page" id="photo-gallery" data-tab-page="photo-gallery">
+      <div class="page-header">
+        <p class="eyebrow">Photo Gallery</p>
+        <h1>Photo Gallery</h1>
+      </div>
+    </section>
+
+    <section class="tab-page" id="gallery-hudson-river" data-tab-page="gallery-hudson-river">
+      <div class="page-header">
+        <p class="eyebrow">Photo Gallery</p>
+        <h1>Hudson River</h1>
+      </div>
+      <div class="gallery-grid">
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Hudson%20River/2025-rr10-1-west-point-military-achademy-from-the-water.jpg" alt="2025 RR10 1 West Point Military Achademy From The Water" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR10 1 West Point Military Achademy From The Water</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Hudson%20River/2025-rr11-10-fall-on-the-hudson.jpg" alt="2025 RR11 10 Fall On The Hudson" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 10 Fall On The Hudson</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Hudson%20River/2025-rr11-12-hudson-purple-skies-at-sunset.jpg" alt="2025 RR11 12 Hudson Purple Skies At Sunset" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 12 Hudson Purple Skies At Sunset</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Hudson%20River/2025-rr11-3-sunrise.jpg" alt="2025 RR11 3 Sunrise" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 3 Sunrise</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Hudson%20River/2025-rr11-4-sunset.jpg" alt="2025 RR11 4 Sunset" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 4 Sunset</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Hudson%20River/2025-rr8-5-nyc-from-the-hudson.jpg" alt="2025 RR8 5 NYC From The Hudson" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR8 5 NYC From The Hudson</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Hudson%20River/2025-rr9-3-woody-i-views.jpg" alt="2025 RR9 3 Woody I Views" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR9 3 Woody I Views</h2>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="tab-page" id="gallery-field-sampling" data-tab-page="gallery-field-sampling">
+      <div class="page-header">
+        <p class="eyebrow">Photo Gallery</p>
+        <h1>Field Sampling Photos</h1>
+      </div>
+      <div class="gallery-grid">
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2024-1-sarah-praisner-holding-striped-bass.jpg" alt="2024 1 Sarah Praisner Holding Striped Bass" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2024 1 Sarah Praisner Holding Striped Bass</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2024-2-natalia-castro-recording-surgeon-data.jpg" alt="2024 2 Natalia Castro Recording Surgeon Data" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2024 2 Natalia Castro Recording Surgeon Data</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr1-1-natalia-castro-with-channel-catfish.jpg" alt="2025 RR1 1 Natalia Castro With Channel Catfish" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR1 1 Natalia Castro With Channel Catfish</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr1-2-waterquality.jpg" alt="2025 RR1 2 Waterquality" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR1 2 Waterquality</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr1-3-spotted-hake.jpg" alt="2025 RR1 3 Spotted Hake" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR1 3 Spotted Hake</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr1-4-fish-jar-to-be-preserved.jpg" alt="2025 RR1 4 Fish Jar To Be Preserved" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR1 4 Fish Jar To Be Preserved</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr10-2-katrina-rokosz-holding-summer-flounder.jpg" alt="2025 RR10 2 Katrina Rokosz Holding Summer Flounder" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR10 2 Katrina Rokosz Holding Summer Flounder</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr11-1-summer-flounder.jpg" alt="2025 RR11 1 Summer Flounder" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 1 Summer Flounder</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr11-11-woody-i-running.jpg" alt="2025 RR11 11 Woody I Running" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 11 Woody I Running</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr11-13-nyc-from-the-woody-i-cabin.jpg" alt="2025 RR11 13 NYC From The Woody I Cabin" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 13 NYC From The Woody I Cabin</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr11-2-alewife-and-white-perch-on-measuring-board.jpg" alt="2025 RR11 2 Alewife And White Perch On Measuring Board" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 2 Alewife And White Perch On Measuring Board</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr11-5-white-catfish.jpg" alt="2025 RR11 5 White Catfish" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 5 White Catfish</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr11-6-stern-of-the-woody-i-on-the-hudson.jpg" alt="2025 RR11 6 Stern Of The Woody I On The Hudson" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 6 Stern Of The Woody I On The Hudson</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr11-7-abigail-costigan-counting-hogchoker.jpg" alt="2025 RR11 7 Abigail Costigan Counting Hogchoker" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 7 Abigail Costigan Counting Hogchoker</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr11-8-deckhand-overlooking-water-on-the-hudson.jpg" alt="2025 RR11 8 Deckhand Overlooking Water On The Hudson" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 8 Deckhand Overlooking Water On The Hudson</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr11-9-american-eel.jpg" alt="2025 RR11 9 American Eel" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR11 9 American Eel</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr3-1-tomcod.jpg" alt="2025 RR3 1 Tomcod" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR3 1 Tomcod</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr3-3-striped-bass.jpg" alt="2025 RR3 3 Striped Bass" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR3 3 Striped Bass</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr4-1-weakfish-teeth-close-up.jpg" alt="2025 RR4 1 Weakfish Teeth Close Up" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR4 1 Weakfish Teeth Close Up</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr4-2-nyc-stormy.jpg" alt="2025 RR4 2 NYC Stormy" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR4 2 NYC Stormy</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr4-3-white-perch.jpg" alt="2025 RR4 3 White Perch" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR4 3 White Perch</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr5-1-bay-anchovy.jpg" alt="2025 RR5 1 Bay Anchovy" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR5 1 Bay Anchovy</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr5-2-summer-flounder.jpg" alt="2025 RR5 2 Summer Flounder" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR5 2 Summer Flounder</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr5-4-channel-catfish-and-bay-anchovy.jpg" alt="2025 RR5 4 Channel Catfish And Bay Anchovy" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR5 4 Channel Catfish And Bay Anchovy</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr5-5-white-catfish.jpg" alt="2025 RR5 5 White Catfish" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR5 5 White Catfish</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr5-6-woody1-sunset.jpg" alt="2025 RR5 6 Woody1 Sunset" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR5 6 Woody1 Sunset</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr5-7-natalia-castro-holding-striped-bass.jpg" alt="2025 RR5 7 Natalia Castro Holding Striped Bass" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR5 7 Natalia Castro Holding Striped Bass</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr7-1-oyster-toadfish.jpg" alt="2025 RR7 1 Oyster Toadfish" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR7 1 Oyster Toadfish</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr7-2-striped-bass.jpg" alt="2025 RR7 2 Striped Bass" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR7 2 Striped Bass</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr7-3-round-goby.jpg" alt="2025 RR7 3 Round Goby" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR7 3 Round Goby</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr7-4-moonfish.jpg" alt="2025 RR7 4 Moonfish" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR7 4 Moonfish</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr7-5-harvest-fish.jpg" alt="2025 RR7 5 Harvest Fish" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR7 5 Harvest Fish</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr8-1-blue-crab-with-bay-anchony.jpg" alt="2025 RR8 1 Blue Crab With Bay Anchony" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR8 1 Blue Crab With Bay Anchony</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr8-2-moonfish.jpg" alt="2025 RR8 2 Moonfish" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR8 2 Moonfish</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr8-3-mixed-catch-with-american-eel.jpg" alt="2025 RR8 3 Mixed Catch With American Eel" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR8 3 Mixed Catch With American Eel</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr8-4-harvest-fish-and-blue-crab.jpg" alt="2025 RR8 4 Harvest Fish And Blue Crab" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR8 4 Harvest Fish And Blue Crab</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr9-1-juvenile-butterfish.jpg" alt="2025 RR9 1 Juvenile Butterfish" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR9 1 Juvenile Butterfish</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr9-2-summer-flounder.jpg" alt="2025 RR9 2 Summer Flounder" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR9 2 Summer Flounder</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr9-4-alewife.jpg" alt="2025 RR9 4 Alewife" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR9 4 Alewife</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr9-5-white-sucker.jpg" alt="2025 RR9 5 White Sucker" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR9 5 White Sucker</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr9-6-juvenile-striped-bass-vibrant-blue.jpg" alt="2025 RR9 6 Juvenile Striped Bass Vibrant Blue" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR9 6 Juvenile Striped Bass Vibrant Blue</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/2025-rr9-7-juvenile-striped-bass-against-background.jpg" alt="2025 RR9 7 Juvenile Striped Bass Against Background" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR9 7 Juvenile Striped Bass Against Background</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Field%20Sampling/copy-of-img-3914.jpg" alt="Img 3914" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>Img 3914</h2>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="tab-page" id="gallery-sample-warehouse" data-tab-page="gallery-sample-warehouse">
+      <div class="page-header">
+        <p class="eyebrow">Photo Gallery</p>
+        <h1>Sample Warehouse</h1>
+      </div>
+      <div class="gallery-grid">
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Sample%20Warehouse/warehouse-photo.jpg" alt="Warehouse Photo" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>Warehouse Photo</h2>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="tab-page" id="gallery-lab-sample-processing" data-tab-page="gallery-lab-sample-processing">
+      <div class="page-header">
+        <p class="eyebrow">Photo Gallery</p>
+        <h1>Lab Sample Processing</h1>
+      </div>
+      <div class="gallery-grid">
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Lab%20Sample%20Processing/2025-rr2-1-stephanie-arsenault-doing-lab-work.jpg" alt="2025 RR2 1 Stephanie Arsenault Doing Lab Work" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR2 1 Stephanie Arsenault Doing Lab Work</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Lab%20Sample%20Processing/2025-rr3-2-aj-mabaka-doing-lab-work.jpg" alt="2025 RR3 2 Aj Mabaka Doing Lab Work" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR3 2 Aj Mabaka Doing Lab Work</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Lab%20Sample%20Processing/2025-rr5-3-anh-nguyen-doing-lab-work.jpg" alt="2025 RR5 3 Anh Nguyen Doing Lab Work" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>2025 RR5 3 Anh Nguyen Doing Lab Work</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Lab%20Sample%20Processing/di-water-setup-for-rinsing-fish.jpg" alt="DI Water Setup For Rinsing Fish" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>DI Water Setup For Rinsing Fish</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Lab%20Sample%20Processing/fish-photography-setup.jpg" alt="Fish Photography Setup" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>Fish Photography Setup</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Lab%20Sample%20Processing/formalin-exposure-testing-for-sample-work.jpg" alt="Formalin Exposure Testing For Sample Work" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>Formalin Exposure Testing For Sample Work</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Lab%20Sample%20Processing/high-resolution-focusing-on-specimen.jpg" alt="High Resolution Focusing On Specimen" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>High Resolution Focusing On Specimen</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Lab%20Sample%20Processing/processing-1.jpg" alt="Processing 1" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>Processing 1</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Lab%20Sample%20Processing/processing-2.jpg" alt="Processing 2" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>Processing 2</h2>
+          </div>
+        </article>
+        <article class="gallery-card">
+          <figure>
+            <img src="assets/photo_gallery/web/Lab%20Sample%20Processing/sample-warehouse-labels.jpg" alt="Sample Warehouse Labels" loading="lazy" />
+          </figure>
+          <div class="gallery-copy">
+            <h2>Sample Warehouse Labels</h2>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <section class="tab-page" id="issue-report" data-tab-page="issue-report">
       <div class="page-header">
         <p class="eyebrow">Issue Report</p>
@@ -613,6 +1247,8 @@
                 <option>Biological Database</option>
                 <option>Environmental Database</option>
                 <option>Sampling Image Catalog</option>
+                <option>Educational Materials</option>
+                <option>Photo Gallery</option>
                 <option>User Login</option>
                 <option>Team / Contact</option>
               </select>
@@ -717,6 +1353,14 @@
             management team for review.
           </p>
         </div>
+        <div class="policy-callout">
+          <div>
+            <strong>Review the policy before requesting access.</strong>
+            <p>
+              <a href="https://you.stonybrook.edu/hrbmp/files/2024/02/HRBMP_DataSharingPolicy-f253c4f473adf36f.pdf" target="_blank" rel="noopener">Click here for the HRBMP Data Sharing Policy</a>.
+            </p>
+          </div>
+        </div>
         <form class="login-form access-request-form" onsubmit="return false">
           <label>
             Name
@@ -751,26 +1395,6 @@
       <div class="page-header">
         <p class="eyebrow">Team / Contact</p>
         <h1>Database Development Team And Contact Structure</h1>
-      </div>
-
-      <div class="content-grid two-column">
-        <article class="text-panel">
-          <h2>Project Oversight</h2>
-          <p>
-            <strong>Dr. Yong Chen</strong> provides project supervision. <strong>Dr. Chengxue Li</strong>
-            coordinates the major database development tasks, organizes cross-component
-            work, and leads the database buildout under Dr. Yong Chen's guidance.
-          </p>
-        </article>
-        <article class="text-panel">
-          <h2>Contact Points</h2>
-          <p>
-            Use this page as the public-facing contact structure for database questions,
-            metadata updates, survey equipment organization, curriculum materials, and
-            Quality Assurance / Quality Control (QA/QC) routing. Public email links can be
-            finalized before release.
-          </p>
-        </article>
       </div>
 
       <div class="org-tree" aria-label="HRBMP database team hierarchy">
@@ -919,8 +1543,29 @@
 
           <article class="component-branch">
             <div class="component-header">
-              <span>Quality Assurance / Quality Control (QA/QC)</span>
-              <h2>Quality Assurance, Quality Control, Checks, And Review Workflow</h2>
+              <span>Lab Sample Processing</span>
+              <h2>Sample Imaging, Data Archiving, And Lab Processing Workflow</h2>
+            </div>
+            <div class="tree-person leader">
+              <img src="https://you.stonybrook.edu/chenlab/files/2025/08/Tran_J_headshot-e1756414310415.jpg" alt="Profile photo of Jacquelynn Tran" />
+              <div><strong>Jacquelynn Tran</strong><span>Lead</span></div>
+            </div>
+            <div class="member-row">
+              <div class="tree-person">
+                <div class="person-photo-placeholder" role="img" aria-label="Photo placeholder for Catherine Dau"></div>
+                <div><strong>Catherine Dau</strong><span>Core TEAM MEMBER</span></div>
+              </div>
+              <div class="tree-person">
+                <div class="person-photo-placeholder" role="img" aria-label="Photo placeholder for Ethan Li"></div>
+                <div><strong>Ethan Li</strong><span>Core TEAM MEMBER</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="component-branch">
+            <div class="component-header">
+              <span>QA/QC</span>
+              <h2>Quality Assurance, Quality Control, And Review Workflow</h2>
             </div>
             <div class="tree-person leader">
               <img src="https://you.stonybrook.edu/chenlab/files/2021/09/Katrina-300x300.jpg" alt="Profile photo of Katrina Rokosz" />
