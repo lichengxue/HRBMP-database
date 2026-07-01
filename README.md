@@ -1,5 +1,7 @@
 # HRBMP Data Access Portal
 
+[![Open Web GUI](https://img.shields.io/badge/Open-Web%20GUI-2f6f73?style=for-the-badge&logo=githubpages&logoColor=white)](https://lichengxue.github.io/HRBMP-database/)
+
 ## Project purpose
 This repository provides a working foundation for a Hudson River Biological Monitoring Program (HRBMP) data workflow. It includes a normalized SQLite database design, R scripts for database setup and data export, and a static web GUI.
 
