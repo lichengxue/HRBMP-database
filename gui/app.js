@@ -273,6 +273,12 @@ const DATA_REQUEST_VERSION = `${DATA_VERSION}-${Date.now()}`;
 const API_PORT = '8010';
 const MIN_BIOLOGICAL_DEMO_ROWS = 100;
 const MIN_ENVIRONMENTAL_DEMO_ROWS = 100;
+const HOME_SNAPSHOT_COUNTS = {
+  stations: 326,
+  sampling_events: 7842,
+  taxa: 171,
+  observations: 10864
+};
 
 const BIOLOGICAL_MONITORING_PROGRAMS = [
   'Long River Survey',
@@ -1293,6 +1299,57 @@ const SPECIES_HIGHLIGHT_CATALOG = HIGHLIGHT_SPECIES.flatMap((species) =>
   }))
 );
 
+const FIELD_SAMPLING_PHOTO_GROUPS = [
+  {
+    key: 'people',
+    heading: 'People With Fish',
+    patterns: [
+      /holding/i,
+      /with channel catfish/i,
+      /recording (?:surgeon|sturgeon) data/i,
+      /counting hogchoker/i
+    ]
+  },
+  {
+    key: 'fish',
+    heading: 'Fish',
+    patterns: [
+      /alewife|anchov|bass|butterfish|catfish|crab|eel|fish|flounder|goby|hake|hogchoker|img 3914|moonfish|perch|sturgeon|sucker|toadfish|tomcod|weakfish/i
+    ]
+  },
+  {
+    key: 'cruise',
+    heading: 'Cruise And Vessel Photos',
+    patterns: [
+      /deckhand|nyc|stern|stormy|sunset|waterquality|woody/i
+    ]
+  }
+];
+
+const LAB_SAMPLE_PROCESSING_PHOTO_GROUPS = [
+  {
+    key: 'sample-processing',
+    heading: 'Sample Processing',
+    patterns: [
+      /doing lab work|processing [12]|rinsing fish/i
+    ]
+  },
+  {
+    key: 'digital-archive',
+    heading: 'Digital Archive',
+    patterns: [
+      /fish photography|focusing|high resolution|specimen/i
+    ]
+  },
+  {
+    key: 'sample-handling',
+    heading: 'Sample Handling And Safety',
+    patterns: [
+      /exposure|formalin|labels|warehouse/i
+    ]
+  }
+];
+
 const state = {
   ready: false,
   data: null,
@@ -1321,6 +1378,8 @@ const state = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  organizeFieldSamplingGallery();
+  organizeLabSampleProcessingGallery();
   initTabs();
 
   Promise.all([
@@ -1408,6 +1467,14 @@ function initTabs() {
     });
   });
 
+  document.querySelectorAll('[data-curriculum-focus]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      showTab('education-k12-curriculum');
+      focusCurriculumSection(link.dataset.curriculumFocus);
+    });
+  });
+
   window.addEventListener('hashchange', () => {
     showTab(window.location.hash.replace('#', ''), false);
   });
@@ -1417,6 +1484,79 @@ function initTabs() {
   });
 
   showTab(window.location.hash.replace('#', '') || 'home', false);
+}
+
+function focusCurriculumSection(sectionId) {
+  const sections = document.querySelectorAll('#education-k12-curriculum [data-curriculum-section]');
+  const target = document.querySelector(`#education-k12-curriculum [data-curriculum-section="${sectionId}"]`);
+  if (!target) return;
+
+  sections.forEach((section) => {
+    section.open = section === target;
+  });
+
+  window.requestAnimationFrame(() => {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+function organizeFieldSamplingGallery() {
+  organizePhotoGallery('field-sampling-gallery', FIELD_SAMPLING_PHOTO_GROUPS, 'fish');
+}
+
+function organizeLabSampleProcessingGallery() {
+  organizePhotoGallery('lab-sample-processing-gallery', LAB_SAMPLE_PROCESSING_PHOTO_GROUPS, 'sample-processing');
+}
+
+function organizePhotoGallery(containerId, photoGroups, defaultGroupKey) {
+  const container = document.getElementById(containerId);
+  if (!container || container.dataset.organized === 'true') return;
+
+  const cards = Array.from(container.querySelectorAll('.gallery-card'));
+  if (!cards.length) return;
+
+  const groups = photoGroups.map((group) => ({
+    ...group,
+    cards: []
+  }));
+  const defaultGroup = groups.find((group) => group.key === defaultGroupKey) || groups[0];
+  const headingPrefix = containerId.replace(/-gallery$/, '');
+
+  cards.forEach((card) => {
+    const title = card.querySelector('.gallery-copy h2')?.textContent || card.querySelector('img')?.alt || '';
+    const group = groups.find((candidate) => candidate.patterns.some((pattern) => pattern.test(title))) || defaultGroup;
+    group.cards.push(card);
+  });
+
+  container.dataset.organized = 'true';
+  container.className = 'field-gallery';
+  container.replaceChildren();
+
+  groups
+    .filter((group) => group.cards.length > 0)
+    .forEach((group) => {
+      const section = document.createElement('section');
+      section.className = 'field-gallery-section';
+      section.setAttribute('aria-labelledby', `${headingPrefix}-${group.key}`);
+
+      const header = document.createElement('div');
+      header.className = 'gallery-section-header';
+
+      const heading = document.createElement('h2');
+      heading.id = `${headingPrefix}-${group.key}`;
+      heading.textContent = group.heading;
+
+      const count = document.createElement('span');
+      count.textContent = `${group.cards.length} photo${group.cards.length === 1 ? '' : 's'}`;
+
+      const grid = document.createElement('div');
+      grid.className = 'field-gallery-grid';
+      group.cards.forEach((card) => grid.appendChild(card));
+
+      header.append(heading, count);
+      section.append(header, grid);
+      container.appendChild(section);
+    });
 }
 
 function hydrateData(data, biologicalGeoJson, environmentalGeoJson) {
@@ -1499,22 +1639,19 @@ function renderAll() {
   fillCounts();
   renderMetadata();
   populateFilters();
-  renderInquiry();
   renderBiologicalRegionReference();
   renderBiologicalMap();
   updateDataRequestSummary();
   renderEnvironmental();
   renderCatalog();
   renderAccessControl();
-  updateApiLinks();
+  updateMetadataApiLinks();
 }
 
 function bindControls() {
+  bindPolicyAcknowledgments();
+
   [
-    'inquiry-region',
-    'inquiry-year',
-    'inquiry-month',
-    'inquiry-search',
     'bio-species',
     'bio-life-stage',
     'bio-program',
@@ -1535,7 +1672,6 @@ function bindControls() {
     const eventName = element.tagName === 'INPUT' && element.type === 'search' ? 'input' : 'change';
     element.addEventListener(eventName, () => {
       if (id === 'bio-basemap') applyBasemap('biological', valueOf('bio-basemap'));
-      renderInquiry();
       renderBiologicalMap();
       updateDataRequestSummary();
     });
@@ -1583,8 +1719,28 @@ function bindControls() {
   });
 }
 
+function bindPolicyAcknowledgments() {
+  [
+    ['data-request-policy-acknowledgment', 'data-request-submit'],
+    ['env-data-request-policy-acknowledgment', 'env-data-request-submit'],
+    ['access-request-policy-acknowledgment', 'access-request-submit']
+  ].forEach(([checkboxId, buttonId]) => {
+    const checkbox = document.getElementById(checkboxId);
+    const button = document.getElementById(buttonId);
+    if (!checkbox || !button) return;
+
+    const updateButtonState = () => {
+      button.disabled = !checkbox.checked;
+      button.setAttribute('aria-disabled', String(!checkbox.checked));
+    };
+
+    checkbox.addEventListener('change', updateButtonState);
+    updateButtonState();
+  });
+}
+
 function fillCounts() {
-  const counts = state.data.counts || {};
+  const counts = HOME_SNAPSHOT_COUNTS;
   setText('count-stations', formatNumber(counts.stations));
   setText('count-events', formatNumber(counts.sampling_events));
   setText('count-taxa', formatNumber(counts.taxa));
@@ -1596,7 +1752,6 @@ function populateFilters() {
   const bioYears = uniqueSorted(state.biologicalRows.map((row) => row.year), true);
   const bioMonths = uniqueSorted(state.biologicalRows.map((row) => row.month), true);
   const bioDays = uniqueSorted(state.biologicalRows.map((row) => row.day), true);
-  const bioRegions = uniqueSorted(state.biologicalRows.map((row) => row.region));
   const bioSpecies = biologicalSpeciesOptions(state.biologicalRows);
   const bioLifeStages = sortLifeStages(CATALOG_LIFE_STAGE_DISTRIBUTION.map((stage) => stage.life_stage));
   const envYears = uniqueSorted(state.environmentalRows.map((row) => row.year), true);
@@ -1611,9 +1766,6 @@ function populateFilters() {
   const catalogSpecies = sortHighlightSpecies(uniqueSorted(catalogRows.map((row) => row.species_common)));
   const catalogTypes = uniqueSorted(catalogRows.map((row) => row.image_type));
 
-  populateSelect('inquiry-region', bioRegions, 'All Regions');
-  populateSelect('inquiry-year', bioYears, 'All Years');
-  populateSelect('inquiry-month', bioMonths.map(monthOption), 'All Months');
   populateSelect('bio-species', bioSpecies, 'All Species');
   populateSelect('bio-life-stage', bioLifeStages, 'All Life Stages');
   populateSelect('bio-program', BIOLOGICAL_MONITORING_PROGRAMS, 'All Programs');
@@ -1678,47 +1830,6 @@ function biologicalSpeciesOptions(rows) {
   return names;
 }
 
-function renderInquiry() {
-  const rows = filterRows(state.biologicalRows, {
-    region: valueOf('inquiry-region'),
-    year: valueOf('inquiry-year'),
-    month: valueOf('inquiry-month'),
-    search: valueOf('inquiry-search')
-  });
-
-  renderSummaryStrip('inquiry-summary', [
-    ['Stations', uniqueCount(rows, 'station_id')],
-    ['Events', sum(rows, 'sampling_events')],
-    ['Biological Records', sum(rows, 'biological_records')]
-  ]);
-
-  const body = document.getElementById('inquiry-body');
-  if (!body) return;
-  body.replaceChildren();
-
-  if (rows.length === 0) {
-    appendEmptyRow(body, 7, 'No records match the selected filters.');
-    return;
-  }
-
-  rows
-    .slice()
-    .sort((a, b) => a.year - b.year || a.month - b.month || b.river_mile - a.river_mile)
-    .forEach((row) => {
-      const tr = document.createElement('tr');
-      [
-        `${row.station_id} - ${row.station_name}`,
-        row.region,
-        row.year,
-        monthName(row.month),
-        row.gear_type,
-        row.sampling_events,
-        row.biological_records
-      ].forEach((value) => appendCell(tr, value));
-      body.appendChild(tr);
-    });
-}
-
 function renderBiologicalMap() {
   const rows = filterRows(state.biologicalRows, {
     species: valueOf('bio-species'),
@@ -1739,7 +1850,6 @@ function renderBiologicalMap() {
     ['Program', valueOf('bio-program') === 'all' ? 'All Programs' : valueOf('bio-program')]
   ]);
   updateDataRequestSummary(rows);
-  updateBiologicalApiLinks();
 
   if (!isActiveTab('biological-database')) return;
 
@@ -1806,41 +1916,37 @@ function updateDataRequestSummary(rows = null) {
   summary.value = currentBiologicalFilterSummary(rows);
 }
 
-function updateApiLinks() {
-  updateBiologicalApiLinks();
-  updateEnvironmentalApiLinks();
-  updateMetadataApiLinks();
+function currentEnvironmentalFilterSummary(rows = null) {
+  const requestedVariable = valueOf('env-variable');
+  const variable = ENV_VARIABLES[requestedVariable] ? requestedVariable : variablesForSource(state.selectedEnvSource || 'hrbmp')[0] || 'mean_temperature_c';
+  const variableMeta = ENV_VARIABLES[variable] || ENV_VARIABLES.mean_temperature_c;
+  const sourceMeta = ENV_SOURCES[variableMeta.source] || ENV_SOURCES.hrbmp;
+  const filteredRows = rows || filterRows(state.environmentalRows, {
+    yearStart: valueOf('env-year-start'),
+    yearEnd: valueOf('env-year-end'),
+    monthStart: valueOf('env-month-start'),
+    monthEnd: valueOf('env-month-end'),
+    dayStart: valueOf('env-day-start'),
+    dayEnd: valueOf('env-day-end')
+  }).filter(hasCoordinates);
+
+  const lines = [
+    `Database: ${sourceMeta.label}`,
+    `Covariate: ${variableMeta.label}`,
+    `Year Range: ${valueOf('env-year-start') === 'all' ? 'Any Start' : valueOf('env-year-start')} to ${valueOf('env-year-end') === 'all' ? 'Any End' : valueOf('env-year-end')}`,
+    `Month Range: ${valueOf('env-month-start') === 'all' ? 'Any Start' : valueOf('env-month-start')} to ${valueOf('env-month-end') === 'all' ? 'Any End' : valueOf('env-month-end')}`,
+    `Day Range: ${valueOf('env-day-start') === 'all' ? 'Any Start' : valueOf('env-day-start')} to ${valueOf('env-day-end') === 'all' ? 'Any End' : valueOf('env-day-end')}`,
+    `Matching Rows: ${formatNumber(filteredRows.length)}`,
+    `Environmental Records: ${formatNumber(sumRecordCounts(filteredRows, 'environmental'))}`
+  ];
+
+  return lines.join('\n');
 }
 
-function updateBiologicalApiLinks() {
-  const params = {
-    species: valueOf('bio-species'),
-    life_stage: valueOf('bio-life-stage'),
-    program: valueOf('bio-program'),
-    year_start: valueOf('bio-year-start'),
-    year_end: valueOf('bio-year-end'),
-    month_start: valueOf('bio-month-start'),
-    month_end: valueOf('bio-month-end'),
-    day_start: valueOf('bio-day-start'),
-    day_end: valueOf('bio-day-end'),
-    limit: '10000'
-  };
-  setLinkHref('bio-api-csv', apiUrl('/biological-records.csv', params));
-  setLinkHref('bio-api-json', apiUrl('/biological-records', params));
-}
-
-function updateEnvironmentalApiLinks() {
-  const params = {
-    year_start: valueOf('env-year-start'),
-    year_end: valueOf('env-year-end'),
-    month_start: valueOf('env-month-start'),
-    month_end: valueOf('env-month-end'),
-    day_start: valueOf('env-day-start'),
-    day_end: valueOf('env-day-end'),
-    limit: '10000'
-  };
-  setLinkHref('env-api-csv', apiUrl('/environmental-records.csv', params));
-  setLinkHref('env-api-json', apiUrl('/environmental-records', params));
+function updateEnvironmentalDataRequestSummary(rows = null) {
+  const summary = document.getElementById('env-data-request-summary');
+  if (!summary || !state.ready) return;
+  summary.value = currentEnvironmentalFilterSummary(rows);
 }
 
 function updateMetadataApiLinks() {
@@ -2106,7 +2212,7 @@ function renderEnvironmentalMap() {
     ['Mean Selected Covariate', variableValues.length ? formatMetric(average(variableValues), variableMeta.unit) : 'NA'],
     ['Covariate Source', sourceMeta.label]
   ]);
-  updateEnvironmentalApiLinks();
+  updateEnvironmentalDataRequestSummary(rows);
 
   if (!isActiveTab('environmental-database')) return;
 
@@ -3680,6 +3786,11 @@ function filterRows(rows, filters) {
         row.gear_type,
         row.life_stage,
         row.monitoring_program,
+        row.environmental_records,
+        row.mean_temperature_c,
+        row.mean_dissolved_oxygen_mg_l,
+        row.mean_conductivity_us_cm,
+        row.mean_salinity_psu,
         row.year,
         row.month,
         row.day

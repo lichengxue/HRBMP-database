@@ -4,7 +4,6 @@ The GUI is a **static HTML/CSS/JavaScript prototype** modeled after the
 SPASAM-MSE website structure. It has a homepage and tabbed sections for:
 
 - Program Description
-- Data Inquiry
 - Biological Database
 - Environmental Database
 - Sampling Image Catalog
@@ -13,6 +12,7 @@ SPASAM-MSE website structure. It has a homepage and tabbed sections for:
 - Issue Report
 - User Login
 - Team / Contact
+- News
 
 The page reads `gui/data/example_summary.json`, plus map-ready GeoJSON files:
 
@@ -25,8 +25,11 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 
 - Displays repository-level counts, export metadata, institutional partner
   logos, and collaborator logos on the home page.
-- Filters biological availability by region, year, month, day, species, and
-  search text.
+- Provides a blank News tab reserved for HRBMP program news and research updates.
+- Organizes Program Description navigation into a Program Overview plus the
+  six HRBMP survey subtabs listed on the official HRBMP surveys page.
+- Organizes Biological Database and Environmental Database navigation into
+  Data Availability and Data Request subtabs.
 - Shows Leaflet-based Hudson River biological and environmental GIS maps.
 - Supports zooming, panning, popups, marker clustering, layer toggles, and map
   legends.
@@ -37,9 +40,10 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
   no day range is selected, the map shows the full selected month range.
 - Provides biological record totals by HRBMP region for the selected species,
   life stage, program, and date filters.
-- Provides a Biological Database data request form that records the current
-  screening summary for the data management team and links to the official
-  HRBMP Data Sharing Policy PDF.
+- Provides Biological Database and Environmental Database data request forms
+  that record the current screening summary for the data management team and
+  link to the official HRBMP Data Sharing Policy PDF. Requesters must
+  acknowledge that they have read the policy before the form can proceed.
 - Filters environmental map layers by year, month, and day ranges plus selected
   covariate. Environmental database tabs separate HRBMP, USGS, EPA, and NOAA
   variables. If no day range is selected, the map shows the full selected month
@@ -54,9 +58,18 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
   ordered stage sequence.
 - Provides ribbon dropdown menus under Educational Materials and Photo Gallery.
   Each dropdown item opens its own page route for HRBMP history, current
-  research, classroom materials, outreach activities, Hudson River photos,
-  field sampling photos, sample warehouse photos, and lab sample processing
-  photos.
+  research, K-12 curriculum, classroom materials, outreach activities, Hudson
+  River photos, field sampling photos, sample warehouse photos, and lab sample
+  processing photos. Current Research includes nested Ongoing Projects and
+  Publications pages; Ongoing Projects is blank for now, and Publications
+  contains linked citation records. The K-12 Curriculum page
+  organizes Hudson River lessons by K-2, grades 3-5, grades 6-8, grades 9-12,
+  and teacher resources. Field
+  sampling photos are grouped into people-with-fish, fish, and cruise/vessel
+  sections with compact thumbnails. The K-12 Curriculum menu includes nested
+  grade-band choices that open the matching curriculum section. Lab sample
+  processing photos are grouped into sample processing, digital archive, and
+  sample handling / safety sections.
 - Provides a combined team/contact structure with component leads, supporting
   team members, survey equipment organization responsibilities, and lab sample
   processing responsibilities.

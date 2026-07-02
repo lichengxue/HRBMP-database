@@ -118,9 +118,13 @@ Useful endpoints:
 - `GET /api/environmental-records.csv`
 
 The GUI is organized like a small project website with tabs for Program
-Description, Data Inquiry, Biological Database, Environmental Database,
-Sampling Image Catalog, Educational Materials, Photo Gallery, Issue Report,
-User Login, and Team / Contact.
+Description, Biological Database, Environmental Database, Sampling Image
+Catalog, Educational Materials, Photo Gallery, Issue Report, User Login, Team /
+Contact, and News. Biological Database and Environmental Database each include
+Data Availability and Data Request subtabs.
+Program Description includes survey subtabs for Fall Juvenile Survey, Long
+River Ichthyoplankton Survey, Beach Seine Survey, Water Quality Survey,
+Striped Bass Stocking and Evaluation, and Atlantic Tomcod Stock Assessment.
 
 The Biological Database and Environmental Database tabs use Leaflet maps with
 GeoJSON layers exported from SQLite. The Environmental Database separates HRBMP
@@ -132,17 +136,14 @@ Map filters use year, month, and day ranges. Leaving day start/end open shows
 the full selected month range. The Biological Database map also includes
 species, life-stage, and monitoring-program selectors. The species selector
 lists the 13 key species first, then the broader Hudson River species list.
-The Biological Database includes biological record totals by HRBMP region, an
-HRBMP Region 0 to Region 12 boundary-line layer, and a data request form that
-summarizes the current screening filters. The data request form links to the
-official HRBMP Data Sharing Policy and includes fields for applicant details,
-project abstract, specific data scope, and data use plan. The
-Environmental Database similarly focuses on environmental records and selected
+The Biological Database includes biological record totals by HRBMP region and
+an HRBMP Region 0 to Region 12 boundary-line layer. Biological and
+Environmental data request forms summarize the current screening filters, link
+to the official HRBMP Data Sharing Policy, require applicants to acknowledge
+that they have read the policy before proceeding, and include fields for
+applicant details, project abstract, specific data scope, and data use plan.
+The Environmental Database focuses on environmental records and selected
 covariate context.
-
-The Biological Database and Environmental Database pages also include API
-download links. When the GUI is served through `api/server.py`, these links use
-the current filters to request CSV or JSON directly from SQLite.
 
 The Program Description page includes a SQLite Metadata Catalog. When the API
 server is running, this section reads dataset, variable, program, source, and
@@ -165,9 +166,14 @@ and feedback that can be connected to a backend later.
 
 The ribbon navigation provides dropdown menus under Educational Materials and
 Photo Gallery. Each dropdown item opens its own page route, including HRBMP
-history, current research, classroom materials, outreach activities, Hudson
-River photos, field sampling photos, sample warehouse photos, and lab sample
-processing photos.
+history, current research, K-12 curriculum, classroom materials, outreach
+activities, Hudson River photos, field sampling photos, sample warehouse
+photos, and lab sample processing photos. Current Research includes nested
+Ongoing Projects and Publications pages, and the News tab is reserved for
+HRBMP program news and research updates. The K-12 Curriculum page groups
+lesson ideas by K-2, grades 3-5, grades 6-8, grades 9-12, and teacher
+resources, and the navigation includes nested grade-band choices under K-12
+Curriculum.
 
 The Sampling Image Catalog starts with 13 commonly discussed key species, then
 provides an All Species browser. Selecting a species opens pseudo distribution,

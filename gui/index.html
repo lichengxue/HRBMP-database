@@ -18,16 +18,54 @@
       </a>
       <nav class="tab-nav" aria-label="Main sections">
         <a href="#home" data-tab-link="home">Home</a>
-        <a href="#program-description" data-tab-link="program-description">Program Description</a>
-        <a href="#data-inquiry" data-tab-link="data-inquiry">Data Inquiry</a>
-        <a href="#biological-database" data-tab-link="biological-database">Biological Database</a>
-        <a href="#environmental-database" data-tab-link="environmental-database">Environmental Database</a>
+        <div class="nav-dropdown">
+          <a href="#program-description" data-tab-link="program-description">Program Description</a>
+          <div class="nav-submenu" aria-label="Program Description subsections">
+            <a href="#program-description" data-tab-link="program-description">Program Overview</a>
+            <a href="#survey-fall-juvenile" data-tab-link="survey-fall-juvenile">Fall Juvenile Survey</a>
+            <a href="#survey-long-river-ichthyoplankton" data-tab-link="survey-long-river-ichthyoplankton">Long River Ichthyoplankton Survey</a>
+            <a href="#survey-beach-seine" data-tab-link="survey-beach-seine">Beach Seine Survey</a>
+            <a href="#survey-water-quality" data-tab-link="survey-water-quality">Water Quality Survey</a>
+            <a href="#survey-striped-bass-stocking-evaluation" data-tab-link="survey-striped-bass-stocking-evaluation">Striped Bass Stocking and Evaluation</a>
+            <a href="#survey-atlantic-tomcod-stock-assessment" data-tab-link="survey-atlantic-tomcod-stock-assessment">Atlantic Tomcod Stock Assessment</a>
+          </div>
+        </div>
+        <div class="nav-dropdown">
+          <a href="#biological-database" data-tab-link="biological-database">Biological Database</a>
+          <div class="nav-submenu" aria-label="Biological Database subsections">
+            <a href="#biological-database" data-tab-link="biological-database">Data Availability</a>
+            <a href="#biological-data-request" data-tab-link="biological-data-request">Data Request</a>
+          </div>
+        </div>
+        <div class="nav-dropdown">
+          <a href="#environmental-database" data-tab-link="environmental-database">Environmental Database</a>
+          <div class="nav-submenu" aria-label="Environmental Database subsections">
+            <a href="#environmental-database" data-tab-link="environmental-database">Data Availability</a>
+            <a href="#environmental-data-request" data-tab-link="environmental-data-request">Data Request</a>
+          </div>
+        </div>
         <a href="#sampling-image-catalog" data-tab-link="sampling-image-catalog">Sampling Image Catalog</a>
         <div class="nav-dropdown">
           <a href="#educational-materials" data-tab-link="educational-materials">Educational Materials</a>
           <div class="nav-submenu" aria-label="Educational Materials subsections">
+            <div class="nav-subitem">
+              <a href="#education-k12-curriculum" data-tab-link="education-k12-curriculum">K-12 Curriculum</a>
+              <div class="nav-nested-submenu" aria-label="K-12 Curriculum grade bands">
+                <a href="#education-k12-curriculum" data-curriculum-focus="k2">K-2: River Explorers</a>
+                <a href="#education-k12-curriculum" data-curriculum-focus="grades-3-5">Grades 3-5: Habitat Detectives</a>
+                <a href="#education-k12-curriculum" data-curriculum-focus="grades-6-8">Grades 6-8: Estuary Data Lab</a>
+                <a href="#education-k12-curriculum" data-curriculum-focus="grades-9-12">Grades 9-12: Research Lab</a>
+                <a href="#education-k12-curriculum" data-curriculum-focus="teacher-resources">Teacher Resources</a>
+              </div>
+            </div>
             <a href="#education-history" data-tab-link="education-history">History of HRBMP</a>
-            <a href="#education-current-research" data-tab-link="education-current-research">Current Research</a>
+            <div class="nav-subitem">
+              <a href="#education-current-research" data-tab-link="education-current-research">Current Research</a>
+              <div class="nav-nested-submenu" aria-label="Current Research subsections">
+                <a href="#research-ongoing-projects" data-tab-link="research-ongoing-projects">Ongoing Projects</a>
+                <a href="#research-publications" data-tab-link="research-publications">Publications</a>
+              </div>
+            </div>
             <a href="#education-classroom" data-tab-link="education-classroom">Classroom Materials</a>
             <a href="#education-outreach" data-tab-link="education-outreach">Outreach Activities</a>
           </div>
@@ -44,52 +82,87 @@
         <a href="#issue-report" data-tab-link="issue-report">Issue Report</a>
         <a href="#user-login" data-tab-link="user-login">User Login</a>
         <a href="#team-contact" data-tab-link="team-contact">Team / Contact</a>
+        <a href="#news" data-tab-link="news">News</a>
       </nav>
     </div>
   </header>
 
   <main class="page-shell">
     <section class="tab-page active" id="home" data-tab-page="home">
-      <div class="home-layout">
-        <div class="intro-block">
-          <p class="eyebrow">Hudson River Biological Monitoring Program</p>
-          <h1>HRBMP Data Access Portal</h1>
-          <p class="lead">
-            Browse HRBMP program information, biological observations,
-            environmental measurements, and sampling image records.
-          </p>
-          <div class="pill-row">
-            <span class="pill">Program Overview</span>
-            <span class="pill">Biological Database</span>
-            <span class="pill">Environmental Database</span>
-            <span class="pill">Image Catalog</span>
-          </div>
-        </div>
+      <div class="home-page-grid">
+        <div class="home-left-column">
+          <div class="home-layout">
+            <div class="intro-block">
+              <p class="eyebrow">Hudson River Biological Monitoring Program</p>
+              <h1>HRBMP Data Portal</h1>
+              <p class="lead">
+                Browse HRBMP program information, biological observations,
+                environmental measurements, and sampling image records.
+              </p>
+              <div class="pill-row">
+                <span class="pill">Program Overview</span>
+                <span class="pill">Biological Database</span>
+                <span class="pill">Environmental Database</span>
+                <span class="pill">Image Catalog</span>
+              </div>
+            </div>
 
-        <aside class="snapshot-panel" aria-label="Database snapshot">
-          <div class="panel-heading">
-            <p class="eyebrow">Current Snapshot</p>
-            <p id="snapshot-date">Loading data...</p>
+            <aside class="snapshot-panel" aria-label="Database snapshot">
+              <div class="panel-heading">
+                <p class="eyebrow">Current Snapshot</p>
+                <p id="snapshot-date">Loading data...</p>
+              </div>
+              <div class="metric-grid compact">
+                <article class="metric-card">
+                  <span>Stations</span>
+                  <strong id="count-stations">-</strong>
+                </article>
+                <article class="metric-card">
+                  <span>Sampling Events</span>
+                  <strong id="count-events">-</strong>
+                </article>
+                <article class="metric-card">
+                  <span>Taxa</span>
+                  <strong id="count-taxa">-</strong>
+                </article>
+                <article class="metric-card">
+                  <span>Observations</span>
+                  <strong id="count-observations">-</strong>
+                </article>
+              </div>
+            </aside>
           </div>
-          <div class="metric-grid compact">
-            <article class="metric-card">
-              <span>Stations</span>
-              <strong id="count-stations">-</strong>
-            </article>
-            <article class="metric-card">
-              <span>Sampling Events</span>
-              <strong id="count-events">-</strong>
-            </article>
-            <article class="metric-card">
-              <span>Taxa</span>
-              <strong id="count-taxa">-</strong>
-            </article>
-            <article class="metric-card">
-              <span>Observations</span>
-              <strong id="count-observations">-</strong>
-            </article>
-          </div>
-        </aside>
+
+          <section class="partner-panel data-panel" aria-label="Institutional partners and collaborators">
+            <div class="partner-group">
+              <h2>Institutional Partners</h2>
+              <div class="logo-grid">
+                <a class="logo-card" href="https://www.stonybrook.edu/" target="_blank" rel="noopener">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Stony_Brook_U_logo_horizontal.svg" alt="Stony Brook University Logo" />
+                  <span>Stony Brook University</span>
+                </a>
+                <a class="logo-card dark-logo" href="https://www.stonybrook.edu/somas/" target="_blank" rel="noopener">
+                  <img src="https://www.stonybrook.edu/_resources/images/sb-logo-footer-dept-sm-rev-11.22.25-01.svg" alt="School Of Marine And Atmospheric Sciences Logo" />
+                  <span>School Of Marine And Atmospheric Sciences</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="partner-group">
+              <h2>Collaborators</h2>
+              <div class="logo-grid">
+                <a class="logo-card" href="https://dec.ny.gov/" target="_blank" rel="noopener">
+                  <img src="https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/s3fs-public/media/images/DEC.png" alt="NYSDEC Logo" />
+                  <span>NYSDEC</span>
+                </a>
+                <a class="logo-card dark-logo" href="https://hudsonriver.org/" target="_blank" rel="noopener">
+                  <img src="https://hudsonriver.org/wp-content/uploads/2017/04/logo-hrf-white.svg" alt="Hudson River Foundation Logo" />
+                  <span>Hudson River Foundation</span>
+                </a>
+              </div>
+            </div>
+          </section>
+        </div>
 
         <aside class="home-map-card" aria-label="Hudson River geographic reference map">
           <div class="home-map-title">
@@ -98,36 +171,6 @@
           <img src="assets/fig1a_hudson_map.png" alt="Hudson River map with HRBMP region abbreviations and inset location map" />
         </aside>
       </div>
-
-      <section class="partner-panel data-panel" aria-label="Institutional partners and collaborators">
-        <div class="partner-group">
-          <h2>Institutional Partners</h2>
-          <div class="logo-grid">
-            <a class="logo-card" href="https://www.stonybrook.edu/" target="_blank" rel="noopener">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Stony_Brook_U_logo_horizontal.svg" alt="Stony Brook University Logo" />
-              <span>Stony Brook University</span>
-            </a>
-            <a class="logo-card dark-logo" href="https://www.stonybrook.edu/somas/" target="_blank" rel="noopener">
-              <img src="https://www.stonybrook.edu/_resources/images/sb-logo-footer-dept-sm-rev-11.22.25-01.svg" alt="School Of Marine And Atmospheric Sciences Logo" />
-              <span>School Of Marine And Atmospheric Sciences</span>
-            </a>
-          </div>
-        </div>
-
-        <div class="partner-group">
-          <h2>Collaborators</h2>
-          <div class="logo-grid">
-            <a class="logo-card" href="https://dec.ny.gov/" target="_blank" rel="noopener">
-              <img src="https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/s3fs-public/media/images/DEC.png" alt="NYSDEC Logo" />
-              <span>NYSDEC</span>
-            </a>
-            <a class="logo-card dark-logo" href="https://hudsonriver.org/" target="_blank" rel="noopener">
-              <img src="https://hudsonriver.org/wp-content/uploads/2017/04/logo-hrf-white.svg" alt="Hudson River Foundation Logo" />
-              <span>Hudson River Foundation</span>
-            </a>
-          </div>
-        </div>
-      </section>
 
       <section class="homepage-disclaimer data-panel" aria-label="Development disclaimer">
         <h2>Development Disclaimer</h2>
@@ -195,6 +238,45 @@
         </article>
       </div>
 
+      <section class="data-panel survey-overview-panel">
+        <div>
+          <h2>The HRBMP Surveys</h2>
+          <p>
+            HRBMP uses distinct survey programs with different gear types to represent fish across life stages
+            and river regions, with major survey coverage extending along the Hudson River between Albany and New York City.
+          </p>
+        </div>
+        <div class="survey-card-grid">
+          <a class="survey-card" href="#survey-fall-juvenile" data-tab-link="survey-fall-juvenile">
+            <span>Survey</span>
+            <strong>Fall Juvenile Survey</strong>
+          </a>
+          <a class="survey-card" href="#survey-long-river-ichthyoplankton" data-tab-link="survey-long-river-ichthyoplankton">
+            <span>Survey</span>
+            <strong>Long River Ichthyoplankton Survey</strong>
+          </a>
+          <a class="survey-card" href="#survey-beach-seine" data-tab-link="survey-beach-seine">
+            <span>Survey</span>
+            <strong>Beach Seine Survey</strong>
+          </a>
+          <a class="survey-card" href="#survey-water-quality" data-tab-link="survey-water-quality">
+            <span>Survey</span>
+            <strong>Water Quality Survey</strong>
+          </a>
+          <a class="survey-card" href="#survey-striped-bass-stocking-evaluation" data-tab-link="survey-striped-bass-stocking-evaluation">
+            <span>Survey</span>
+            <strong>Striped Bass Stocking and Evaluation</strong>
+          </a>
+          <a class="survey-card" href="#survey-atlantic-tomcod-stock-assessment" data-tab-link="survey-atlantic-tomcod-stock-assessment">
+            <span>Survey</span>
+            <strong>Atlantic Tomcod Stock Assessment</strong>
+          </a>
+        </div>
+        <div class="history-source-links">
+          <a href="https://you.stonybrook.edu/hrbmp/the-surveys/" target="_blank" rel="noopener">Official HRBMP Surveys Page</a>
+        </div>
+      </section>
+
       <section class="data-panel metadata-panel">
         <div class="metadata-panel-header">
           <div>
@@ -241,51 +323,112 @@
       </section>
     </section>
 
-    <section class="tab-page" id="data-inquiry" data-tab-page="data-inquiry">
-      <div class="page-header with-controls">
-        <div>
-          <p class="eyebrow">Data Inquiry</p>
-          <h1>Search Exported HRBMP Records</h1>
-        </div>
-        <div class="control-row">
-          <label>
-            Region
-            <select id="inquiry-region"></select>
-          </label>
-          <label>
-            Year
-            <select id="inquiry-year"></select>
-          </label>
-          <label>
-            Month
-            <select id="inquiry-month"></select>
-          </label>
-          <label class="search-label">
-            Search
-            <input id="inquiry-search" type="search" placeholder="station, gear, taxon" />
-          </label>
-        </div>
+    <section class="tab-page" id="survey-fall-juvenile" data-tab-page="survey-fall-juvenile">
+      <div class="page-header">
+        <p class="eyebrow">Program Description</p>
+        <h1>Fall Juvenile Survey</h1>
       </div>
-
-      <div class="summary-strip" id="inquiry-summary"></div>
-
-      <div class="data-panel">
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Station</th>
-                <th>Region</th>
-                <th>Year</th>
-                <th>Month</th>
-                <th>Gear</th>
-                <th>Events</th>
-                <th>Biological Records</th>
-              </tr>
-            </thead>
-            <tbody id="inquiry-body"></tbody>
-          </table>
+      <article class="survey-detail-panel data-panel">
+        <h2>Survey Context</h2>
+        <p>
+          This survey is one of the six HRBMP survey pages listed under the official HRBMP The Surveys section.
+          Survey-specific protocol fields, coverage notes, and database links can be added here as reviewed documentation is finalized.
+        </p>
+        <div class="history-source-links">
+          <a href="https://you.stonybrook.edu/hrbmp/the-surveys/fall-juvenile-survey/" target="_blank" rel="noopener">Official Fall Juvenile Survey Page</a>
         </div>
+      </article>
+    </section>
+
+    <section class="tab-page" id="survey-long-river-ichthyoplankton" data-tab-page="survey-long-river-ichthyoplankton">
+      <div class="page-header">
+        <p class="eyebrow">Program Description</p>
+        <h1>Long River Ichthyoplankton Survey</h1>
+      </div>
+      <article class="survey-detail-panel data-panel">
+        <h2>Survey Context</h2>
+        <p>
+          This survey is one of the six HRBMP survey pages listed under the official HRBMP The Surveys section.
+          Survey-specific protocol fields, coverage notes, and database links can be added here as reviewed documentation is finalized.
+        </p>
+        <div class="history-source-links">
+          <a href="https://you.stonybrook.edu/hrbmp/the-surveys/long-river-ichthyoplankton-survey/" target="_blank" rel="noopener">Official Long River Ichthyoplankton Survey Page</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="tab-page" id="survey-beach-seine" data-tab-page="survey-beach-seine">
+      <div class="page-header">
+        <p class="eyebrow">Program Description</p>
+        <h1>Beach Seine Survey</h1>
+      </div>
+      <article class="survey-detail-panel data-panel">
+        <h2>Survey Context</h2>
+        <p>
+          This survey is one of the six HRBMP survey pages listed under the official HRBMP The Surveys section.
+          Survey-specific protocol fields, coverage notes, and database links can be added here as reviewed documentation is finalized.
+        </p>
+        <div class="history-source-links">
+          <a href="https://you.stonybrook.edu/hrbmp/the-surveys/beach-seine-survey/" target="_blank" rel="noopener">Official Beach Seine Survey Page</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="tab-page" id="survey-water-quality" data-tab-page="survey-water-quality">
+      <div class="page-header">
+        <p class="eyebrow">Program Description</p>
+        <h1>Water Quality Survey</h1>
+      </div>
+      <article class="survey-detail-panel data-panel">
+        <h2>Survey Context</h2>
+        <p>
+          This survey is one of the six HRBMP survey pages listed under the official HRBMP The Surveys section.
+          Survey-specific protocol fields, coverage notes, and database links can be added here as reviewed documentation is finalized.
+        </p>
+        <div class="history-source-links">
+          <a href="https://you.stonybrook.edu/hrbmp/the-surveys/water-quality-survey/" target="_blank" rel="noopener">Official Water Quality Survey Page</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="tab-page" id="survey-striped-bass-stocking-evaluation" data-tab-page="survey-striped-bass-stocking-evaluation">
+      <div class="page-header">
+        <p class="eyebrow">Program Description</p>
+        <h1>Striped Bass Stocking and Evaluation</h1>
+      </div>
+      <article class="survey-detail-panel data-panel">
+        <h2>Survey Context</h2>
+        <p>
+          This survey is one of the six HRBMP survey pages listed under the official HRBMP The Surveys section.
+          Survey-specific protocol fields, coverage notes, and database links can be added here as reviewed documentation is finalized.
+        </p>
+        <div class="history-source-links">
+          <a href="https://you.stonybrook.edu/hrbmp/the-surveys/striped-bass-stocking-and-evaluation/" target="_blank" rel="noopener">Official Striped Bass Stocking and Evaluation Page</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="tab-page" id="survey-atlantic-tomcod-stock-assessment" data-tab-page="survey-atlantic-tomcod-stock-assessment">
+      <div class="page-header">
+        <p class="eyebrow">Program Description</p>
+        <h1>Atlantic Tomcod Stock Assessment</h1>
+      </div>
+      <article class="survey-detail-panel data-panel">
+        <h2>Survey Context</h2>
+        <p>
+          This survey is one of the six HRBMP survey pages listed under the official HRBMP The Surveys section.
+          Survey-specific protocol fields, coverage notes, and database links can be added here as reviewed documentation is finalized.
+        </p>
+        <div class="history-source-links">
+          <a href="https://you.stonybrook.edu/hrbmp/the-surveys/atlantic-tomcod-stock-assessment/" target="_blank" rel="noopener">Official Atlantic Tomcod Stock Assessment Page</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="tab-page" id="news" data-tab-page="news">
+      <div class="page-header">
+        <p class="eyebrow">News</p>
+        <h1>News</h1>
       </div>
     </section>
 
@@ -375,17 +518,6 @@
         </section>
       </div>
 
-      <section class="data-panel api-download-panel">
-        <div>
-          <h2>API Download</h2>
-          <p>Download the current biological screening result or open the same query as JSON.</p>
-        </div>
-        <div class="api-link-row">
-          <a id="bio-api-csv" class="primary-button link-button" href="#" target="_blank" rel="noopener">Download Biological CSV</a>
-          <a id="bio-api-json" class="secondary-button link-button" href="#" target="_blank" rel="noopener">Open Biological JSON</a>
-        </div>
-      </section>
-
       <section class="data-panel">
         <div>
           <h2>HRBMP River Regions</h2>
@@ -393,15 +525,21 @@
         </div>
         <div class="region-reference-grid" id="bio-region-reference"></div>
       </section>
+    </section>
 
+    <section class="tab-page" id="biological-data-request" data-tab-page="biological-data-request">
+      <div class="page-header">
+        <p class="eyebrow">Biological Database</p>
+        <h1>Biological Data Request</h1>
+      </div>
       <section class="data-panel data-request-panel">
         <div>
           <h2>Data Request</h2>
-          <p>Send the current screening request to the data management team after reviewing the HRBMP data sharing requirements.</p>
+          <p>Send the current screening request to the data management team after reading and acknowledging the HRBMP data sharing requirements.</p>
         </div>
         <div class="policy-callout">
           <div>
-            <strong>Review the policy before requesting detailed data.</strong>
+            <strong>You must read the policy before requesting detailed data.</strong>
             <p>
               <a href="https://you.stonybrook.edu/hrbmp/files/2024/02/HRBMP_DataSharingPolicy-f253c4f473adf36f.pdf" target="_blank" rel="noopener">Click here for the HRBMP Data Sharing Policy</a>.
             </p>
@@ -458,7 +596,11 @@
             Current Screening Summary
             <textarea id="data-request-summary" rows="4" readonly></textarea>
           </label>
-          <button type="button" class="primary-button">Submit Data Request</button>
+          <label class="full-span policy-acknowledgment">
+            <input id="data-request-policy-acknowledgment" type="checkbox" required />
+            <span>I acknowledge that I have read the HRBMP Data Sharing Policy and understand that the data management team will review this request under that policy.</span>
+          </label>
+          <button id="data-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Data Request</button>
         </form>
       </section>
     </section>
@@ -546,17 +688,6 @@
         </section>
       </div>
 
-      <section class="data-panel api-download-panel">
-        <div>
-          <h2>API Download</h2>
-          <p>Download environmental records for the selected date range or open the same query as JSON.</p>
-        </div>
-        <div class="api-link-row">
-          <a id="env-api-csv" class="primary-button link-button" href="#" target="_blank" rel="noopener">Download Environmental CSV</a>
-          <a id="env-api-json" class="secondary-button link-button" href="#" target="_blank" rel="noopener">Open Environmental JSON</a>
-        </div>
-      </section>
-
       <div class="metric-grid environmental" id="environmental-metrics"></div>
 
       <div class="content-grid two-column">
@@ -591,6 +722,84 @@
           </table>
         </div>
       </div>
+    </section>
+
+    <section class="tab-page" id="environmental-data-request" data-tab-page="environmental-data-request">
+      <div class="page-header">
+        <p class="eyebrow">Environmental Database</p>
+        <h1>Environmental Data Request</h1>
+      </div>
+      <section class="data-panel data-request-panel">
+        <div>
+          <h2>Data Request</h2>
+          <p>Send the current environmental screening request to the data management team after reading and acknowledging the HRBMP data sharing requirements.</p>
+        </div>
+        <div class="policy-callout">
+          <div>
+            <strong>You must read the policy before requesting detailed data.</strong>
+            <p>
+              <a href="https://you.stonybrook.edu/hrbmp/files/2024/02/HRBMP_DataSharingPolicy-f253c4f473adf36f.pdf" target="_blank" rel="noopener">Click here for the HRBMP Data Sharing Policy</a>.
+            </p>
+          </div>
+        </div>
+        <form class="data-request-form" onsubmit="return false">
+          <label>
+            Name
+            <input id="env-data-request-name" type="text" autocomplete="name" />
+          </label>
+          <label>
+            Title
+            <input id="env-data-request-title" type="text" />
+          </label>
+          <label>
+            Email
+            <input id="env-data-request-email" type="email" autocomplete="email" />
+          </label>
+          <label>
+            Phone
+            <input id="env-data-request-phone" type="tel" autocomplete="tel" />
+          </label>
+          <label>
+            Affiliation
+            <input id="env-data-request-affiliation" type="text" />
+          </label>
+          <label>
+            Intended Use
+            <select id="env-data-request-use">
+              <option>Research</option>
+              <option>Management</option>
+              <option>Education</option>
+              <option>Public Information</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <label class="full-span">
+            Other Project Members With Data Access
+            <textarea id="env-data-request-collaborators" rows="3"></textarea>
+          </label>
+          <label class="full-span">
+            Project Abstract
+            <textarea id="env-data-request-abstract" rows="4"></textarea>
+          </label>
+          <label class="full-span">
+            Specific Environmental Data Requested
+            <textarea id="env-data-request-notes" rows="5"></textarea>
+          </label>
+          <label class="full-span">
+            Data Use Plan
+            <textarea id="env-data-request-use-plan" rows="4"></textarea>
+          </label>
+          <label class="full-span">
+            Current Environmental Screening Summary
+            <textarea id="env-data-request-summary" rows="4" readonly></textarea>
+          </label>
+          <label class="full-span policy-acknowledgment">
+            <input id="env-data-request-policy-acknowledgment" type="checkbox" required />
+            <span>I acknowledge that I have read the HRBMP Data Sharing Policy and understand that the data management team will review this request under that policy.</span>
+          </label>
+          <button id="env-data-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Data Request</button>
+        </form>
+      </section>
     </section>
 
     <section class="tab-page" id="sampling-image-catalog" data-tab-page="sampling-image-catalog">
@@ -636,6 +845,135 @@
         <p class="eyebrow">Educational Materials</p>
         <h1>HRBMP Learning Resources</h1>
       </div>
+
+      <div class="education-resource-grid">
+        <article class="resource-card data-panel">
+          <span class="resource-kicker">Curriculum</span>
+          <h2>K-12 Curriculum</h2>
+          <p>Grade-band lesson pathways that use Hudson River fish, habitats, maps, and monitoring data for standards-aligned classroom learning.</p>
+          <div class="history-source-links">
+            <a href="#education-k12-curriculum" data-tab-link="education-k12-curriculum">Open K-12 Curriculum</a>
+          </div>
+        </article>
+        <article class="resource-card data-panel">
+          <span class="resource-kicker">Classroom</span>
+          <h2>Classroom Materials</h2>
+          <p>Future worksheet packets, slides, vocabulary lists, and printable activity sheets for teachers and outreach partners.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="tab-page" id="education-k12-curriculum" data-tab-page="education-k12-curriculum">
+      <div class="page-header">
+        <p class="eyebrow">Educational Materials</p>
+        <h1>K-12 Curriculum</h1>
+        <p class="page-note">
+          A Hudson River learning pathway organized by student age, classroom readiness, and scientific skill level.
+        </p>
+      </div>
+
+      <section class="data-panel curriculum-overview">
+        <div>
+          <h2>Curriculum Pathway</h2>
+          <p>
+            The sequence moves from observation and vocabulary in early grades to authentic data analysis and evidence-based environmental decision-making in high school.
+          </p>
+        </div>
+        <div class="curriculum-pill-row" aria-label="Curriculum grade bands">
+          <span>K-2</span>
+          <span>Grades 3-5</span>
+          <span>Grades 6-8</span>
+          <span>Grades 9-12</span>
+          <span>Teacher Resources</span>
+        </div>
+      </section>
+
+      <div class="education-accordion">
+        <details class="education-dropdown" data-curriculum-section="k2" open>
+          <summary>K-2: River Explorers</summary>
+          <div class="education-panel-body">
+            <p>Observation-rich lessons for young students learning what living things need and how animals use body parts to survive.</p>
+            <div class="education-resource-grid">
+              <article class="education-resource-item">
+                <h2>Meet Hudson River Animals</h2>
+                <p>Students sort fish, crabs, and other river organisms by observable features, then draw what each animal needs to live.</p>
+              </article>
+              <article class="education-resource-item">
+                <h2>Fish Body Parts</h2>
+                <p>Students label fins, eyes, mouth, tail, and body shape, then explain how those parts help a fish move, feed, and hide.</p>
+              </article>
+            </div>
+          </div>
+        </details>
+
+        <details class="education-dropdown" data-curriculum-section="grades-3-5">
+          <summary>Grades 3-5: Habitat Detectives</summary>
+          <div class="education-panel-body">
+            <p>Elementary investigations that connect life cycles, habitat, river regions, and simple graphs from monitoring records.</p>
+            <div class="education-resource-grid">
+              <article class="education-resource-item">
+                <h2>Fish Life Stages</h2>
+                <p>Students compare eggs, larvae, juveniles, and adults, then match life stages to habitat needs in the estuary.</p>
+              </article>
+              <article class="education-resource-item">
+                <h2>Where Are The Fish?</h2>
+                <p>Students use HRBMP river regions to map species observations and build simple bar charts by region or season.</p>
+              </article>
+            </div>
+          </div>
+        </details>
+
+        <details class="education-dropdown" data-curriculum-section="grades-6-8">
+          <summary>Grades 6-8: Estuary Data Lab</summary>
+          <div class="education-panel-body">
+            <p>Middle school modules where students ask questions, filter database records, interpret patterns, and connect fish distributions to environmental conditions.</p>
+            <div class="education-resource-grid">
+              <article class="education-resource-item">
+                <h2>Biodiversity By Region</h2>
+                <p>Students compare species richness and abundance across Hudson River regions and discuss how sampling design affects conclusions.</p>
+              </article>
+              <article class="education-resource-item">
+                <h2>Water Quality And Fish</h2>
+                <p>Students compare temperature, dissolved oxygen, salinity, and fish records to identify possible habitat relationships.</p>
+              </article>
+            </div>
+          </div>
+        </details>
+
+        <details class="education-dropdown" data-curriculum-section="grades-9-12">
+          <summary>Grades 9-12: Hudson River Research Lab</summary>
+          <div class="education-panel-body">
+            <p>High school investigations focused on authentic monitoring questions, data limitations, evidence, and communication of scientific claims.</p>
+            <div class="education-resource-grid">
+              <article class="education-resource-item">
+                <h2>Long-Term Change</h2>
+                <p>Students analyze annual or seasonal patterns in selected species and evaluate whether the evidence supports a trend claim.</p>
+              </article>
+              <article class="education-resource-item">
+                <h2>From Data To Decision</h2>
+                <p>Students build a short research brief using database results, uncertainty, and data-sharing expectations for responsible science.</p>
+              </article>
+            </div>
+          </div>
+        </details>
+
+        <details class="education-dropdown" data-curriculum-section="teacher-resources">
+          <summary>Teacher Resources</summary>
+          <div class="education-panel-body">
+            <p>Planning materials that can be added as downloadable packets as the curriculum matures.</p>
+            <div class="education-resource-grid">
+              <article class="education-resource-item">
+                <h2>Lesson Packet Templates</h2>
+                <p>Space for printable lessons, student worksheets, answer keys, vocabulary lists, and slide decks.</p>
+              </article>
+              <article class="education-resource-item">
+                <h2>Standards Alignment</h2>
+                <p>Space for NY P-12 and NGSS-aligned summaries covering practices, ecosystems, Earth systems, and human activity.</p>
+              </article>
+            </div>
+          </div>
+        </details>
+      </div>
     </section>
 
     <section class="tab-page" id="education-history" data-tab-page="education-history">
@@ -680,11 +1018,147 @@
       <div class="page-header">
         <p class="eyebrow">Educational Materials</p>
         <h1>Current Research</h1>
+        <p class="page-note">
+          Research pathways connected to HRBMP monitoring records, environmental change, fish communities, and data access.
+        </p>
       </div>
 
-      <div class="data-panel">
-        <h2>Current Research Materials</h2>
-        <p>Research summaries, project updates, and outreach-ready research materials can be added here.</p>
+      <div class="research-link-grid">
+        <article class="resource-card data-panel">
+          <span class="resource-kicker">Research Portfolio</span>
+          <h2>Ongoing Projects</h2>
+          <p>Active research themes using HRBMP data, environmental covariates, and long-term Hudson River monitoring records.</p>
+          <div class="history-source-links">
+            <a href="#research-ongoing-projects" data-tab-link="research-ongoing-projects">Open Ongoing Projects</a>
+          </div>
+        </article>
+        <article class="resource-card data-panel">
+          <span class="resource-kicker">Peer-reviewed Work</span>
+          <h2>Publications</h2>
+          <p>Recent publications connected to Hudson River fish populations, spawning ecology, habitat, and monitoring data methods.</p>
+          <div class="history-source-links">
+            <a href="#research-publications" data-tab-link="research-publications">Open Publications</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="tab-page" id="research-ongoing-projects" data-tab-page="research-ongoing-projects">
+      <div class="page-header">
+        <p class="eyebrow">Current Research</p>
+        <h1>Ongoing Projects</h1>
+      </div>
+    </section>
+
+    <section class="tab-page" id="research-publications" data-tab-page="research-publications">
+      <div class="page-header">
+        <p class="eyebrow">Current Research</p>
+        <h1>Publications</h1>
+        <p class="page-note">
+          Recent peer-reviewed publications connected to HRBMP datasets, Hudson River fish ecology, and related modeling work.
+        </p>
+      </div>
+
+      <div class="publication-list">
+        <article class="publication-card data-panel">
+          <span class="publication-year">2025</span>
+          <div class="publication-body">
+            <h2>Spatiotemporal shifts in American Eel population in a changing Hudson River estuary</h2>
+            <p class="publication-authors">Lowe, E., Rokosz, K., Hodgdon, C., Chang, H.-Y., &amp; Chen, Y.</p>
+            <p class="publication-journal"><em>Transactions of the American Fisheries Society</em>, vnaf015.</p>
+            <a href="https://doi.org/10.1093/tafafs/vnaf015" target="_blank" rel="noopener">https://doi.org/10.1093/tafafs/vnaf015</a>
+          </div>
+        </article>
+
+        <article class="publication-card data-panel">
+          <span class="publication-year">2025</span>
+          <div class="publication-body">
+            <h2>Decadal-scale changes in fish spawning strategies: A case study of striped bass in the Hudson River</h2>
+            <p class="publication-authors">Pan, X., Zhang, W., Liu, W., Nguyen, A., Best, J., Pendleton, R., Huang, L., &amp; Chen, Y.</p>
+            <p class="publication-journal"><em>Ecological Indicators</em>, 173, 113410.</p>
+            <a href="https://doi.org/10.1016/j.ecolind.2025.113410" target="_blank" rel="noopener">https://doi.org/10.1016/j.ecolind.2025.113410</a>
+          </div>
+        </article>
+
+        <article class="publication-card data-panel">
+          <span class="publication-year">2025</span>
+          <div class="publication-body">
+            <h2>Unraveling drivers and patterns of species richness in coastal marine ecosystem under global warming: Insights from ecosystem connectivity</h2>
+            <p class="publication-authors">Yang, X., Wo, J., Keiling, T., &amp; Chen, Y.</p>
+            <p class="publication-journal"><em>Ecological Indicators</em>, 170, 113093.</p>
+            <a href="https://doi.org/10.1016/j.ecolind.2025.113093" target="_blank" rel="noopener">https://doi.org/10.1016/j.ecolind.2025.113093</a>
+          </div>
+        </article>
+
+        <article class="publication-card data-panel">
+          <span class="publication-year">2025</span>
+          <div class="publication-body">
+            <h2>Evaluating effects of data quality and variable weighting on habitat suitability modelling</h2>
+            <p class="publication-authors">Arsenault, S., Linner, R., &amp; Chen, Y.</p>
+            <p class="publication-journal"><em>Ecological Informatics</em>, 87, 103086.</p>
+            <a href="https://doi.org/10.1016/j.ecoinf.2025.103086" target="_blank" rel="noopener">https://doi.org/10.1016/j.ecoinf.2025.103086</a>
+          </div>
+        </article>
+
+        <article class="publication-card data-panel">
+          <span class="publication-year">2024</span>
+          <div class="publication-body">
+            <h2>Shifting spawning phenology in Hudson River American Shad</h2>
+            <p class="publication-authors">Chang, H.-Y., &amp; Chen, Y.</p>
+            <p class="publication-journal"><em>Marine and Coastal Fisheries</em>, 16(5), e10312.</p>
+            <a href="https://doi.org/10.1002/mcf2.10312" target="_blank" rel="noopener">https://doi.org/10.1002/mcf2.10312</a>
+          </div>
+        </article>
+
+        <article class="publication-card data-panel">
+          <span class="publication-year">2024</span>
+          <div class="publication-body">
+            <h2>Understanding the dynamics of fish spawning phenology and habitat in a changing ecosystem using a long-term ichthyoplankton monitoring dataset</h2>
+            <p class="publication-authors">Hunt, N., Rokosz, K., &amp; Chen, Y.</p>
+            <p class="publication-journal"><em>Canadian Journal of Fisheries and Aquatic Sciences</em>.</p>
+            <a href="https://doi.org/10.1139/cjfas-2023-0361" target="_blank" rel="noopener">https://doi.org/10.1139/cjfas-2023-0361</a>
+          </div>
+        </article>
+
+        <article class="publication-card data-panel">
+          <span class="publication-year">2024</span>
+          <div class="publication-body">
+            <h2>Spatiotemporal dynamics of spawning habitat distribution of American shad (Alosa sapidissima) in the Hudson River Estuary under multi stressors</h2>
+            <p class="publication-authors">Chang, H.-Y., Pendleton, R., Kenney, G., McKown, K., Eakin, W., Maniscalco, J., &amp; Chen, Y.</p>
+            <p class="publication-journal"><em>Canadian Journal of Fisheries and Aquatic Sciences</em>, 81(5), 559-572.</p>
+            <a href="https://doi.org/10.1139/cjfas-2023-0241" target="_blank" rel="noopener">https://doi.org/10.1139/cjfas-2023-0241</a>
+          </div>
+        </article>
+
+        <article class="publication-card data-panel">
+          <span class="publication-year">2023</span>
+          <div class="publication-body">
+            <h2>Evaluating effects of changing sampling protocol for a long-term ichthyoplankton monitoring program</h2>
+            <p class="publication-authors">Chang, H.-Y., Sun, M., Rokosz, K., &amp; Chen, Y.</p>
+            <p class="publication-journal"><em>Frontiers in Marine Science</em>, 10, 1237549.</p>
+            <a href="https://doi.org/10.3389/fmars.2023.1237549" target="_blank" rel="noopener">https://doi.org/10.3389/fmars.2023.1237549</a>
+          </div>
+        </article>
+
+        <article class="publication-card data-panel">
+          <span class="publication-year">2023</span>
+          <div class="publication-body">
+            <h2>Spatial variability of striped bass spawning responses to climate change</h2>
+            <p class="publication-authors">Pan, X., Arsenault, S., Rokosz, K., &amp; Chen, Y.</p>
+            <p class="publication-journal"><em>Global Ecology and Conservation</em>, 42, e02405.</p>
+            <a href="https://doi.org/10.1016/j.gecco.2023.e02405" target="_blank" rel="noopener">https://doi.org/10.1016/j.gecco.2023.e02405</a>
+          </div>
+        </article>
+
+        <article class="publication-card data-panel">
+          <span class="publication-year">2023</span>
+          <div class="publication-body">
+            <h2>A long-term ichthyoplankton monitoring program suggests climate-induced environmental variabilities changed fish communities in the Hudson River estuary</h2>
+            <p class="publication-authors">Chang, H.-Y., McKown, K., &amp; Chen, Y.</p>
+            <p class="publication-journal"><em>Frontiers in Marine Science</em>, 9.</p>
+            <a href="https://doi.org/10.3389/fmars.2022.1077997" target="_blank" rel="noopener">https://doi.org/10.3389/fmars.2022.1077997</a>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -765,7 +1239,7 @@
         <p class="eyebrow">Photo Gallery</p>
         <h1>Field Sampling Photos</h1>
       </div>
-      <div class="gallery-grid">
+      <div id="field-sampling-gallery" class="gallery-grid">
         <article class="gallery-card">
           <figure>
             <img src="assets/photo_gallery/web/Field%20Sampling/2024-1-sarah-praisner-holding-striped-bass.jpg" alt="2024 1 Sarah Praisner Holding Striped Bass" loading="lazy" />
@@ -1135,7 +1609,7 @@
         <p class="eyebrow">Photo Gallery</p>
         <h1>Lab Sample Processing</h1>
       </div>
-      <div class="gallery-grid">
+      <div id="lab-sample-processing-gallery" class="gallery-grid">
         <article class="gallery-card">
           <figure>
             <img src="assets/photo_gallery/web/Lab%20Sample%20Processing/2025-rr2-1-stephanie-arsenault-doing-lab-work.jpg" alt="2025 RR2 1 Stephanie Arsenault Doing Lab Work" loading="lazy" />
@@ -1243,11 +1717,21 @@
               <select id="issue-page" name="issue-page">
                 <option>Home</option>
                 <option>Program Description</option>
-                <option>Data Inquiry</option>
-                <option>Biological Database</option>
-                <option>Environmental Database</option>
+                <option>Program Description - Fall Juvenile Survey</option>
+                <option>Program Description - Long River Ichthyoplankton Survey</option>
+                <option>Program Description - Beach Seine Survey</option>
+                <option>Program Description - Water Quality Survey</option>
+                <option>Program Description - Striped Bass Stocking and Evaluation</option>
+                <option>Program Description - Atlantic Tomcod Stock Assessment</option>
+                <option>News</option>
+                <option>Biological Data Availability</option>
+                <option>Biological Data Request</option>
+                <option>Environmental Data Availability</option>
+                <option>Environmental Data Request</option>
                 <option>Sampling Image Catalog</option>
                 <option>Educational Materials</option>
+                <option>Current Research - Ongoing Projects</option>
+                <option>Current Research - Publications</option>
                 <option>Photo Gallery</option>
                 <option>User Login</option>
                 <option>Team / Contact</option>
@@ -1355,7 +1839,7 @@
         </div>
         <div class="policy-callout">
           <div>
-            <strong>Review the policy before requesting access.</strong>
+            <strong>You must read the policy before requesting access.</strong>
             <p>
               <a href="https://you.stonybrook.edu/hrbmp/files/2024/02/HRBMP_DataSharingPolicy-f253c4f473adf36f.pdf" target="_blank" rel="noopener">Click here for the HRBMP Data Sharing Policy</a>.
             </p>
@@ -1386,7 +1870,11 @@
             Project Or Use Case
             <textarea name="request-purpose" rows="4"></textarea>
           </label>
-          <button type="button" class="primary-button">Submit Request</button>
+          <label class="full-span policy-acknowledgment">
+            <input id="access-request-policy-acknowledgment" type="checkbox" required />
+            <span>I acknowledge that I have read the HRBMP Data Sharing Policy and understand that access will be reviewed under that policy.</span>
+          </label>
+          <button id="access-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Request</button>
         </form>
       </section>
     </section>
@@ -1438,10 +1926,6 @@
               <div><strong>Dr. Chengxue Li</strong><span>Lead</span></div>
             </div>
             <div class="member-row">
-              <div class="tree-person">
-                <img src="https://you.stonybrook.edu/chenlab/files/2025/03/jie-e1741122629168-300x300.jpg" alt="Profile photo of Dr. Jie Yin" />
-                <div><strong>Dr. Jie Yin</strong><span>Core TEAM MEMBER</span></div>
-              </div>
               <div class="tree-person">
                 <img src="https://you.stonybrook.edu/chenlab/files/2022/01/Xiangyan-300x300.jpg" alt="Profile photo of Xiangyan Yang" />
                 <div><strong>Xiangyan Yang</strong><span>Core TEAM MEMBER</span></div>
@@ -1588,7 +2072,7 @@
   </main>
 
   <footer class="site-footer">
-    <span>Hudson River Biological Monitoring Program Data Access Portal</span>
+    <span>Hudson River Biological Monitoring Program Data Portal</span>
     <span>Integrated Biological, Environmental, And Image Data Resources.</span>
   </footer>
 
