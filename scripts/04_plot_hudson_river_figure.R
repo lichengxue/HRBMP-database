@@ -8,7 +8,7 @@
 # Useful environment overrides:
 #   HRBMP_SHORELINE_SHP       - full path to hr_shoreline_splitbymilemarker.shp
 #   HRBMP_FIGURE_OUTPUT_DIR   - output folder; defaults to gui/assets
-#   HRBMP_MAP_STYLE           - color/terrain/classic; defaults to color
+#   HRBMP_MAP_STYLE           - light/color/terrain/classic; defaults to light
 #   HRBMP_UPDATE_GUI_MAP      - TRUE/FALSE; copy selected style to GUI asset; defaults TRUE
 #   HRBMP_SHOW_NOAA_COASTLINE - TRUE/FALSE; defaults to FALSE to avoid downloads
 #   HRBMP_SHOW_BATHY          - TRUE/FALSE; defaults to FALSE
@@ -93,11 +93,15 @@ output_dir <- env_or_default(
 
 show_bathy <- env_flag("HRBMP_SHOW_BATHY", default = FALSE)
 show_noaa_coastline <- env_flag("HRBMP_SHOW_NOAA_COASTLINE", default = FALSE)
-map_style <- tolower(env_or_default("HRBMP_MAP_STYLE", "color"))
+map_style <- tolower(env_or_default("HRBMP_MAP_STYLE", "light"))
 update_gui_map <- env_flag("HRBMP_UPDATE_GUI_MAP", default = TRUE)
 
-if (!map_style %in% c("color", "terrain", "classic")) {
-  stop("HRBMP_MAP_STYLE must be 'color', 'terrain', or 'classic'.")
+if (!map_style %in% c("color", "terrain", "light", "classic")) {
+  stop("HRBMP_MAP_STYLE must be 'color', 'terrain', 'light', or 'classic'.")
+}
+
+if (map_style == "light") {
+  require_packages(c("rosm", "prettymapr"))
 }
 
 map_palette <- switch(
@@ -112,6 +116,7 @@ map_palette <- switch(
     region_border = "#173f36",
     coast = "#4f756d",
     river = "#1375ad",
+    river_fill = "#1375ad70",
     grid = "#bfd5cc",
     state_label = "#4d5f55",
     city = "#1f302b",
@@ -129,12 +134,31 @@ map_palette <- switch(
     region_border = "#254d34",
     coast = "#697b66",
     river = "#0d6fa6",
+    river_fill = "#0d6fa670",
     grid = "#c7ceb3",
     state_label = "#526043",
     city = "#263424",
     red = "#cc3b2e",
     panel_bg = "#8fc7e6",
     export_bg = "#f3efdf"
+  ),
+  light = list(
+    water = NA,
+    inset_water = "#e9f3f7",
+    new_york = NA,
+    other_states = NA,
+    inset_land = "#f0f0ed",
+    state_border = "#c8cdd1",
+    region_border = "#315c68",
+    coast = "#aab5bb",
+    river = "#0c78b6",
+    river_fill = "#0c78b64d",
+    grid = "#d9e0e4",
+    state_label = "#8b9296",
+    city = "#2f3b42",
+    red = "#bf3b34",
+    panel_bg = "#f7f8f8",
+    export_bg = "white"
   ),
   classic = list(
     water = "#cfe8f3",
@@ -146,6 +170,7 @@ map_palette <- switch(
     region_border = "black",
     coast = "black",
     river = "black",
+    river_fill = "#cfe8f380",
     grid = "gray85",
     state_label = "gray20",
     city = "black",
@@ -267,6 +292,26 @@ build_noaa_layers <- function(target_crs, clip_poly) {
   })
 }
 
+build_reference_tile_layer <- function() {
+  if (map_style != "light") {
+    return(NULL)
+  }
+
+  tile_cache_dir <- file.path(repo_root, "data", "processed", "tile-cache")
+  if (!dir.exists(tile_cache_dir)) {
+    dir.create(tile_cache_dir, recursive = TRUE, showWarnings = FALSE)
+  }
+
+  annotation_map_tile(
+    type = "cartolight",
+    zoomin = 0,
+    cachedir = tile_cache_dir,
+    progress = "none",
+    quiet = TRUE,
+    alpha = 0.42
+  )
+}
+
 build_inset_map <- function(clip_bb) {
   tryCatch({
     states_us <- ne_states(country = "united states of america", returnclass = "sf") |>
@@ -295,24 +340,30 @@ build_inset_map <- function(clip_bb) {
       st_transform(26918) |>
       st_coordinates()
 
+    inset_land_fill <- if (map_style == "light") "#e5eadf" else map_palette$inset_land
+    inset_water_fill <- if (map_style == "light") "#dceff7" else map_palette$inset_water
+    inset_ny_fill <- if (map_style == "light") "#cfe6c8" else map_palette$new_york
+    inset_border_color <- if (map_style == "light") "#8f9da2" else map_palette$state_border
+    inset_label_color <- if (map_style == "light") "#66747a" else map_palette$state_label
+
     ggplot() +
-      geom_sf(data = canada_us, fill = map_palette$inset_land, color = "white") +
-      geom_sf(data = states_us, fill = map_palette$inset_land, color = "white") +
+      geom_sf(data = canada_us, fill = inset_land_fill, color = "white", linewidth = 0.20) +
+      geom_sf(data = states_us, fill = inset_land_fill, color = "white", linewidth = 0.20) +
       geom_sf(
         data = subset(states_us, name == "New York"),
-        fill = map_palette$new_york,
-        color = map_palette$state_border,
-        linewidth = 0.35
+        fill = inset_ny_fill,
+        color = inset_border_color,
+        linewidth = 0.55
       ) +
-      geom_sf(data = hudson_river, color = map_palette$river, linewidth = 1.0) +
-      geom_sf(data = study_box_sf, fill = NA, color = map_palette$red, linewidth = 0.9) +
+      geom_sf(data = hudson_river, color = map_palette$river, linewidth = 1.45) +
+      geom_sf(data = study_box_sf, fill = NA, color = map_palette$red, linewidth = 1.25) +
       annotate(
         "text",
         x = 350000, y = 5000000,
         label = "CANADA",
         size = 4.2,
         fontface = "bold",
-        color = map_palette$state_label
+        color = inset_label_color
       ) +
       annotate(
         "text",
@@ -320,7 +371,7 @@ build_inset_map <- function(clip_bb) {
         label = "USA",
         size = 4.2,
         fontface = "bold",
-        color = map_palette$state_label
+        color = inset_label_color
       ) +
       annotate(
         "text",
@@ -328,14 +379,14 @@ build_inset_map <- function(clip_bb) {
         label = "NY",
         size = 3.7,
         fontface = "bold",
-        color = map_palette$state_label
+        color = inset_label_color
       ) +
       annotate(
         "text",
         x = 760000, y = 4350000,
         label = "ATLANTIC\nOCEAN",
         size = 3.7,
-        color = map_palette$state_label
+        color = inset_label_color
       ) +
       coord_sf(
         xlim = inset_limits[c(1, 2), 1],
@@ -344,8 +395,8 @@ build_inset_map <- function(clip_bb) {
       ) +
       theme_void() +
       theme(
-        panel.background = element_rect(fill = map_palette$inset_water, color = NA),
-        panel.border = element_rect(color = map_palette$state_border, fill = NA, linewidth = 0.8),
+        panel.background = element_rect(fill = inset_water_fill, color = NA),
+        panel.border = element_rect(color = inset_border_color, fill = NA, linewidth = 0.95),
         plot.tag = element_text(face = "bold", size = 16),
         plot.tag.position = c(0, 1.3)
       ) +
@@ -413,8 +464,8 @@ build_hudson_map <- function() {
 
   major_cities <- maps::us.cities |>
     filter(country.etc %in% c("NY", "NJ", "PA", "CT", "MA", "RI")) |>
-    filter(pop > city_pop_threshold | name %in% c("Albany NY", "Hartford CT", "New York NY")) |>
-    filter(name != "Philadelphia PA") |>
+    filter(pop > city_pop_threshold | name %in% c("Hartford CT", "New York NY")) |>
+    filter(!name %in% c("Albany NY", "Philadelphia PA")) |>
     st_as_sf(coords = c("long", "lat"), crs = 4326) |>
     st_transform(target_crs) |>
     mutate(name = gsub(" [A-Z]{2}$", "", name)) |>
@@ -423,7 +474,6 @@ build_hudson_map <- function() {
       nudge_x = case_when(name == "New York" ~ 2000, TRUE ~ 0),
       nudge_y = case_when(
         name == "New York" ~ 4000,
-        name == "Albany" ~ 12000,
         TRUE ~ 9000
       )
     )
@@ -505,39 +555,45 @@ build_hudson_map <- function() {
       label_hjust = ifelse(Landmark == "AL (12)", 0, 1)
     )
 
-  indian_point_df <- data.frame(
-    name = "Indian Point\nEnergy Center",
-    lon = -73.9523,
-    lat = 41.2697
-  )
-
-  indian_point_sf <- st_as_sf(
-    indian_point_df,
-    coords = c("lon", "lat"),
-    crs = 4326
-  ) |>
-    st_transform(target_crs) |>
-    safe_intersection(clip_poly)
-
-  ip_xy <- st_coordinates(indian_point_sf)
-
   noaa_layers <- build_noaa_layers(target_crs = target_crs, clip_poly = clip_poly)
+  reference_tile_layer <- build_reference_tile_layer()
 
-  LIS_x <- xlim_use[1] + 0.80 * diff(xlim_use)
-  LIS_y <- ylim_use[1] + 0.25 * diff(ylim_use)
+  water_layer <- if (!is.null(noaa_layers$water_poly_sf) && map_style != "light") {
+    geom_sf(data = noaa_layers$water_poly_sf, fill = map_palette$water, color = NA)
+  } else {
+    NULL
+  }
 
-  NYB_x <- xlim_use[1] + 0.60 * diff(xlim_use)
-  NYB_y <- ylim_use[1] + 0.05 * diff(ylim_use)
+  state_layers <- if (map_style == "light") {
+    list(
+      geom_sf(
+        data = states_data,
+        fill = NA,
+        color = map_palette$state_border,
+        linewidth = 0.35
+      )
+    )
+  } else {
+    list(
+      geom_sf(
+        data = states_data,
+        aes(fill = fill_group),
+        color = map_palette$state_border,
+        linewidth = 0.45
+      ),
+      scale_fill_manual(
+        values = c(
+          "New York" = map_palette$new_york,
+          "Other states" = map_palette$other_states
+        ),
+        guide = "none"
+      )
+    )
+  }
 
-  p_final <- ggplot() +
-    { if (!is.null(noaa_layers$water_poly_sf)) geom_sf(data = noaa_layers$water_poly_sf, fill = map_palette$water, color = NA) } +
-    geom_sf(data = states_data, aes(fill = fill_group), color = map_palette$state_border, linewidth = 0.45) +
-    scale_fill_manual(
-      values = c("New York" = map_palette$new_york, "Other states" = map_palette$other_states),
-      guide = "none"
-    ) +
-    { if (isTRUE(show_noaa_coastline) && !is.null(noaa_layers$coast_line_sf)) geom_sf(data = noaa_layers$coast_line_sf, color = map_palette$coast, linewidth = 0.30) } +
-    geom_sf(data = hudson_regions, fill = NA, color = map_palette$region_border, linewidth = hudson_lwd) +
+  state_label_layer <- if (map_style == "light") {
+    NULL
+  } else {
     geom_sf_text(
       data = state_labels_sf,
       aes(label = name),
@@ -545,41 +601,60 @@ build_hudson_map <- function() {
       fontface = "bold",
       alpha = 0.48,
       color = map_palette$state_label
+    )
+  }
+
+  city_layers <- if (map_style == "light") {
+    NULL
+  } else {
+    list(
+      geom_sf(data = major_cities, size = 1.8, color = map_palette$city),
+      geom_sf_text(
+        data = major_cities,
+        aes(label = name),
+        nudge_x = major_cities$nudge_x,
+        nudge_y = major_cities$nudge_y,
+        size = 4.6,
+        fontface = "bold",
+        color = map_palette$city
+      )
+    )
+  }
+
+  LIS_x <- xlim_use[1] + 0.80 * diff(xlim_use)
+  LIS_y <- ylim_use[1] + 0.22 * diff(ylim_use)
+
+  NYB_x <- xlim_use[1] + 0.60 * diff(xlim_use)
+  NYB_y <- ylim_use[1] + 0.05 * diff(ylim_use)
+
+  p_final <- ggplot() +
+    reference_tile_layer +
+    water_layer +
+    state_layers +
+    { if (isTRUE(show_noaa_coastline) && !is.null(noaa_layers$coast_line_sf)) geom_sf(data = noaa_layers$coast_line_sf, color = map_palette$coast, linewidth = 0.30) } +
+    geom_sf(
+      data = hudson_regions,
+      fill = map_palette$river_fill,
+      color = map_palette$river,
+      linewidth = 0.42
     ) +
+    state_label_layer +
     geom_segment(
       data = tick_df,
       aes(x = tick_x, xend = tick_xend, y = y, yend = y),
       color = map_palette$region_border,
-      linewidth = 0.34
+      linewidth = 0.26,
+      alpha = 0.72
     ) +
     geom_text(
       data = label_df,
       aes(x = text_x, y = text_y, label = Landmark, hjust = label_hjust),
       vjust = 0.5,
       size = 4.4,
+      fontface = "bold",
       color = map_palette$region_border
     ) +
-    geom_sf(data = major_cities, size = 1.8, color = map_palette$city) +
-    geom_sf_text(
-      data = major_cities,
-      aes(label = name),
-      nudge_x = major_cities$nudge_x,
-      nudge_y = major_cities$nudge_y,
-      size = 4.6,
-      fontface = "bold",
-      color = map_palette$city
-    ) +
-    geom_sf(data = indian_point_sf, color = map_palette$red, size = 3.7) +
-    annotate(
-      "text",
-      x = ip_xy[1, 1] + 10000,
-      y = ip_xy[1, 2] + 7000,
-      label = "Indian Point\nEnergy Center",
-      color = map_palette$red,
-      fontface = "bold",
-      size = 6.6,
-      hjust = 0
-    ) +
+    city_layers +
     annotate(
       "text",
       x = LIS_x, y = LIS_y,
@@ -597,6 +672,8 @@ build_hudson_map <- function() {
       color = map_palette$city
     ) +
     coord_sf(
+      crs = target_crs,
+      default_crs = target_crs,
       xlim = xlim_use,
       ylim = ylim_use,
       expand = FALSE,

@@ -268,7 +268,7 @@ const MONTH_NAMES = [
   'December'
 ];
 
-const DATA_VERSION = 'environmental-fallback-100-20260506';
+const DATA_VERSION = '1.1.2';
 const DATA_REQUEST_VERSION = `${DATA_VERSION}-${Date.now()}`;
 const API_PORT = '8010';
 const MIN_BIOLOGICAL_DEMO_ROWS = 100;
