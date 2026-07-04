@@ -1460,6 +1460,190 @@ function initTabs() {
     window.dispatchEvent(new CustomEvent('hrbmp-tab-change', { detail: { tabId: nextId } }));
   }
 
+  const siteSearchForm = document.getElementById('site-search-form');
+  const siteSearchInput = document.getElementById('site-search-input');
+  const siteSearchOptions = document.getElementById('site-search-options');
+  const siteSearchItems = [];
+  const siteSearchSeen = new Set();
+
+  function normalizeSiteSearchText(value) {
+    return String(value || '')
+      .toLowerCase()
+      .replace(/&/g, ' and ')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+  }
+
+  function navSearchLabel(link) {
+    const label = link.textContent.trim().replace(/\s+/g, ' ');
+    const nestedParent = link.closest('.nav-nested-submenu')
+      ?.closest('.nav-subitem')
+      ?.querySelector(':scope > a');
+    const dropdownParent = link.closest('.nav-submenu')
+      ?.closest('.nav-dropdown')
+      ?.querySelector(':scope > a');
+    const parentLabel = nestedParent && nestedParent !== link
+      ? nestedParent.textContent.trim().replace(/\s+/g, ' ')
+      : dropdownParent && dropdownParent !== link
+        ? dropdownParent.textContent.trim().replace(/\s+/g, ' ')
+        : '';
+
+    return parentLabel && parentLabel !== label ? `${parentLabel} - ${label}` : label;
+  }
+
+  function addSiteSearchItem(label, action, keywords = '') {
+    const cleanLabel = String(label || '').trim().replace(/\s+/g, ' ');
+    if (!cleanLabel) return;
+
+    const searchText = normalizeSiteSearchText(`${cleanLabel} ${keywords}`);
+    const key = `${cleanLabel.toLowerCase()}|${searchText}`;
+    if (siteSearchSeen.has(key)) return;
+
+    siteSearchSeen.add(key);
+    siteSearchItems.push({
+      label: cleanLabel,
+      normalizedLabel: normalizeSiteSearchText(cleanLabel),
+      searchText,
+      action
+    });
+
+    if (siteSearchOptions) {
+      const option = document.createElement('option');
+      option.value = cleanLabel;
+      siteSearchOptions.append(option);
+    }
+  }
+
+  function navigateSiteSearchItem(item) {
+    item.action();
+    if (siteSearchInput) {
+      siteSearchInput.value = item.label;
+      siteSearchInput.setCustomValidity('');
+      siteSearchInput.blur();
+    }
+  }
+
+  function runSiteSearch(query) {
+    const normalizedQuery = normalizeSiteSearchText(query);
+    if (!normalizedQuery) return;
+
+    const queryTokens = normalizedQuery.split(' ').filter(Boolean);
+    const match = siteSearchItems.find((item) => item.normalizedLabel === normalizedQuery)
+      || siteSearchItems.find((item) => item.searchText.startsWith(normalizedQuery))
+      || siteSearchItems.find((item) => item.searchText.includes(normalizedQuery))
+      || siteSearchItems.find((item) => queryTokens.every((token) => item.searchText.includes(token)));
+
+    if (match) {
+      navigateSiteSearchItem(match);
+      return;
+    }
+
+    if (siteSearchInput) {
+      siteSearchInput.setCustomValidity('No matching portal section found.');
+      siteSearchInput.reportValidity();
+      window.setTimeout(() => siteSearchInput.setCustomValidity(''), 1800);
+    }
+  }
+
+  if (siteSearchOptions) {
+    siteSearchOptions.innerHTML = '';
+  }
+
+  document.querySelectorAll('.site-nav [data-tab-link]').forEach((link) => {
+    const tabId = link.dataset.tabLink;
+    addSiteSearchItem(
+      navSearchLabel(link),
+      () => showTab(tabId),
+      `${tabId.replace(/-/g, ' ')} ${link.textContent}`
+    );
+  });
+
+  [
+    ['Data Sharing Policy - Biological Request', 'biological-data-request', 'biological-data-sharing-policy', 'biological data request must read consent'],
+    ['Data Sharing Policy - Environmental Request', 'environmental-data-request', 'environmental-data-sharing-policy', 'environmental data request must read consent'],
+    ['Data Sharing Policy - Access Request', 'user-login', 'access-data-sharing-policy', 'access request login must read consent']
+  ].forEach(([label, pageId, targetId, keywords]) => {
+    addSiteSearchItem(label, () => {
+      showTab(pageId);
+      const target = document.getElementById(targetId);
+      if (!target) return;
+
+      window.requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.focus({ preventScroll: true });
+      });
+    }, keywords);
+  });
+
+  [
+    {
+      selector: '[data-curriculum-focus]',
+      pageId: 'education-k12-curriculum',
+      datasetKey: 'curriculumFocus',
+      keywords: 'k 12 curriculum education classroom',
+      focus: (sectionId) => focusCurriculumSection(sectionId)
+    },
+    {
+      selector: '[data-fish-tale-focus]',
+      pageId: 'education-fish-tales',
+      datasetKey: 'fishTaleFocus',
+      keywords: 'fish tales species key species',
+      focus: (sectionId) => focusEducationTopic('education-fish-tales', 'fish-tale', sectionId)
+    },
+    {
+      selector: '[data-history-focus]',
+      pageId: 'education-history',
+      datasetKey: 'historyFocus',
+      keywords: 'history hrbmp storymap',
+      focus: (sectionId) => focusHistorySection(sectionId)
+    },
+    {
+      selector: '[data-interview-focus]',
+      pageId: 'education-interviews',
+      datasetKey: 'interviewFocus',
+      keywords: 'oral interviews video watch',
+      focus: (sectionId) => focusInterviewSection(sectionId)
+    },
+    {
+      selector: '[data-classroom-focus]',
+      pageId: 'education-classroom',
+      datasetKey: 'classroomFocus',
+      keywords: 'classroom materials lessons worksheets slides',
+      focus: (sectionId) => focusEducationTopic('education-classroom', 'classroom', sectionId)
+    },
+    {
+      selector: '[data-outreach-focus]',
+      pageId: 'education-outreach',
+      datasetKey: 'outreachFocus',
+      keywords: 'outreach activities public community',
+      focus: (sectionId) => focusEducationTopic('education-outreach', 'outreach', sectionId)
+    }
+  ].forEach((config) => {
+    document.querySelectorAll(`.site-nav ${config.selector}`).forEach((link) => {
+      const sectionId = link.dataset[config.datasetKey] || '';
+      addSiteSearchItem(
+        navSearchLabel(link),
+        () => {
+          showTab(config.pageId);
+          config.focus(sectionId);
+        },
+        `${sectionId.replace(/-/g, ' ')} ${config.keywords} ${link.textContent}`
+      );
+    });
+  });
+
+  if (siteSearchForm && siteSearchInput) {
+    siteSearchForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      runSiteSearch(siteSearchInput.value);
+    });
+
+    siteSearchInput.addEventListener('change', () => {
+      const selected = siteSearchItems.find((item) => item.label === siteSearchInput.value);
+      if (selected) navigateSiteSearchItem(selected);
+    });
+  }
+
   links.forEach((link) => {
     link.addEventListener('click', (event) => {
       event.preventDefault();
@@ -1472,6 +1656,46 @@ function initTabs() {
       event.preventDefault();
       showTab('education-k12-curriculum');
       focusCurriculumSection(link.dataset.curriculumFocus);
+    });
+  });
+
+  document.querySelectorAll('[data-fish-tale-focus]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      showTab('education-fish-tales');
+      focusEducationTopic('education-fish-tales', 'fish-tale', link.dataset.fishTaleFocus);
+    });
+  });
+
+  document.querySelectorAll('[data-history-focus]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      showTab('education-history');
+      focusHistorySection(link.dataset.historyFocus);
+    });
+  });
+
+  document.querySelectorAll('[data-interview-focus]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      showTab('education-interviews');
+      focusInterviewSection(link.dataset.interviewFocus);
+    });
+  });
+
+  document.querySelectorAll('[data-classroom-focus]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      showTab('education-classroom');
+      focusEducationTopic('education-classroom', 'classroom', link.dataset.classroomFocus);
+    });
+  });
+
+  document.querySelectorAll('[data-outreach-focus]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      showTab('education-outreach');
+      focusEducationTopic('education-outreach', 'outreach', link.dataset.outreachFocus);
     });
   });
 
@@ -1497,6 +1721,48 @@ function focusCurriculumSection(sectionId) {
 
   window.requestAnimationFrame(() => {
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+function focusHistorySection(sectionId) {
+  const cards = document.querySelectorAll('#education-history [data-history-section]');
+  const target = document.querySelector(`#education-history [data-history-section="${sectionId}"]`);
+  if (!target) return;
+
+  cards.forEach((card) => {
+    card.classList.toggle('is-focused', card === target);
+  });
+
+  window.requestAnimationFrame(() => {
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+}
+
+function focusEducationTopic(pageId, topicType, sectionId) {
+  const cards = document.querySelectorAll(`#${pageId} [data-${topicType}-section]`);
+  const target = document.querySelector(`#${pageId} [data-${topicType}-section="${sectionId}"]`);
+  if (!target) return;
+
+  cards.forEach((card) => {
+    card.classList.toggle('is-focused', card === target);
+  });
+
+  window.requestAnimationFrame(() => {
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+}
+
+function focusInterviewSection(sectionId) {
+  const cards = document.querySelectorAll('#education-interviews [data-interview-section]');
+  const target = document.querySelector(`#education-interviews [data-interview-section="${sectionId}"]`);
+  if (!target) return;
+
+  cards.forEach((card) => {
+    card.classList.toggle('is-focused', card === target);
+  });
+
+  window.requestAnimationFrame(() => {
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
 }
 

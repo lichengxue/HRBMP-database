@@ -16,6 +16,12 @@
         <span class="brand-mark" aria-hidden="true"></span>
         <span>HRBMP Database</span>
       </a>
+      <form class="site-search" id="site-search-form" role="search">
+        <label class="screen-reader-text" for="site-search-input">Search portal sections</label>
+        <input id="site-search-input" type="search" list="site-search-options" placeholder="Search portal..." autocomplete="off" />
+        <datalist id="site-search-options"></datalist>
+        <button type="submit">Search</button>
+      </form>
       <nav class="tab-nav" aria-label="Main sections">
         <a href="#home" data-tab-link="home">Home</a>
         <div class="nav-dropdown">
@@ -58,8 +64,50 @@
                 <a href="#education-k12-curriculum" data-curriculum-focus="teacher-resources">Teacher Resources</a>
               </div>
             </div>
-            <a href="#education-history" data-tab-link="education-history">History of HRBMP</a>
-            <a href="#education-interviews" data-tab-link="education-interviews">Oral Interviews</a>
+            <div class="nav-subitem">
+              <a href="#education-fish-tales" data-tab-link="education-fish-tales">Fish Tales</a>
+              <div class="nav-nested-submenu" aria-label="Fish Tales species">
+                <a href="#education-fish-tales" data-fish-tale-focus="atlantic-tomcod">Atlantic Tomcod</a>
+                <a href="#education-fish-tales" data-fish-tale-focus="american-shad">American Shad</a>
+                <a href="#education-fish-tales" data-fish-tale-focus="striped-bass">Striped Bass</a>
+                <a href="#education-fish-tales" data-fish-tale-focus="white-perch">White Perch</a>
+                <a href="#education-fish-tales" data-fish-tale-focus="bay-anchovy">Bay Anchovy</a>
+                <a href="#education-fish-tales" data-fish-tale-focus="alewife">Alewife</a>
+                <a href="#education-fish-tales" data-fish-tale-focus="blueback-herring">Blueback Herring</a>
+                <a href="#education-fish-tales" data-fish-tale-focus="rainbow-smelt">Rainbow Smelt</a>
+                <a href="#education-fish-tales" data-fish-tale-focus="yellow-perch">Yellow Perch</a>
+                <a href="#education-fish-tales" data-fish-tale-focus="spottail-shiner">Spottail Shiner</a>
+                <a href="#education-fish-tales" data-fish-tale-focus="bluefish">Bluefish</a>
+                <a href="#education-fish-tales" data-fish-tale-focus="hogchoker">Hogchoker</a>
+                <a href="#education-fish-tales" data-fish-tale-focus="atlantic-menhaden">Atlantic Menhaden</a>
+              </div>
+            </div>
+            <div class="nav-subitem">
+              <a href="#education-history" data-tab-link="education-history">History of HRBMP</a>
+              <div class="nav-nested-submenu" aria-label="History of HRBMP subsections">
+                <a href="#education-history" data-history-focus="timeline">Timeline</a>
+                <a href="#education-history" data-history-focus="important-influencers">Important Influencers</a>
+                <a href="#education-history" data-history-focus="legal-battle">Impacts of the Legal Battle</a>
+                <a href="#education-history" data-history-focus="the-hrbmp">The HRBMP</a>
+                <a href="#education-history" data-history-focus="hudson-river-today">The Hudson River Today</a>
+                <a href="#education-history" data-history-focus="stony-brook-goals">Stony Brook University's Goals</a>
+              </div>
+            </div>
+            <div class="nav-subitem">
+              <a href="#education-interviews" data-tab-link="education-interviews">Oral Interviews</a>
+              <div class="nav-nested-submenu" aria-label="Oral Interviews subsections">
+                <a href="#education-interviews" data-interview-focus="paul-shepson-yong-chen">Program Potential - Paul Shepson &amp; Yong Chen</a>
+                <a href="#education-interviews" data-interview-focus="larry-barnthouse">Scientific Counsel - Larry Barnthouse</a>
+                <a href="#education-interviews" data-interview-focus="fran-dunwell">Estuary Management - Fran Dunwell</a>
+                <a href="#education-interviews" data-interview-focus="karin-limburg">Fisheries Science - Karin E. Limburg</a>
+                <a href="#education-interviews" data-interview-focus="john-lipscomb">Hudson Advocacy - John Lipscomb</a>
+                <a href="#education-interviews" data-interview-focus="kim-mckown">NYSDEC Review - Kim McKown</a>
+                <a href="#education-interviews" data-interview-focus="bob-schmidt">Collections - Bob Schmidt</a>
+                <a href="#education-interviews" data-interview-focus="eric-schultz">Ichthyology - Eric Schultz</a>
+                <a href="#education-interviews" data-interview-focus="john-young">Survey Analysis - John Young</a>
+                <a href="#education-interviews" data-interview-focus="elise-zoli">Legal History - Elise N. Zoli</a>
+              </div>
+            </div>
             <div class="nav-subitem">
               <a href="#education-current-research" data-tab-link="education-current-research">Current Research</a>
               <div class="nav-nested-submenu" aria-label="Current Research subsections">
@@ -67,8 +115,27 @@
                 <a href="#research-publications" data-tab-link="research-publications">Publications</a>
               </div>
             </div>
-            <a href="#education-classroom" data-tab-link="education-classroom">Classroom Materials</a>
-            <a href="#education-outreach" data-tab-link="education-outreach">Outreach Activities</a>
+            <div class="nav-subitem">
+              <a href="#education-classroom" data-tab-link="education-classroom">Classroom Materials</a>
+              <div class="nav-nested-submenu" aria-label="Classroom Materials subsections">
+                <a href="#education-classroom" data-classroom-focus="lesson-plans">Lesson Plans</a>
+                <a href="#education-classroom" data-classroom-focus="student-worksheets">Student Worksheets</a>
+                <a href="#education-classroom" data-classroom-focus="slide-decks">Teacher Slide Decks</a>
+                <a href="#education-classroom" data-classroom-focus="data-activities">Data Activities</a>
+                <a href="#education-classroom" data-classroom-focus="field-lab-activities">Field &amp; Lab Activities</a>
+              </div>
+            </div>
+            <div class="nav-subitem">
+              <a href="#education-outreach" data-tab-link="education-outreach">Outreach Activities</a>
+              <div class="nav-nested-submenu" aria-label="Outreach Activities subsections">
+                <a href="#education-outreach" data-outreach-focus="public-talks">Public Talks</a>
+                <a href="#education-outreach" data-outreach-focus="tabling-displays">Tabling Displays</a>
+                <a href="#education-outreach" data-outreach-focus="school-visits">School Visits</a>
+                <a href="#education-outreach" data-outreach-focus="teacher-workshops">Teacher Workshops</a>
+                <a href="#education-outreach" data-outreach-focus="community-science">Community Science</a>
+                <a href="#education-outreach" data-outreach-focus="event-handouts">Event Handouts</a>
+              </div>
+            </div>
           </div>
         </div>
         <div class="nav-dropdown">
@@ -96,10 +163,15 @@
             <div class="intro-block">
               <p class="eyebrow">Hudson River Biological Monitoring Program</p>
               <h1>HRBMP Data Portal</h1>
+              <p class="portal-version">Beta Version 1.1.2</p>
               <p class="lead">
                 Browse HRBMP program information, biological observations,
                 environmental measurements, and sampling image records.
               </p>
+              <div class="home-action-row" aria-label="Featured HRBMP links">
+                <a href="https://www.youtube.com/watch?v=J2TWs7Vs-Sg" target="_blank" rel="noopener">HRBMP Program Overview</a>
+                <a href="https://you.stonybrook.edu/chenlab/" target="_blank" rel="noopener">Chen Lab Website</a>
+              </div>
             </div>
 
             <aside class="snapshot-panel" aria-label="Database snapshot">
@@ -530,14 +602,19 @@
       <section class="data-panel data-request-panel">
         <div>
           <h2>Data Request</h2>
-          <p>Send the current screening request to the data management team after reading and acknowledging the HRBMP data sharing requirements.</p>
+          <p>Send the current screening request to the data management team after reading and consenting to the HRBMP data sharing requirements.</p>
         </div>
-        <div class="policy-callout">
+        <div class="policy-callout" id="biological-data-sharing-policy" tabindex="-1">
           <div>
-            <strong>You must read the policy before requesting detailed data.</strong>
+            <strong>MUST READ: Data Sharing Policy</strong>
             <p>
               <a href="https://you.stonybrook.edu/hrbmp/files/2024/02/HRBMP_DataSharingPolicy-f253c4f473adf36f.pdf" target="_blank" rel="noopener">Click here for the HRBMP Data Sharing Policy</a>.
             </p>
+            <ul class="policy-summary">
+              <li>Detailed HRBMP data requests are reviewed by the data management team before release.</li>
+              <li>Requestors must describe the intended use, project members, requested data, and data use plan.</li>
+              <li>The request cannot be submitted until the policy consent checkbox below is checked.</li>
+            </ul>
           </div>
         </div>
         <form class="data-request-form" onsubmit="return false">
@@ -593,7 +670,7 @@
           </label>
           <label class="full-span policy-acknowledgment">
             <input id="data-request-policy-acknowledgment" type="checkbox" required />
-            <span>I acknowledge that I have read the HRBMP Data Sharing Policy and understand that the data management team will review this request under that policy.</span>
+            <span>I have read, understand, and agree to follow the HRBMP Data Sharing Policy. I understand that the data management team will review this request under that policy before any detailed data are released.</span>
           </label>
           <button id="data-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Data Request</button>
         </form>
@@ -727,14 +804,19 @@
       <section class="data-panel data-request-panel">
         <div>
           <h2>Data Request</h2>
-          <p>Send the current environmental screening request to the data management team after reading and acknowledging the HRBMP data sharing requirements.</p>
+          <p>Send the current environmental screening request to the data management team after reading and consenting to the HRBMP data sharing requirements.</p>
         </div>
-        <div class="policy-callout">
+        <div class="policy-callout" id="environmental-data-sharing-policy" tabindex="-1">
           <div>
-            <strong>You must read the policy before requesting detailed data.</strong>
+            <strong>MUST READ: Data Sharing Policy</strong>
             <p>
               <a href="https://you.stonybrook.edu/hrbmp/files/2024/02/HRBMP_DataSharingPolicy-f253c4f473adf36f.pdf" target="_blank" rel="noopener">Click here for the HRBMP Data Sharing Policy</a>.
             </p>
+            <ul class="policy-summary">
+              <li>Detailed HRBMP data requests are reviewed by the data management team before release.</li>
+              <li>Requestors must describe the intended use, project members, requested data, and data use plan.</li>
+              <li>The request cannot be submitted until the policy consent checkbox below is checked.</li>
+            </ul>
           </div>
         </div>
         <form class="data-request-form" onsubmit="return false">
@@ -790,7 +872,7 @@
           </label>
           <label class="full-span policy-acknowledgment">
             <input id="env-data-request-policy-acknowledgment" type="checkbox" required />
-            <span>I acknowledge that I have read the HRBMP Data Sharing Policy and understand that the data management team will review this request under that policy.</span>
+            <span>I have read, understand, and agree to follow the HRBMP Data Sharing Policy. I understand that the data management team will review this request under that policy before any detailed data are released.</span>
           </label>
           <button id="env-data-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Data Request</button>
         </form>
@@ -848,6 +930,14 @@
           <p>Grade-band lesson pathways that use Hudson River fish, habitats, maps, and monitoring data for standards-aligned classroom learning.</p>
           <div class="history-source-links">
             <a href="#education-k12-curriculum" data-tab-link="education-k12-curriculum">Open K-12 Curriculum</a>
+          </div>
+        </article>
+        <article class="resource-card data-panel">
+          <span class="resource-kicker">Species Stories</span>
+          <h2>Fish Tales</h2>
+          <p>Short species spotlights for the 13 key Hudson River fishes, written for classroom and outreach storytelling.</p>
+          <div class="history-source-links">
+            <a href="#education-fish-tales" data-tab-link="education-fish-tales">Open Fish Tales</a>
           </div>
         </article>
         <article class="resource-card data-panel">
@@ -979,6 +1069,109 @@
       </div>
     </section>
 
+    <section class="tab-page" id="education-fish-tales" data-tab-page="education-fish-tales">
+      <div class="page-header">
+        <p class="eyebrow">Educational Materials</p>
+        <h1>Fish Tales</h1>
+        <p class="page-note">
+          Species spotlights for the 13 key Hudson River fishes, designed as a starting place for classroom stories, photos, monitoring notes, and outreach activities.
+        </p>
+      </div>
+
+      <div class="education-topic-grid">
+        <article class="education-topic-card data-panel" data-fish-tale-section="atlantic-tomcod">
+          <span class="resource-kicker">Key Species 1</span>
+          <h2>Atlantic Tomcod</h2>
+          <p><em>Microgadus tomcod</em></p>
+          <p>Story focus: a winter-associated estuarine fish that connects cold-season sampling, spawning habitat, and long-term Hudson River monitoring.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-fish-tale-section="american-shad">
+          <span class="resource-kicker">Key Species 2</span>
+          <h2>American Shad</h2>
+          <p><em>Alosa sapidissima</em></p>
+          <p>Story focus: a migratory fish whose river spawning runs help students connect life cycles, timing, and estuary conservation.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-fish-tale-section="striped-bass">
+          <span class="resource-kicker">Key Species 3</span>
+          <h2>Striped Bass</h2>
+          <p><em>Morone saxatilis</em></p>
+          <p>Story focus: an iconic Hudson River fish for discussing spawning, nursery habitat, population change, and fishery management.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-fish-tale-section="white-perch">
+          <span class="resource-kicker">Key Species 4</span>
+          <h2>White Perch</h2>
+          <p><em>Morone americana</em></p>
+          <p>Story focus: a common estuarine fish that can anchor lessons about resident species, food webs, and regional habitat patterns.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-fish-tale-section="bay-anchovy">
+          <span class="resource-kicker">Key Species 5</span>
+          <h2>Bay Anchovy</h2>
+          <p><em>Anchoa mitchilli</em></p>
+          <p>Story focus: a small forage fish that helps explain why tiny organisms matter to larger predators and estuary food webs.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-fish-tale-section="alewife">
+          <span class="resource-kicker">Key Species 6</span>
+          <h2>Alewife</h2>
+          <p><em>Alosa pseudoharengus</em></p>
+          <p>Story focus: a river herring species useful for comparing migration, spawning runs, and shared life histories among related fishes.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-fish-tale-section="blueback-herring">
+          <span class="resource-kicker">Key Species 7</span>
+          <h2>Blueback Herring</h2>
+          <p><em>Alosa aestivalis</em></p>
+          <p>Story focus: a migratory river herring that pairs well with alewife for lessons about species comparison and seasonal movement.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-fish-tale-section="rainbow-smelt">
+          <span class="resource-kicker">Key Species 8</span>
+          <h2>Rainbow Smelt</h2>
+          <p><em>Osmerus mordax</em></p>
+          <p>Story focus: a cool-water fish that can introduce temperature, habitat sensitivity, and environmental change in the estuary.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-fish-tale-section="yellow-perch">
+          <span class="resource-kicker">Key Species 9</span>
+          <h2>Yellow Perch</h2>
+          <p><em>Perca flavescens</em></p>
+          <p>Story focus: a familiar freshwater and brackish-water fish for discussing shallow habitats, juveniles, and local observations.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-fish-tale-section="spottail-shiner">
+          <span class="resource-kicker">Key Species 10</span>
+          <h2>Spottail Shiner</h2>
+          <p><em>Notropis hudsonius</em></p>
+          <p>Story focus: a small schooling fish that can help students practice observation, body features, and habitat association.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-fish-tale-section="bluefish">
+          <span class="resource-kicker">Key Species 11</span>
+          <h2>Bluefish</h2>
+          <p><em>Pomatomus saltatrix</em></p>
+          <p>Story focus: an active predator that brings food-web interactions, seasonal visitors, and estuary-ocean connections into view.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-fish-tale-section="hogchoker">
+          <span class="resource-kicker">Key Species 12</span>
+          <h2>Hogchoker</h2>
+          <p><em>Trinectes maculatus</em></p>
+          <p>Story focus: a small flatfish for introducing bottom habitats, camouflage, body shape, and benthic life in the Hudson River.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-fish-tale-section="atlantic-menhaden">
+          <span class="resource-kicker">Key Species 13</span>
+          <h2>Atlantic Menhaden</h2>
+          <p><em>Brevoortia tyrannus</em></p>
+          <p>Story focus: a filter-feeding forage fish that connects plankton, water-column ecology, predators, and broader coastal food webs.</p>
+        </article>
+      </div>
+    </section>
+
     <section class="tab-page" id="education-history" data-tab-page="education-history">
       <div class="page-header">
         <p class="eyebrow">Educational Materials</p>
@@ -1001,6 +1194,62 @@
           </div>
         </div>
       </article>
+
+      <div class="history-topic-grid">
+        <article class="history-topic-card data-panel" data-history-section="timeline">
+          <span class="resource-kicker">StoryMap Section</span>
+          <h2>Timeline</h2>
+          <p>Explore the major events and long-term sequence that shaped the Hudson River Biological Monitoring Program.</p>
+          <div class="history-source-links">
+            <a href="https://storymaps.arcgis.com/stories/cae4a5cf107544d9a7deb3aeaef985a2#n-WQiqlh" target="_blank" rel="noopener">Open Timeline</a>
+          </div>
+        </article>
+
+        <article class="history-topic-card data-panel" data-history-section="important-influencers">
+          <span class="resource-kicker">StoryMap Section</span>
+          <h2>Important Influencers</h2>
+          <p>People, agencies, institutions, and decisions that influenced the direction of Hudson River monitoring and management.</p>
+          <div class="history-source-links">
+            <a href="https://storymaps.arcgis.com/stories/cae4a5cf107544d9a7deb3aeaef985a2#n-55yGHB" target="_blank" rel="noopener">Open Important Influencers</a>
+          </div>
+        </article>
+
+        <article class="history-topic-card data-panel" data-history-section="legal-battle">
+          <span class="resource-kicker">StoryMap Section</span>
+          <h2>Impacts of the Legal Battle</h2>
+          <p>How legal and regulatory conflict around Hudson River power plants helped shape monitoring questions, evidence, and program history.</p>
+          <div class="history-source-links">
+            <a href="https://storymaps.arcgis.com/stories/cae4a5cf107544d9a7deb3aeaef985a2#n-saaeSn" target="_blank" rel="noopener">Open Legal Battle</a>
+          </div>
+        </article>
+
+        <article class="history-topic-card data-panel" data-history-section="the-hrbmp">
+          <span class="resource-kicker">StoryMap Section</span>
+          <h2>The HRBMP</h2>
+          <p>An overview of the monitoring program itself, including its purpose, survey context, and role in understanding Hudson River fisheries.</p>
+          <div class="history-source-links">
+            <a href="https://storymaps.arcgis.com/stories/cae4a5cf107544d9a7deb3aeaef985a2#n-4JkUCm" target="_blank" rel="noopener">Open The HRBMP</a>
+          </div>
+        </article>
+
+        <article class="history-topic-card data-panel" data-history-section="hudson-river-today">
+          <span class="resource-kicker">StoryMap Section</span>
+          <h2>The Hudson River Today</h2>
+          <p>Current river conditions, ecological context, and why long-term information remains important for the Hudson River Estuary.</p>
+          <div class="history-source-links">
+            <a href="https://storymaps.arcgis.com/stories/cae4a5cf107544d9a7deb3aeaef985a2#n-4aVOV0" target="_blank" rel="noopener">Open Hudson River Today</a>
+          </div>
+        </article>
+
+        <article class="history-topic-card data-panel" data-history-section="stony-brook-goals">
+          <span class="resource-kicker">StoryMap Section</span>
+          <h2>Stony Brook University's Goals</h2>
+          <p>How Stony Brook University frames future work around program documentation, data access, education, and long-term scientific value.</p>
+          <div class="history-source-links">
+            <a href="https://storymaps.arcgis.com/stories/cae4a5cf107544d9a7deb3aeaef985a2#n-a7ZO03" target="_blank" rel="noopener">Open Stony Brook Goals</a>
+          </div>
+        </article>
+      </div>
     </section>
 
     <section class="tab-page" id="education-interviews" data-tab-page="education-interviews">
@@ -1013,7 +1262,19 @@
       </div>
 
       <div class="interview-grid">
-        <article class="interview-card data-panel">
+        <article class="interview-card data-panel" data-interview-section="paul-shepson-yong-chen">
+          <a class="interview-video" href="https://www.youtube.com/watch?v=J2TWs7Vs-Sg" target="_blank" rel="noopener" aria-label="Watch an interview with Dean Paul Shepson and Professor Yong Chen on YouTube">
+            <img src="https://img.youtube.com/vi/J2TWs7Vs-Sg/hqdefault.jpg" alt="Video thumbnail for an interview with Dean Paul Shepson and Professor Yong Chen" loading="lazy" />
+            <span class="video-play">Watch on YouTube</span>
+          </a>
+          <div class="interview-body">
+            <span class="resource-kicker">Program Potential</span>
+            <h2>Paul Shepson and Yong Chen</h2>
+            <p>An interview with Dean Paul Shepson of SoMAS and Professor Yong Chen discussing the potential for the HRBMP.</p>
+          </div>
+        </article>
+
+        <article class="interview-card data-panel" data-interview-section="larry-barnthouse">
           <a class="interview-video" href="https://www.youtube.com/watch?v=KaUNMCv4bFM" target="_blank" rel="noopener" aria-label="Watch HRBMP Interview Project - Larry Barnthouse on YouTube">
             <img src="https://img.youtube.com/vi/KaUNMCv4bFM/hqdefault.jpg" alt="Video thumbnail for HRBMP Interview Project - Larry Barnthouse" loading="lazy" />
             <span class="video-play">Watch on YouTube</span>
@@ -1025,7 +1286,7 @@
           </div>
         </article>
 
-        <article class="interview-card data-panel">
+        <article class="interview-card data-panel" data-interview-section="fran-dunwell">
           <a class="interview-video" href="https://www.youtube.com/watch?v=ez_tL0v3cSI" target="_blank" rel="noopener" aria-label="Watch HRBMP Interview Project - Fran Dunwell on YouTube">
             <img src="https://img.youtube.com/vi/ez_tL0v3cSI/hqdefault.jpg" alt="Video thumbnail for HRBMP Interview Project - Fran Dunwell" loading="lazy" />
             <span class="video-play">Watch on YouTube</span>
@@ -1037,7 +1298,7 @@
           </div>
         </article>
 
-        <article class="interview-card data-panel">
+        <article class="interview-card data-panel" data-interview-section="karin-limburg">
           <a class="interview-video" href="https://www.youtube.com/watch?v=LADXMMZxmpQ" target="_blank" rel="noopener" aria-label="Watch HRBMP Interview Project - Karin E. Limburg on YouTube">
             <img src="https://img.youtube.com/vi/LADXMMZxmpQ/hqdefault.jpg" alt="Video thumbnail for HRBMP Interview Project - Karin E. Limburg" loading="lazy" />
             <span class="video-play">Watch on YouTube</span>
@@ -1049,7 +1310,7 @@
           </div>
         </article>
 
-        <article class="interview-card data-panel">
+        <article class="interview-card data-panel" data-interview-section="john-lipscomb">
           <a class="interview-video" href="https://www.youtube.com/watch?v=CDsPb-1fqgM" target="_blank" rel="noopener" aria-label="Watch HRBMP Interview Project - John Lipscomb on YouTube">
             <img src="https://img.youtube.com/vi/CDsPb-1fqgM/hqdefault.jpg" alt="Video thumbnail for HRBMP Interview Project - John Lipscomb" loading="lazy" />
             <span class="video-play">Watch on YouTube</span>
@@ -1061,7 +1322,7 @@
           </div>
         </article>
 
-        <article class="interview-card data-panel">
+        <article class="interview-card data-panel" data-interview-section="kim-mckown">
           <a class="interview-video" href="https://www.youtube.com/watch?v=XLyU5t1Imfk" target="_blank" rel="noopener" aria-label="Watch HRBMP Interview Project - Kim McKown on YouTube">
             <img src="https://img.youtube.com/vi/XLyU5t1Imfk/hqdefault.jpg" alt="Video thumbnail for HRBMP Interview Project - Kim McKown" loading="lazy" />
             <span class="video-play">Watch on YouTube</span>
@@ -1073,7 +1334,7 @@
           </div>
         </article>
 
-        <article class="interview-card data-panel">
+        <article class="interview-card data-panel" data-interview-section="bob-schmidt">
           <a class="interview-video" href="https://www.youtube.com/watch?v=MyhTA_hv-LA" target="_blank" rel="noopener" aria-label="Watch HRBMP Interview Project - Bob Schmidt on YouTube">
             <img src="https://img.youtube.com/vi/MyhTA_hv-LA/hqdefault.jpg" alt="Video thumbnail for HRBMP Interview Project - Bob Schmidt" loading="lazy" />
             <span class="video-play">Watch on YouTube</span>
@@ -1085,7 +1346,7 @@
           </div>
         </article>
 
-        <article class="interview-card data-panel">
+        <article class="interview-card data-panel" data-interview-section="eric-schultz">
           <a class="interview-video" href="https://www.youtube.com/watch?v=JLXMdOAh--c" target="_blank" rel="noopener" aria-label="Watch HRBMP Interview Project - Eric Schultz on YouTube">
             <img src="https://img.youtube.com/vi/JLXMdOAh--c/hqdefault.jpg" alt="Video thumbnail for HRBMP Interview Project - Eric Schultz" loading="lazy" />
             <span class="video-play">Watch on YouTube</span>
@@ -1097,7 +1358,7 @@
           </div>
         </article>
 
-        <article class="interview-card data-panel">
+        <article class="interview-card data-panel" data-interview-section="john-young">
           <a class="interview-video" href="https://www.youtube.com/watch?v=m3rH8YoNyAs" target="_blank" rel="noopener" aria-label="Watch HRBMP Interview Project - John Young on YouTube">
             <img src="https://img.youtube.com/vi/m3rH8YoNyAs/hqdefault.jpg" alt="Video thumbnail for HRBMP Interview Project - John Young" loading="lazy" />
             <span class="video-play">Watch on YouTube</span>
@@ -1109,7 +1370,7 @@
           </div>
         </article>
 
-        <article class="interview-card data-panel">
+        <article class="interview-card data-panel" data-interview-section="elise-zoli">
           <a class="interview-video" href="https://www.youtube.com/watch?v=iSfsFJhRabk" target="_blank" rel="noopener" aria-label="Watch HRBMP Interview Project - Elise N. Zoli on YouTube">
             <img src="https://img.youtube.com/vi/iSfsFJhRabk/hqdefault.jpg" alt="Video thumbnail for HRBMP Interview Project - Elise N. Zoli" loading="lazy" />
             <span class="video-play">Watch on YouTube</span>
@@ -1127,6 +1388,41 @@
       <div class="page-header">
         <p class="eyebrow">Educational Materials</p>
         <h1>Classroom Materials</h1>
+        <p class="page-note">
+          Printable and presentation-ready resources that can support classroom use of HRBMP history, maps, images, and monitoring data.
+        </p>
+      </div>
+
+      <div class="education-topic-grid">
+        <article class="education-topic-card data-panel" data-classroom-section="lesson-plans">
+          <span class="resource-kicker">Planning</span>
+          <h2>Lesson Plans</h2>
+          <p>Teacher-facing lesson outlines for estuary ecology, fish life stages, monitoring design, and long-term environmental change.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-classroom-section="student-worksheets">
+          <span class="resource-kicker">Student Packets</span>
+          <h2>Student Worksheets</h2>
+          <p>Printable observation sheets, graphing prompts, vocabulary practice, short readings, and evidence-building activities.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-classroom-section="slide-decks">
+          <span class="resource-kicker">Instruction</span>
+          <h2>Teacher Slide Decks</h2>
+          <p>Presentation slides for introducing HRBMP history, Hudson River regions, key species, and classroom data investigations.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-classroom-section="data-activities">
+          <span class="resource-kicker">Data Skills</span>
+          <h2>Data Activities</h2>
+          <p>Guided activities where students filter records, read maps, compare regions, graph patterns, and explain scientific evidence.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-classroom-section="field-lab-activities">
+          <span class="resource-kicker">Hands-on</span>
+          <h2>Field &amp; Lab Activities</h2>
+          <p>Simple protocols and demonstrations for sampling methods, specimen observations, water-quality measurements, and habitat comparisons.</p>
+        </article>
       </div>
     </section>
 
@@ -1134,6 +1430,47 @@
       <div class="page-header">
         <p class="eyebrow">Educational Materials</p>
         <h1>Outreach Activities</h1>
+        <p class="page-note">
+          Public-facing activities for sharing HRBMP history, Hudson River monitoring, fish ecology, and data resources with community audiences.
+        </p>
+      </div>
+
+      <div class="education-topic-grid">
+        <article class="education-topic-card data-panel" data-outreach-section="public-talks">
+          <span class="resource-kicker">Programs</span>
+          <h2>Public Talks</h2>
+          <p>Short talks for public audiences about Hudson River monitoring, long-term data, fish communities, and program history.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-outreach-section="tabling-displays">
+          <span class="resource-kicker">Events</span>
+          <h2>Tabling Displays</h2>
+          <p>Display materials for science fairs, open houses, community days, and campus events, including maps, photos, and key species.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-outreach-section="school-visits">
+          <span class="resource-kicker">Schools</span>
+          <h2>School Visits</h2>
+          <p>Age-appropriate visit formats for introducing Hudson River fish, sampling methods, research careers, and estuary stewardship.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-outreach-section="teacher-workshops">
+          <span class="resource-kicker">Professional Learning</span>
+          <h2>Teacher Workshops</h2>
+          <p>Workshop outlines for helping teachers use HRBMP maps, images, datasets, and curriculum modules in classroom instruction.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-outreach-section="community-science">
+          <span class="resource-kicker">Participation</span>
+          <h2>Community Science</h2>
+          <p>Ideas for guided public observation, shoreline habitat discussions, photo-based activities, and responsible data interpretation.</p>
+        </article>
+
+        <article class="education-topic-card data-panel" data-outreach-section="event-handouts">
+          <span class="resource-kicker">Take-home</span>
+          <h2>Event Handouts</h2>
+          <p>One-page summaries, species guides, QR-code cards, and simple explainers for visitors to take home after outreach events.</p>
+        </article>
       </div>
     </section>
 
@@ -1960,12 +2297,17 @@
             management team for review.
           </p>
         </div>
-        <div class="policy-callout">
+        <div class="policy-callout" id="access-data-sharing-policy" tabindex="-1">
           <div>
-            <strong>You must read the policy before requesting access.</strong>
+            <strong>MUST READ: Data Sharing Policy</strong>
             <p>
               <a href="https://you.stonybrook.edu/hrbmp/files/2024/02/HRBMP_DataSharingPolicy-f253c4f473adf36f.pdf" target="_blank" rel="noopener">Click here for the HRBMP Data Sharing Policy</a>.
             </p>
+            <ul class="policy-summary">
+              <li>Access requests are reviewed by the data management team before approval.</li>
+              <li>Requestors must describe their role, dataset need, and project or use case.</li>
+              <li>The request cannot be submitted until the policy consent checkbox below is checked.</li>
+            </ul>
           </div>
         </div>
         <form class="login-form access-request-form" onsubmit="return false">
@@ -1995,7 +2337,7 @@
           </label>
           <label class="full-span policy-acknowledgment">
             <input id="access-request-policy-acknowledgment" type="checkbox" required />
-            <span>I acknowledge that I have read the HRBMP Data Sharing Policy and understand that access will be reviewed under that policy.</span>
+            <span>I have read, understand, and agree to follow the HRBMP Data Sharing Policy. I understand that access will be reviewed under that policy before approval.</span>
           </label>
           <button id="access-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Request</button>
         </form>
@@ -2201,6 +2543,6 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script src="app.js?v=environmental-fallback-100-20260506"></script>
+  <script src="app.js?v=1.1.2"></script>
 </body>
 </html>

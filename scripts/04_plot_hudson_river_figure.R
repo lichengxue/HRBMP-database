@@ -643,8 +643,9 @@ build_hudson_map <- function() {
       data = tick_df,
       aes(x = tick_x, xend = tick_xend, y = y, yend = y),
       color = map_palette$region_border,
-      linewidth = 0.26,
-      alpha = 0.72
+      linewidth = 0.58,
+      alpha = 0.96,
+      lineend = "round"
     ) +
     geom_text(
       data = label_df,
