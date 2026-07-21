@@ -192,3 +192,7 @@ See `docs/github_vs_database.md` for guidance on what belongs in GitHub versus
 what should stay in a local or hosted SQLite/API environment.
 See `docs/access_control_design.md` for the planned login, role, request, and
 download-audit structure.
+See `docs/fjs_supabase_archive.md` for the Fall Juvenile Survey image/PDF
+archive workflow using Supabase PostgreSQL and Storage.
+See `docs/fjs_photo_filename_conventions.md` for the fish photo protocol's
+folder tree and filename code meanings.
