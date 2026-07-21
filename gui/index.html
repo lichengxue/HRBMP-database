@@ -43,6 +43,7 @@
             <a href="#biological-data-request" data-tab-link="biological-data-request">Data Request</a>
           </div>
         </div>
+        <a href="#demo" data-tab-link="demo">Demo</a>
         <div class="nav-dropdown">
           <a href="#environmental-database" data-tab-link="environmental-database">Environmental Database</a>
           <div class="nav-submenu" aria-label="Environmental Database subsections">
@@ -674,6 +675,159 @@
           </label>
           <button id="data-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Data Request</button>
         </form>
+      </section>
+    </section>
+
+    <section class="tab-page" id="demo" data-tab-page="demo">
+      <div class="page-header with-controls">
+        <div>
+          <p class="eyebrow">Demo</p>
+          <h1>FJS Data Request Demo</h1>
+          <p class="page-note">
+            Public Fall Juvenile Survey archive metadata are read from Supabase and shaped into a data request.
+          </p>
+        </div>
+        <div class="control-row demo-api-controls">
+          <label>
+            Supabase Publishable Key
+            <input id="demo-supabase-key" type="password" autocomplete="off" placeholder="sb_publishable_..." />
+          </label>
+          <button id="demo-save-key" type="button" class="secondary-button">Save Key</button>
+          <button id="demo-refresh-results" type="button" class="primary-button">Refresh</button>
+        </div>
+      </div>
+
+      <section class="data-panel demo-status-panel">
+        <div class="metadata-panel-header">
+          <div>
+            <h2>Archive Request Workspace</h2>
+            <p id="demo-api-status">Waiting for Supabase API settings.</p>
+          </div>
+          <a id="demo-api-url" class="secondary-button link-button" href="https://vnqulddrlhkftcqpekpl.supabase.co/rest/v1/fjs_archive_catalog" target="_blank" rel="noopener">Open API Endpoint</a>
+        </div>
+        <div class="summary-strip" id="demo-summary"></div>
+      </section>
+
+      <section class="data-panel demo-filter-panel">
+        <div class="metadata-panel-header">
+          <div>
+            <h2>Request Filters</h2>
+            <p>Choose program, species, year, region, sample, and data type before submitting the request.</p>
+          </div>
+          <button id="demo-clear-filters" type="button" class="secondary-button">Clear Filters</button>
+        </div>
+        <div class="demo-filter-grid">
+          <label>
+            Survey Program
+            <select id="demo-program"></select>
+          </label>
+          <label>
+            Species
+            <select id="demo-species"></select>
+          </label>
+          <label>
+            Year From
+            <select id="demo-year-start"></select>
+          </label>
+          <label>
+            Year To
+            <select id="demo-year-end"></select>
+          </label>
+          <label>
+            HRBMP Region
+            <select id="demo-region"></select>
+          </label>
+          <label>
+            Sample
+            <select id="demo-sample"></select>
+          </label>
+          <fieldset class="demo-data-type-group">
+            <legend>Data Type</legend>
+            <label>
+              <input id="demo-type-counts" type="checkbox" checked />
+              <span>Processed abundance/count data</span>
+            </label>
+            <label>
+              <input id="demo-type-images" type="checkbox" checked />
+              <span>Representative fish images</span>
+            </label>
+            <label>
+              <input id="demo-type-documents" type="checkbox" checked />
+              <span>Jar labels, field sheets, and lab sheets</span>
+            </label>
+          </fieldset>
+        </div>
+      </section>
+
+      <section class="data-panel demo-results-panel">
+        <div class="metadata-panel-header">
+          <div>
+            <h2>Matching Public Records</h2>
+            <p id="demo-result-status">No query has been run yet.</p>
+          </div>
+          <a id="demo-manifest-download" class="secondary-button link-button" href="#" download="hrbmp_fjs_demo_manifest.csv">Download Manifest CSV</a>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Sample</th>
+                <th>Date</th>
+                <th>Species</th>
+                <th>Region</th>
+                <th>Data Type</th>
+                <th>File</th>
+                <th>Storage Path</th>
+              </tr>
+            </thead>
+            <tbody id="demo-result-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="data-panel data-request-panel demo-request-panel">
+        <div>
+          <h2>Submit Data Request</h2>
+          <p>Public demo requests can be recorded in Supabase for admin review. Packaging and email delivery require the backend automation step.</p>
+        </div>
+        <form class="data-request-form" onsubmit="return false">
+          <label>
+            Name
+            <input id="demo-request-name" type="text" autocomplete="name" />
+          </label>
+          <label>
+            Email
+            <input id="demo-request-email" type="email" autocomplete="email" />
+          </label>
+          <label>
+            Affiliation
+            <input id="demo-request-affiliation" type="text" autocomplete="organization" />
+          </label>
+          <label>
+            Intended Use
+            <select id="demo-request-use">
+              <option>Research</option>
+              <option>Management</option>
+              <option>Education</option>
+              <option>Public Information</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <label class="full-span">
+            Project Or Request Notes
+            <textarea id="demo-request-notes" rows="4"></textarea>
+          </label>
+          <label class="full-span">
+            Current Request Summary
+            <textarea id="demo-request-summary" rows="5" readonly></textarea>
+          </label>
+          <label class="full-span policy-acknowledgment">
+            <input id="demo-data-request-policy-acknowledgment" type="checkbox" required />
+            <span>I understand that this request will be reviewed by the HRBMP data management team before any detailed archive package is released.</span>
+          </label>
+          <button id="demo-data-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Demo Request</button>
+        </form>
+        <div id="demo-request-status" class="demo-request-status" aria-live="polite"></div>
       </section>
     </section>
 

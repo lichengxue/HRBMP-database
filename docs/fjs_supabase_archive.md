@@ -142,6 +142,82 @@ CSV values should be imported as `NULL`.
 
 ## Upload JPG/PDF Files
 
+### No-Key Dashboard Upload
+
+For a small demo batch, use the local R helper to prepare an upload-ready folder.
+This does not connect to Supabase and does not need any API key.
+
+From the repository root:
+
+```bash
+Rscript scripts/prepare_fjs_storage_upload.R 98_20171023_1592
+```
+
+The script copies the files into:
+
+```text
+data/processed/FJS_2017_sample/storage_upload_ready/samples/98_20171023_1592/
+```
+
+Then in Supabase:
+
+1. Open **Storage**.
+2. Open the bucket `fjs-archive`.
+3. Create or open a folder named `samples`.
+4. Upload the prepared sample folder, such as `98_20171023_1592`.
+
+Do not rename the prepared folders or files. The folder path must match
+`fjs_assets.storage_object_path`, for example:
+
+```text
+samples/98_20171023_1592/jar_label_image/98_20171023_1592_J01.JPG
+```
+
+To prepare every asset in `fjs_assets.csv`:
+
+```bash
+Rscript scripts/prepare_fjs_storage_upload.R all
+```
+
+Then upload the prepared `samples` folder into the root of the `fjs-archive`
+bucket.
+
+### API Upload
+
+For larger batches, API upload is less manual. The uploader reads
+`fjs_assets.csv` and sends each local file to the exact Supabase Storage object
+path recorded in the database. This method requires a backend-only Supabase key.
+
+First, get a backend-only Supabase key from **Project Settings > API Keys**. Use
+a secret key or legacy service-role key. Do not commit this key and do not put it
+in browser code.
+
+In PowerShell:
+
+```powershell
+$env:SUPABASE_SERVICE_ROLE_KEY = "paste-secret-or-service-role-key-here"
+```
+
+Preview the upload plan:
+
+```powershell
+python scripts/upload_fjs_storage_assets.py `
+  --supabase-url "https://vnqulddrlhkftcqpekpl.supabase.co"
+```
+
+Upload the files:
+
+```powershell
+python scripts/upload_fjs_storage_assets.py `
+  --supabase-url "https://vnqulddrlhkftcqpekpl.supabase.co" `
+  --apply
+```
+
+If you need to replace files already uploaded at the same paths, add
+`--upsert`.
+
+Fully manual upload is still possible, but should only be used for small
+corrections.
 Upload the files listed in:
 
 ```text
@@ -188,6 +264,41 @@ where sample_id in ('98_20171023_1591', '98_20171023_1592');
 ```
 
 Use `restricted` for records that should require an authenticated Supabase user.
+
+## GUI Demo Request Tab
+
+The static GUI includes a **Demo** tab for public FJS archive requests.
+
+The tab can:
+
+- Read public rows from `fjs_archive_catalog` through the Supabase REST API.
+- Filter by survey program, species, year, HRBMP region, sample, and data type.
+- Download a manifest CSV for the matching request items.
+- Submit a request row to Supabase for admin review, after the request-queue
+  migration is installed.
+
+Run this migration in Supabase SQL Editor before testing request submission:
+
+```text
+supabase/migrations/20260721170000_create_hrbmp_data_requests.sql
+```
+
+It creates:
+
+```text
+public.hrbmp_data_requests
+```
+
+Public users can insert new request records but cannot read the request queue.
+Admins can review submitted requests from the Supabase dashboard.
+
+The GUI does not commit the Supabase publishable key. In the Demo tab, paste the
+project publishable key into the browser-only key field and click **Save Key**.
+
+The current demo does not yet send automated emails or create ZIP packages.
+That production step should be implemented with a backend component such as a
+Supabase Edge Function, because GitHub Pages cannot safely hold email-service
+credentials or service-role database credentials.
 
 ## QC Result For Current Bundle
 
