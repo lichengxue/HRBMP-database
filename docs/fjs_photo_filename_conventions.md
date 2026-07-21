@@ -30,7 +30,7 @@ For the current local archive, the outer `Task/Task_Year/` folders are not
 present; the sample folders are directly under:
 
 ```text
-data/raw/fjs_2017_sample1591_1592/
+data/raw/FJS_2017_sample/
 ```
 
 Example:

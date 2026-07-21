@@ -35,13 +35,13 @@ docs/fjs_photo_filename_conventions.md
 The raw bundle was moved here:
 
 ```text
-data/raw/fjs_2017_sample1591_1592/
+data/raw/FJS_2017_sample/
 ```
 
 The processed metadata CSV should use a role-based name:
 
 ```text
-data/raw/fjs_2017_sample1591_1592/processed_counts_by_sample_taxon.csv
+data/raw/FJS_2017_sample/processed_counts_by_sample_taxon.csv
 ```
 
 The filename does not need `FJS` or `2017` because the program/task code,
@@ -53,7 +53,7 @@ to GitHub.
 The generated import files are written here:
 
 ```text
-data/processed/fjs_2017_sample1591_1592/supabase_import/
+data/processed/FJS_2017_sample/supabase_import/
 ```
 
 That folder is also ignored by Git because it is derived from the raw source
@@ -123,7 +123,7 @@ python scripts/build_fjs_archive_manifest.py
 The script writes normalized import CSVs and a QC report to:
 
 ```text
-data/processed/fjs_2017_sample1591_1592/supabase_import/
+data/processed/FJS_2017_sample/supabase_import/
 ```
 
 Import the CSVs in this order:
@@ -145,7 +145,7 @@ CSV values should be imported as `NULL`.
 Upload the files listed in:
 
 ```text
-data/processed/fjs_2017_sample1591_1592/supabase_import/fjs_assets.csv
+data/processed/FJS_2017_sample/supabase_import/fjs_assets.csv
 ```
 
 For each row, upload `local_source_path` into Supabase Storage bucket
@@ -155,7 +155,7 @@ Example:
 
 ```text
 local_source_path:
-data/raw/fjs_2017_sample1591_1592/98_20171023_1591/98_20171023_1591_J01.JPG
+data/raw/FJS_2017_sample/98_20171023_1591/98_20171023_1591_J01.JPG
 
 storage_object_path:
 samples/98_20171023_1591/jar_label_image/98_20171023_1591_J01.JPG

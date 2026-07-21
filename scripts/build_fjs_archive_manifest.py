@@ -788,7 +788,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--source-root",
-        default="data/raw/fjs_2017_sample1591_1592",
+        default="data/raw/FJS_2017_sample",
         help="FJS raw source bundle folder.",
     )
     parser.add_argument(
@@ -806,7 +806,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
     parser.add_argument(
         "--output-dir",
-        default="data/processed/fjs_2017_sample1591_1592/supabase_import",
+        default="data/processed/FJS_2017_sample/supabase_import",
         help="Output directory for generated import CSV files.",
     )
     parser.add_argument("--bucket", default=DEFAULT_BUCKET, help="Supabase Storage bucket name.")
@@ -818,7 +818,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
     parser.add_argument(
         "--batch-name",
-        default="fjs_2017_sample1591_1592",
+        default="FJS_2017_sample",
         help="Import batch name.",
     )
     return parser.parse_args(argv)
