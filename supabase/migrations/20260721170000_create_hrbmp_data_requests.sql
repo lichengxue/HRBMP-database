@@ -56,6 +56,9 @@ alter table public.hrbmp_data_requests enable row level security;
 
 grant insert on public.hrbmp_data_requests to anon, authenticated;
 
+drop policy if exists "Public can submit HRBMP data requests"
+on public.hrbmp_data_requests;
+
 create policy "Public can submit HRBMP data requests"
 on public.hrbmp_data_requests
 for insert
