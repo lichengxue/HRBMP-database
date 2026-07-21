@@ -308,117 +308,133 @@ const DEMO_ARCHIVE_SELECT = [
   'effective_access_level'
 ].join(',');
 
-const DEMO_FALLBACK_ARCHIVE_ROWS = [
-  {
+const DEMO_REGION_CODE_LABELS = {
+  BT: 'BT - Battery',
+  YK: 'YK - Yonkers',
+  TZ: 'TZ - Tappan Zee',
+  CH: 'CH - Croton-Haverstraw',
+  IP: 'IP - Indian Point',
+  WP: 'WP - West Point',
+  CW: 'CW - Cornwall',
+  PK: 'PK - Poughkeepsie',
+  HP: 'HP - Hyde Park',
+  KG: 'KG - Kingston',
+  SG: 'SG - Saugerties',
+  CS: 'CS - Catskill',
+  AL: 'AL - Albany'
+};
+
+const DEMO_FALLBACK_SAMPLES = {
+  '98_20171023_1591': {
+    sample_id: '98_20171023_1591',
+    program: 'FJS',
+    sample_date: '2017-10-23',
+    river_mile: 8,
+    river_region_number: 0,
+    river_region_name: 'BT - Battery',
+    latitude: 40.81,
+    longitude: -73.98
+  },
+  '98_20171023_1592': {
     sample_id: '98_20171023_1592',
     program: 'FJS',
     sample_date: '2017-10-23',
-    river_mile: null,
-    river_region_number: null,
-    river_region_name: 'Region pending',
+    river_mile: 9,
+    river_region_number: 0,
+    river_region_name: 'BT - Battery',
+    latitude: 40.82,
+    longitude: -73.97
+  }
+};
+
+const DEMO_FALLBACK_SAMPLE_TAXA = [
+  {
+    sample_id: '98_20171023_1591',
+    taxon_code: 1,
+    common_name: 'ALEWIFE',
+    young_of_year_count_corrected: 1,
+    yearling_count_corrected: 0,
+    older_count_corrected: 0,
+    yearling_and_older_count_corrected: 0,
+    total_count_corrected: 1
+  },
+  {
+    sample_id: '98_20171023_1591',
     taxon_code: 2,
     common_name: 'BAY ANCHOVY',
-    scientific_name: null,
-    young_of_year_count_corrected: null,
-    yearling_count_corrected: null,
-    older_count_corrected: null,
-    yearling_and_older_count_corrected: null,
-    total_count_corrected: null,
-    asset_kind: 'jar_label_image',
-    storage_bucket: 'fjs-archive',
-    storage_object_path: 'samples/98_20171023_1592/jar_label_image/98_20171023_1592_J01.JPG',
-    original_file_name: '98_20171023_1592_J01.JPG',
-    mime_type: 'image/jpeg',
-    file_size_bytes: null,
-    image_view: null,
-    sheet_code: 'J01',
-    effective_access_level: 'public'
+    young_of_year_count_corrected: 0,
+    yearling_count_corrected: 2,
+    older_count_corrected: 0,
+    yearling_and_older_count_corrected: 2,
+    total_count_corrected: 4
+  },
+  {
+    sample_id: '98_20171023_1591',
+    taxon_code: 45,
+    common_name: 'WEAKFISH',
+    young_of_year_count_corrected: 2,
+    yearling_count_corrected: 0,
+    older_count_corrected: 0,
+    yearling_and_older_count_corrected: 0,
+    total_count_corrected: 2
   },
   {
     sample_id: '98_20171023_1592',
-    program: 'FJS',
-    sample_date: '2017-10-23',
-    river_mile: null,
-    river_region_number: null,
-    river_region_name: 'Region pending',
     taxon_code: 2,
     common_name: 'BAY ANCHOVY',
-    scientific_name: null,
-    total_count_corrected: null,
-    asset_kind: 'representative_species_image',
-    storage_bucket: 'fjs-archive',
-    storage_object_path: 'samples/98_20171023_1592/representative_species_image/98_20171023_1592_J01_002_04_01_01.JPG',
-    original_file_name: '98_20171023_1592_J01_002_04_01_01.JPG',
-    mime_type: 'image/jpeg',
-    file_size_bytes: null,
-    image_view: 'left_side',
-    sheet_code: 'J01',
-    effective_access_level: 'public'
-  },
-  {
-    sample_id: '98_20171023_1592',
-    program: 'FJS',
-    sample_date: '2017-10-23',
-    river_mile: null,
-    river_region_number: null,
-    river_region_name: 'Region pending',
-    taxon_code: 2,
-    common_name: 'BAY ANCHOVY',
-    scientific_name: null,
-    total_count_corrected: null,
-    asset_kind: 'representative_species_image',
-    storage_bucket: 'fjs-archive',
-    storage_object_path: 'samples/98_20171023_1592/representative_species_image/98_20171023_1592_J01_002_04_01_02.JPG',
-    original_file_name: '98_20171023_1592_J01_002_04_01_02.JPG',
-    mime_type: 'image/jpeg',
-    file_size_bytes: null,
-    image_view: 'right_side',
-    sheet_code: 'J01',
-    effective_access_level: 'public'
-  },
-  {
-    sample_id: '98_20171023_1592',
-    program: 'FJS',
-    sample_date: '2017-10-23',
-    river_mile: null,
-    river_region_number: null,
-    river_region_name: 'Region pending',
-    taxon_code: 2,
-    common_name: 'BAY ANCHOVY',
-    scientific_name: null,
-    total_count_corrected: null,
-    asset_kind: 'lab_sheet_pdf',
-    storage_bucket: 'fjs-archive',
-    storage_object_path: 'samples/98_20171023_1592/lab_sheet_pdf/98_20171023_1592_LW1.pdf',
-    original_file_name: '98_20171023_1592_LW1.pdf',
-    mime_type: 'application/pdf',
-    file_size_bytes: null,
-    image_view: null,
-    sheet_code: 'LW1',
-    effective_access_level: 'public'
-  },
-  {
-    sample_id: '98_20171023_1592',
-    program: 'FJS',
-    sample_date: '2017-10-23',
-    river_mile: null,
-    river_region_number: null,
-    river_region_name: 'Region pending',
-    taxon_code: 2,
-    common_name: 'BAY ANCHOVY',
-    scientific_name: null,
-    total_count_corrected: null,
-    asset_kind: 'field_sheet_pdf',
-    storage_bucket: 'fjs-archive',
-    storage_object_path: 'samples/98_20171023_1592/field_sheet_pdf/98_20171023_1592_SC1.pdf',
-    original_file_name: '98_20171023_1592_SC1.pdf',
-    mime_type: 'application/pdf',
-    file_size_bytes: null,
-    image_view: null,
-    sheet_code: 'SC1',
-    effective_access_level: 'public'
+    young_of_year_count_corrected: 2,
+    yearling_count_corrected: 0,
+    older_count_corrected: 0,
+    yearling_and_older_count_corrected: 0,
+    total_count_corrected: 2
   }
 ];
+
+const DEMO_FALLBACK_ASSETS = [
+  { sample_id: '98_20171023_1591', asset_kind: 'jar_label_image', original_file_name: '98_20171023_1591_J01.JPG', mime_type: 'image/jpeg', sheet_code: 'J01' },
+  { sample_id: '98_20171023_1591', asset_kind: 'field_sheet_pdf', original_file_name: '98_20171023_1591_SC1.pdf', mime_type: 'application/pdf', sheet_code: 'SC1' },
+  { sample_id: '98_20171023_1591', asset_kind: 'lab_sheet_pdf', original_file_name: '98_20171023_1591_LW1.pdf', mime_type: 'application/pdf', sheet_code: 'LW1' },
+  { sample_id: '98_20171023_1591', taxon_code: 1, asset_kind: 'representative_species_image', original_file_name: '98_20171023_1591_J01_001_04_01_01.JPG', mime_type: 'image/jpeg', image_view: 'left_side', sheet_code: 'J01' },
+  { sample_id: '98_20171023_1591', taxon_code: 1, asset_kind: 'representative_species_image', original_file_name: '98_20171023_1591_J01_001_04_01_02.JPG', mime_type: 'image/jpeg', image_view: 'right_side', sheet_code: 'J01' },
+  { sample_id: '98_20171023_1591', taxon_code: 45, asset_kind: 'representative_species_image', original_file_name: '98_20171023_1591_J01_045_04_01_01.JPG', mime_type: 'image/jpeg', image_view: 'left_side', sheet_code: 'J01' },
+  { sample_id: '98_20171023_1591', taxon_code: 45, asset_kind: 'representative_species_image', original_file_name: '98_20171023_1591_J01_045_04_01_02.JPG', mime_type: 'image/jpeg', image_view: 'right_side', sheet_code: 'J01' },
+  { sample_id: '98_20171023_1592', asset_kind: 'jar_label_image', original_file_name: '98_20171023_1592_J01.JPG', mime_type: 'image/jpeg', sheet_code: 'J01' },
+  { sample_id: '98_20171023_1592', asset_kind: 'field_sheet_pdf', original_file_name: '98_20171023_1592_SC1.pdf', mime_type: 'application/pdf', sheet_code: 'SC1' },
+  { sample_id: '98_20171023_1592', asset_kind: 'lab_sheet_pdf', original_file_name: '98_20171023_1592_LW1.pdf', mime_type: 'application/pdf', sheet_code: 'LW1' },
+  { sample_id: '98_20171023_1592', taxon_code: 2, asset_kind: 'representative_species_image', original_file_name: '98_20171023_1592_J01_002_04_01_01.JPG', mime_type: 'image/jpeg', image_view: 'left_side', sheet_code: 'J01' },
+  { sample_id: '98_20171023_1592', taxon_code: 2, asset_kind: 'representative_species_image', original_file_name: '98_20171023_1592_J01_002_04_01_02.JPG', mime_type: 'image/jpeg', image_view: 'right_side', sheet_code: 'J01' }
+];
+
+const DEMO_FALLBACK_ARCHIVE_ROWS = buildDemoFallbackArchiveRows();
+
+function buildDemoFallbackArchiveRows() {
+  const rows = [];
+  DEMO_FALLBACK_SAMPLE_TAXA.forEach((taxonRow) => {
+    const sample = DEMO_FALLBACK_SAMPLES[taxonRow.sample_id];
+    if (!sample) return;
+
+    DEMO_FALLBACK_ASSETS
+      .filter((asset) => asset.sample_id === taxonRow.sample_id)
+      .filter((asset) => !asset.taxon_code || Number(asset.taxon_code) === Number(taxonRow.taxon_code))
+      .forEach((asset) => {
+        rows.push({
+          ...sample,
+          ...taxonRow,
+          scientific_name: null,
+          storage_bucket: 'fjs-archive',
+          storage_object_path: `samples/${asset.sample_id}/${asset.asset_kind}/${asset.original_file_name}`,
+          original_file_name: asset.original_file_name,
+          mime_type: asset.mime_type,
+          file_size_bytes: null,
+          image_view: asset.image_view || null,
+          sheet_code: asset.sheet_code || null,
+          asset_kind: asset.asset_kind,
+          effective_access_level: 'public'
+        });
+      });
+  });
+  return rows;
+}
 
 const BIOLOGICAL_MONITORING_PROGRAMS = [
   'Long River Survey',
@@ -1515,7 +1531,7 @@ const state = {
   selectedEnvSource: 'hrbmp',
   selectedCatalogSpecies: null,
   selectedCatalogLifeStage: null,
-  demoRows: DEMO_FALLBACK_ARCHIVE_ROWS,
+  demoRows: DEMO_FALLBACK_ARCHIVE_ROWS.map(normalizeDemoArchiveRow),
   demoRowsSource: 'fallback',
   demoLastFilteredRows: [],
   demoApiLoaded: false
@@ -2491,18 +2507,31 @@ async function fetchDemoArchiveRows(key) {
 
 function normalizeDemoArchiveRow(row) {
   const sampleDate = row.sample_date || '';
+  const regionLabel = demoRegionLabel(row.river_region_name, row.river_region_number);
   return {
     ...row,
     program: row.program || 'FJS',
     sample_year: Number(sampleDate.slice(0, 4)) || null,
     common_name: row.common_name || 'Species pending',
-    river_region_name: row.river_region_name || regionNameForNumber(row.river_region_number) || 'Region pending',
+    river_region_name: regionLabel || 'Region pending',
     total_count_corrected: asNumberOrNull(row.total_count_corrected),
     young_of_year_count_corrected: asNumberOrNull(row.young_of_year_count_corrected),
     yearling_count_corrected: asNumberOrNull(row.yearling_count_corrected),
     older_count_corrected: asNumberOrNull(row.older_count_corrected),
     yearling_and_older_count_corrected: asNumberOrNull(row.yearling_and_older_count_corrected)
   };
+}
+
+function demoRegionLabel(regionName, regionNumber) {
+  const raw = String(regionName || '').trim();
+  if (DEMO_REGION_CODE_LABELS[raw]) return DEMO_REGION_CODE_LABELS[raw];
+  const rawLower = raw.toLowerCase();
+  const namedRegion = HRBMP_REGIONS.find((region) => region.name.toLowerCase() === rawLower);
+  if (namedRegion) return `${namedRegion.code} - ${namedRegion.name}`;
+  if (raw) return raw;
+
+  const numberedRegion = HRBMP_REGIONS.find((region) => String(region.number) === String(regionNumber));
+  return numberedRegion ? `${numberedRegion.code} - ${numberedRegion.name}` : '';
 }
 
 function populateDemoFilters() {
