@@ -1745,6 +1745,7 @@ function initTabs() {
   [
     ['Data Sharing Policy - Biological Request', 'biological-data-request', 'biological-data-sharing-policy', 'biological data request must read consent'],
     ['Data Sharing Policy - Environmental Request', 'environmental-data-request', 'environmental-data-sharing-policy', 'environmental data request must read consent'],
+    ['Data Sharing Policy - Demo Request', 'demo', 'demo-data-sharing-policy', 'demo data request archive must read consent'],
     ['Data Sharing Policy - Access Request', 'user-login', 'access-data-sharing-policy', 'access request login must read consent']
   ].forEach(([label, pageId, targetId, keywords]) => {
     addSiteSearchItem(label, () => {
@@ -2654,7 +2655,7 @@ function renderAdminRequestRows(rows) {
     actions.className = 'admin-request-actions';
     actions.append(
       adminStatusButton(row, 'reviewing', 'Reviewing'),
-      adminStatusButton(row, 'approved', 'Approve'),
+      adminStatusButton(row, 'approved', 'Approve & Email'),
       adminStatusButton(row, 'declined', 'Decline')
     );
     tr.appendChild(actions);
@@ -2667,7 +2668,10 @@ function adminStatusButton(row, status, label) {
   button.type = 'button';
   button.className = status === 'approved' ? 'primary-button compact-button' : 'secondary-button compact-button';
   button.textContent = label;
-  button.disabled = row.request_status === status;
+  const isDeliveryButton = status === 'approved';
+  button.disabled = row.request_status === 'delivered'
+    || row.request_status === 'packaging'
+    || (!isDeliveryButton && row.request_status === status);
   button.addEventListener('click', () => updateAdminRequestStatus(row.request_id, status));
   return button;
 }
@@ -2676,6 +2680,11 @@ async function updateAdminRequestStatus(requestId, status) {
   const client = createHrbmpSupabaseClient();
   if (!client) {
     setLoginStatus('Save the Supabase publishable key first.', 'warning');
+    return;
+  }
+
+  if (status === 'approved') {
+    await approveAndDeliverAdminRequest(requestId);
     return;
   }
 
@@ -2693,6 +2702,50 @@ async function updateAdminRequestStatus(requestId, status) {
     console.error(error);
     setLoginStatus(`Could not update request: ${error.message}`, 'error');
   }
+}
+
+async function approveAndDeliverAdminRequest(requestId) {
+  const client = createHrbmpSupabaseClient();
+  if (!client) {
+    setLoginStatus('Save the Supabase publishable key first.', 'warning');
+    return;
+  }
+
+  setLoginStatus('Approving request, preparing download links, and sending email...', 'warning');
+  try {
+    const { data, error } = await client.functions.invoke('deliver-approved-request', {
+      body: { request_id: requestId }
+    });
+
+    if (error) {
+      const detail = await functionErrorDetail(error);
+      throw new Error(detail);
+    }
+    if (data?.error) throw new Error(data.error);
+
+    setLoginStatus(
+      `Request delivered. Email sent to ${data?.requester_email || 'the requester'} with ${formatNumber(data?.asset_link_count || 0)} archive file link(s) and ${formatNumber(data?.count_row_count || 0)} count row(s).`,
+      'success'
+    );
+    await loadAdminRequests();
+  } catch (error) {
+    console.error(error);
+    setLoginStatus(`Could not deliver request: ${error.message}`, 'error');
+    await loadAdminRequests();
+  }
+}
+
+async function functionErrorDetail(error) {
+  if (error?.context && typeof error.context.json === 'function') {
+    try {
+      const body = await error.context.json();
+      if (body?.error) return body.error;
+      return JSON.stringify(body);
+    } catch {
+      // Fall back to the generic error message below.
+    }
+  }
+  return error?.message || String(error);
 }
 
 function adminRequestFilters(row) {
@@ -3012,6 +3065,14 @@ async function submitDemoDataRequest() {
 function buildDemoRequestPayload() {
   const rows = state.demoLastFilteredRows || [];
   const dataTypes = selectedDemoDataTypes();
+  const requestForm = {
+    requester_title: document.getElementById('demo-request-title')?.value.trim() || '',
+    requester_phone: document.getElementById('demo-request-phone')?.value.trim() || '',
+    collaborators_with_data_access: document.getElementById('demo-request-collaborators')?.value.trim() || '',
+    project_abstract: document.getElementById('demo-request-abstract')?.value.trim() || '',
+    specific_data_requested: document.getElementById('demo-request-notes')?.value.trim() || '',
+    data_use_plan: document.getElementById('demo-request-use-plan')?.value.trim() || ''
+  };
   return {
     request_scope: 'fjs_archive_demo',
     request_status: 'submitted',
@@ -3020,7 +3081,7 @@ function buildDemoRequestPayload() {
     requester_email: document.getElementById('demo-request-email')?.value.trim() || '',
     requester_affiliation: document.getElementById('demo-request-affiliation')?.value.trim() || '',
     intended_use: valueOf('demo-request-use'),
-    request_notes: document.getElementById('demo-request-notes')?.value.trim() || '',
+    request_notes: requestForm.specific_data_requested,
     selected_program: valueOf('demo-program'),
     selected_species: valueOf('demo-species'),
     selected_region: valueOf('demo-region'),
@@ -3033,6 +3094,7 @@ function buildDemoRequestPayload() {
     request_summary: currentDemoRequestSummary(rows),
     request_payload: {
       source: state.demoRowsSource,
+      request_form: requestForm,
       filters: {
         program: valueOf('demo-program'),
         species: valueOf('demo-species'),

@@ -1,20 +1,24 @@
 # HRBMP Request Delivery Automation
 
-This workflow sends email download links after an administrator approves an
-HRBMP data request in Supabase.
+This workflow sends email download links when an HRBMP admin clicks
+**Approve & Email** in the GUI request queue.
 
 ## What This Adds
 
-The public GUI already inserts rows into `public.hrbmp_data_requests` with
-`request_status = 'submitted'`.
-
-This automation adds the next step:
+The public Demo page inserts rows into `public.hrbmp_data_requests` with:
 
 ```text
-Admin changes request_status to approved
-  -> Supabase Database Webhook fires
-  -> Edge Function validates the webhook secret
-  -> Edge Function creates signed download links
+request_status = submitted
+```
+
+The User Login admin panel then does this:
+
+```text
+Admin signs in with Supabase Auth
+  -> Admin clicks Approve & Email
+  -> GUI calls the deliver-approved-request Edge Function
+  -> Edge Function verifies the signed-in admin email
+  -> Edge Function creates signed download links and CSV manifests
   -> Edge Function emails the requester and copies the admin
   -> request_status becomes delivered
 ```
@@ -29,7 +33,6 @@ Set these in Supabase Dashboard under **Edge Functions > Secrets**.
 Do not commit these values to GitHub.
 
 ```text
-HRBMP_REQUEST_WEBHOOK_SECRET=make-a-long-random-private-secret
 RESEND_API_KEY=paste-your-resend-api-key
 HRBMP_EMAIL_FROM=HRBMP Archive <archive@your-verified-domain.edu>
 HRBMP_ADMIN_EMAIL=chengxue.li@stonybrook.edu
@@ -46,10 +49,40 @@ SUPABASE_URL
 SUPABASE_SECRET_KEYS
 ```
 
-Those are available to deployed Supabase Edge Functions. Secret/service-role
-keys must never be placed in browser code.
+Secret/service-role keys must never be placed in browser code.
 
-## Deploy The Edge Function
+## Deploy Through The Supabase Dashboard
+
+This is the easiest path if the Supabase CLI is not installed.
+
+1. Open the Supabase project dashboard.
+2. Go to **Edge Functions**.
+3. Click **Deploy a new function**.
+4. Choose **Via Editor**.
+5. Name the function:
+
+```text
+deliver-approved-request
+```
+
+6. Paste the code from:
+
+```text
+supabase/functions/deliver-approved-request/index.ts
+```
+
+7. Deploy the function.
+
+The function URL will be:
+
+```text
+https://vnqulddrlhkftcqpekpl.supabase.co/functions/v1/deliver-approved-request
+```
+
+The function checks the signed-in Supabase Auth user and only allows the admin
+email in `HRBMP_ADMIN_EMAIL`.
+
+## Deploy Through The Supabase CLI
 
 From the repository root:
 
@@ -60,57 +93,24 @@ supabase link --project-ref vnqulddrlhkftcqpekpl
 supabase functions deploy deliver-approved-request --no-verify-jwt --project-ref vnqulddrlhkftcqpekpl
 ```
 
-The function URL will be:
-
-```text
-https://vnqulddrlhkftcqpekpl.supabase.co/functions/v1/deliver-approved-request
-```
-
-`--no-verify-jwt` is intentional here because the caller is a database webhook,
-not a browser user. The function still checks the private
-`x-hrbmp-webhook-secret` header before doing any work.
-
-## Create The Database Webhook
-
-In Supabase Dashboard:
-
-1. Open **Database**.
-2. Open **Webhooks**.
-3. Click **Create a new hook**.
-4. Name it `deliver_approved_hrbmp_data_request`.
-5. Select schema `public`.
-6. Select table `hrbmp_data_requests`.
-7. Select event `UPDATE`.
-8. Choose HTTP method `POST`.
-9. Use this URL:
-
-```text
-https://vnqulddrlhkftcqpekpl.supabase.co/functions/v1/deliver-approved-request
-```
-
-Add these headers:
-
-```text
-Content-Type: application/json
-x-hrbmp-webhook-secret: the-same-value-as-HRBMP_REQUEST_WEBHOOK_SECRET
-```
-
-Save the webhook.
-
-The webhook can fire on every update to `hrbmp_data_requests`; the Edge Function
-ignores updates unless the status just changed to `approved`.
+`--no-verify-jwt` is acceptable here because the function verifies the signed-in
+admin user inside the function code before doing any work.
 
 ## Test
 
 1. Submit a demo request from the HRBMP GUI.
-2. In Supabase Table Editor, open `hrbmp_data_requests`.
-3. Change the newest row's `request_status` from `submitted` to `approved`.
-4. Wait a few seconds.
-5. Check the requester's email.
-6. Check Supabase **Edge Functions > deliver-approved-request > Logs** if the
-   email does not arrive.
+2. Open **User Login** in the GUI.
+3. Sign in as the Supabase Auth admin user.
+4. Click **Approve & Email** for the submitted request.
+5. Check the requester email.
+6. If email does not arrive, check
+   **Supabase > Edge Functions > deliver-approved-request > Logs**.
 
-If the email succeeds, the row should change from `approved` to `delivered`.
+If the email succeeds, the row should change to:
+
+```text
+request_status = delivered
+```
 
 ## Notes
 
@@ -119,5 +119,5 @@ If the email succeeds, the row should change from `approved` to `delivered`.
   `fjs-archive/request-packages/<request_id>/`.
 - Resend requires a valid API key and usually a verified sending domain before
   it can email arbitrary recipients.
-- The database itself does not send email. The webhook only tells the Edge
-  Function that an approved request is ready to deliver.
+- The GUI does not store email secrets. Email is sent only from the Edge
+  Function.

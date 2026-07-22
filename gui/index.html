@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.1.7" />
+  <link rel="stylesheet" href="style.css?v=1.1.9" />
 </head>
 <body>
   <header class="site-nav">
@@ -788,7 +788,20 @@
       <section class="data-panel data-request-panel demo-request-panel">
         <div>
           <h2>Submit Data Request</h2>
-          <p>Public demo requests can be recorded in Supabase for admin review. Packaging and email delivery require the backend automation step.</p>
+          <p>Send the current archive screening request to the data management team after reading and consenting to the HRBMP data sharing requirements.</p>
+        </div>
+        <div class="policy-callout" id="demo-data-sharing-policy" tabindex="-1">
+          <div>
+            <strong>MUST READ: Data Sharing Policy</strong>
+            <p>
+              <a href="https://you.stonybrook.edu/hrbmp/files/2024/02/HRBMP_DataSharingPolicy-f253c4f473adf36f.pdf" target="_blank" rel="noopener">Click here for the HRBMP Data Sharing Policy</a>.
+            </p>
+            <ul class="policy-summary">
+              <li>Detailed HRBMP data and archive image requests are reviewed by the data management team before release.</li>
+              <li>Requestors must describe the intended use, project members, requested data, and data use plan.</li>
+              <li>The request cannot be submitted until the policy consent checkbox below is checked.</li>
+            </ul>
+          </div>
         </div>
         <form class="data-request-form" onsubmit="return false">
           <label>
@@ -796,8 +809,16 @@
             <input id="demo-request-name" type="text" autocomplete="name" />
           </label>
           <label>
+            Title
+            <input id="demo-request-title" type="text" />
+          </label>
+          <label>
             Email
             <input id="demo-request-email" type="email" autocomplete="email" />
+          </label>
+          <label>
+            Phone
+            <input id="demo-request-phone" type="tel" autocomplete="tel" />
           </label>
           <label>
             Affiliation
@@ -814,18 +835,30 @@
             </select>
           </label>
           <label class="full-span">
-            Project Or Request Notes
-            <textarea id="demo-request-notes" rows="4"></textarea>
+            Other Project Members With Data Access
+            <textarea id="demo-request-collaborators" rows="3"></textarea>
           </label>
           <label class="full-span">
-            Current Request Summary
+            Project Abstract
+            <textarea id="demo-request-abstract" rows="4"></textarea>
+          </label>
+          <label class="full-span">
+            Specific Data Requested
+            <textarea id="demo-request-notes" rows="5"></textarea>
+          </label>
+          <label class="full-span">
+            Data Use Plan
+            <textarea id="demo-request-use-plan" rows="4"></textarea>
+          </label>
+          <label class="full-span">
+            Current Screening Summary
             <textarea id="demo-request-summary" rows="5" readonly></textarea>
           </label>
           <label class="full-span policy-acknowledgment">
             <input id="demo-data-request-policy-acknowledgment" type="checkbox" required />
-            <span>I understand that this request will be reviewed by the HRBMP data management team before any detailed archive package is released.</span>
+            <span>I have read, understand, and agree to follow the HRBMP Data Sharing Policy. I understand that the data management team will review this request under that policy before any detailed data or archive images are released.</span>
           </label>
-          <button id="demo-data-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Demo Request</button>
+          <button id="demo-data-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Data Request</button>
         </form>
         <div id="demo-request-status" class="demo-request-status" aria-live="polite"></div>
       </section>
@@ -2684,6 +2717,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=1.1.7"></script>
+  <script src="app.js?v=1.1.9"></script>
 </body>
 </html>

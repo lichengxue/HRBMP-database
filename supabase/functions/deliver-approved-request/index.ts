@@ -17,6 +17,8 @@ type DataRequest = {
   year_start?: number | null;
   year_end?: number | null;
   requested_data_types?: string[] | null;
+  matching_row_count?: number | null;
+  public_row_count?: number | null;
   request_summary?: string | null;
   request_payload?: JsonRecord | null;
 };
@@ -52,6 +54,20 @@ type CatalogRow = {
   file_size_bytes: number | null;
   effective_access_level: string | null;
 };
+
+type DeliveryContext = {
+  approvedBy: string;
+  source: "admin_gui" | "database_webhook";
+};
+
+class HttpError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
 
 const WEBHOOK_SECRET_HEADER = "x-hrbmp-webhook-secret";
 const DEFAULT_BUCKET = "fjs-archive";
@@ -105,13 +121,39 @@ Deno.serve(async (request) => {
   }
 
   try {
-    assertWebhookSecret(request);
+    const supabaseAdmin = createAdminClient();
+    const payload = await request.json().catch(() => ({})) as JsonRecord & WebhookPayload;
+    const requestId = typeof payload.request_id === "string" ? payload.request_id : "";
 
-    const payload = await request.json() as WebhookPayload;
+    if (requestId) {
+      const approvedBy = await requireAdminUser(request, supabaseAdmin);
+      const dataRequest = await loadDataRequestById(supabaseAdmin, requestId);
+
+      if (dataRequest.request_status === "delivered") {
+        return jsonResponse({
+          ok: true,
+          request_id: dataRequest.request_id,
+          status: "delivered",
+          already_delivered: true,
+        });
+      }
+
+      if (dataRequest.request_status === "declined") {
+        return jsonResponse({ error: "Declined requests cannot be delivered." }, 409);
+      }
+
+      const result = await deliverRequest(supabaseAdmin, dataRequest, {
+        approvedBy,
+        source: "admin_gui",
+      });
+      return jsonResponse(result);
+    }
+
+    assertWebhookSecret(request);
     const dataRequest = payload.record;
     const oldRequest = payload.old_record;
 
-    if (!shouldDeliver(payload, dataRequest, oldRequest)) {
+    if (!shouldDeliverFromWebhook(payload, dataRequest, oldRequest)) {
       return jsonResponse({ ok: true, ignored: true });
     }
 
@@ -119,8 +161,70 @@ Deno.serve(async (request) => {
       return jsonResponse({ error: "Webhook payload is missing request_id or requester_email" }, 400);
     }
 
-    const supabase = createClient(getSupabaseUrl(), getServiceKey());
-    const catalogRows = await loadCatalogRows(supabase, dataRequest);
+    const result = await deliverRequest(supabaseAdmin, dataRequest, {
+      approvedBy: "database-webhook",
+      source: "database_webhook",
+    });
+    return jsonResponse(result);
+  } catch (error) {
+    const status = error instanceof HttpError ? error.status : 500;
+    return jsonResponse({ error: error instanceof Error ? error.message : String(error) }, status);
+  }
+});
+
+function createAdminClient() {
+  return createClient(getSupabaseUrl(), getServiceKey(), {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
+}
+
+async function requireAdminUser(request: Request, supabaseAdmin: ReturnType<typeof createClient>) {
+  const token = bearerToken(request);
+  if (!token) throw new HttpError("Missing signed-in Supabase user token.", 401);
+
+  const { data, error } = await supabaseAdmin.auth.getUser(token);
+  if (error || !data.user?.email) {
+    throw new HttpError("Could not verify signed-in Supabase user.", 401);
+  }
+
+  const adminEmail = Deno.env.get("HRBMP_ADMIN_EMAIL") || DEFAULT_ADMIN_EMAIL;
+  if (data.user.email.toLowerCase() !== adminEmail.toLowerCase()) {
+    throw new HttpError(`Signed-in user ${data.user.email} is not the HRBMP request admin.`, 403);
+  }
+
+  return data.user.email;
+}
+
+function bearerToken(request: Request) {
+  const authorization = request.headers.get("Authorization") || "";
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
+  return match?.[1] ?? "";
+}
+
+async function loadDataRequestById(supabaseAdmin: ReturnType<typeof createClient>, requestId: string) {
+  const { data, error } = await supabaseAdmin
+    .from("hrbmp_data_requests")
+    .select("*")
+    .eq("request_id", requestId)
+    .single();
+
+  if (error) throw new Error(`Could not load request ${requestId}: ${error.message}`);
+  if (!data) throw new Error(`Request ${requestId} was not found.`);
+  return data as DataRequest;
+}
+
+async function deliverRequest(
+  supabaseAdmin: ReturnType<typeof createClient>,
+  dataRequest: DataRequest,
+  context: DeliveryContext,
+) {
+  await markPackaging(supabaseAdmin, dataRequest, context);
+
+  try {
+    const catalogRows = await loadCatalogRows(supabaseAdmin, dataRequest);
     const requestedTypes = new Set(dataRequest.requested_data_types ?? []);
     const wantsAllTypes = requestedTypes.size === 0 || requestedTypes.has("all_data");
     const wantsCounts = wantsAllTypes || requestedTypes.has("processed_abundance_count");
@@ -129,13 +233,13 @@ Deno.serve(async (request) => {
 
     const countRows = wantsCounts ? uniqueCountRows(catalogRows) : [];
     const assetRows = uniqueAssetRows(catalogRows.filter((row) => wantsAssets(row.asset_kind)));
-    const assetLinks = await createAssetSignedLinks(supabase, assetRows);
+    const assetLinks = await createAssetSignedLinks(supabaseAdmin, assetRows);
     const expiresAt = new Date(Date.now() + SIGNED_URL_SECONDS * 1000).toISOString();
 
     const requestFolder = `request-packages/${dataRequest.request_id}`;
     const countsLink = countRows.length
       ? await uploadCsvAndSign(
-        supabase,
+        supabaseAdmin,
         requestFolder,
         `hrbmp_request_${dataRequest.request_id}_processed_counts.csv`,
         countRowsToCsv(countRows),
@@ -143,7 +247,7 @@ Deno.serve(async (request) => {
       : null;
 
     const manifestLink = await uploadCsvAndSign(
-      supabase,
+      supabaseAdmin,
       requestFolder,
       `hrbmp_request_${dataRequest.request_id}_manifest.csv`,
       manifestToCsv(assetLinks, countRows, countsLink?.path ?? "", countsLink?.url ?? ""),
@@ -157,7 +261,9 @@ Deno.serve(async (request) => {
       expiresAt,
     });
 
-    await markDelivered(supabase, dataRequest, {
+    await markDelivered(supabaseAdmin, dataRequest, {
+      approved_by: context.approvedBy,
+      delivery_source: context.source,
       delivered_at: new Date().toISOString(),
       signed_url_expires_at: expiresAt,
       manifest_path: manifestLink.path,
@@ -166,17 +272,24 @@ Deno.serve(async (request) => {
       count_row_count: countRows.length,
     });
 
-    return jsonResponse({
+    return {
       ok: true,
       request_id: dataRequest.request_id,
       status: "delivered",
       asset_link_count: assetLinks.length,
       count_row_count: countRows.length,
-    });
+      requester_email: dataRequest.requester_email,
+    };
   } catch (error) {
-    return jsonResponse({ error: error instanceof Error ? error.message : String(error) }, 500);
+    await markDeliveryFailed(supabaseAdmin, dataRequest, {
+      approved_by: context.approvedBy,
+      delivery_source: context.source,
+      failed_at: new Date().toISOString(),
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
   }
-});
+}
 
 function assertWebhookSecret(request: Request) {
   const expectedSecret = Deno.env.get("HRBMP_REQUEST_WEBHOOK_SECRET");
@@ -187,11 +300,11 @@ function assertWebhookSecret(request: Request) {
   }
 
   if (!receivedSecret || receivedSecret !== expectedSecret) {
-    throw new Error("Unauthorized webhook request");
+    throw new HttpError("Unauthorized webhook request", 401);
   }
 }
 
-function shouldDeliver(payload: WebhookPayload, record?: DataRequest, oldRecord?: DataRequest | null) {
+function shouldDeliverFromWebhook(payload: WebhookPayload, record?: DataRequest, oldRecord?: DataRequest | null) {
   return payload.type === "UPDATE" &&
     payload.schema === "public" &&
     payload.table === "hrbmp_data_requests" &&
@@ -208,9 +321,13 @@ function getSupabaseUrl() {
 function getServiceKey() {
   const secretKeys = Deno.env.get("SUPABASE_SECRET_KEYS");
   if (secretKeys) {
-    const parsed = JSON.parse(secretKeys) as Record<string, string>;
-    const key = parsed.default ?? Object.values(parsed)[0];
-    if (key) return key;
+    try {
+      const parsed = JSON.parse(secretKeys) as Record<string, string>;
+      const key = parsed.default ?? Object.values(parsed)[0];
+      if (key) return key;
+    } catch {
+      // Fall through to the legacy key below.
+    }
   }
 
   const legacyServiceRole = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -219,8 +336,8 @@ function getServiceKey() {
   throw new Error("Missing Supabase secret/service-role key in Edge Function environment");
 }
 
-async function loadCatalogRows(supabase: ReturnType<typeof createClient>, dataRequest: DataRequest) {
-  let query = supabase
+async function loadCatalogRows(supabaseAdmin: ReturnType<typeof createClient>, dataRequest: DataRequest) {
+  let query = supabaseAdmin
     .from("fjs_archive_catalog")
     .select(CATALOG_SELECT)
     .eq("effective_access_level", "public")
@@ -281,7 +398,7 @@ function uniqueAssetRows(rows: CatalogRow[]) {
   return Array.from(byStoragePath.values()).sort(compareCatalogRows);
 }
 
-async function createAssetSignedLinks(supabase: ReturnType<typeof createClient>, rows: CatalogRow[]) {
+async function createAssetSignedLinks(supabaseAdmin: ReturnType<typeof createClient>, rows: CatalogRow[]) {
   const links = [];
 
   for (const row of rows) {
@@ -289,9 +406,9 @@ async function createAssetSignedLinks(supabase: ReturnType<typeof createClient>,
     const path = row.storage_object_path;
     if (!path) continue;
 
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabaseAdmin.storage
       .from(bucket)
-      .createSignedUrl(path, SIGNED_URL_SECONDS);
+      .createSignedUrl(path, SIGNED_URL_SECONDS, { download: true });
 
     if (error) throw new Error(`Could not sign ${bucket}/${path}: ${error.message}`);
 
@@ -307,13 +424,13 @@ async function createAssetSignedLinks(supabase: ReturnType<typeof createClient>,
 }
 
 async function uploadCsvAndSign(
-  supabase: ReturnType<typeof createClient>,
+  supabaseAdmin: ReturnType<typeof createClient>,
   folder: string,
   fileName: string,
   csv: string,
 ) {
   const path = `${folder}/${fileName}`;
-  const { error: uploadError } = await supabase.storage
+  const { error: uploadError } = await supabaseAdmin.storage
     .from(DEFAULT_BUCKET)
     .upload(path, new Blob([csv], { type: "text/csv" }), {
       contentType: "text/csv",
@@ -322,9 +439,9 @@ async function uploadCsvAndSign(
 
   if (uploadError) throw new Error(`Could not upload ${path}: ${uploadError.message}`);
 
-  const { data, error } = await supabase.storage
+  const { data, error } = await supabaseAdmin.storage
     .from(DEFAULT_BUCKET)
-    .createSignedUrl(path, SIGNED_URL_SECONDS);
+    .createSignedUrl(path, SIGNED_URL_SECONDS, { download: true });
 
   if (error) throw new Error(`Could not sign ${path}: ${error.message}`);
 
@@ -351,6 +468,17 @@ async function sendDeliveryEmail(
   const subject = `HRBMP data request ready: ${dataRequest.request_id}`;
   const html = buildEmailHtml(dataRequest, delivery);
   const text = buildEmailText(dataRequest, delivery);
+  const message: JsonRecord = {
+    from: fromEmail,
+    to: [dataRequest.requester_email],
+    subject,
+    html,
+    text,
+  };
+
+  if (adminEmail.toLowerCase() !== dataRequest.requester_email.toLowerCase()) {
+    message.cc = [adminEmail];
+  }
 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -358,14 +486,7 @@ async function sendDeliveryEmail(
       Authorization: `Bearer ${resendApiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      from: fromEmail,
-      to: [dataRequest.requester_email],
-      cc: [adminEmail],
-      subject,
-      html,
-      text,
-    }),
+    body: JSON.stringify(message),
   });
 
   if (!response.ok) {
@@ -386,7 +507,7 @@ function buildEmailHtml(
 ) {
   const name = escapeHtml(dataRequest.requester_name || "HRBMP data requester");
   const assetLines = delivery.assetLinks.slice(0, 25).map((link) =>
-    `<li><a href="${escapeHtml(link.download_url)}">${escapeHtml(link.original_file_name || link.storage_object_path)}</a> (${escapeHtml(link.asset_kind || "asset")})</li>`
+    `<li><a href="${escapeHtml(link.download_url)}">${escapeHtml(link.original_file_name || link.storage_object_path)}</a> (${escapeHtml(formatLabel(link.asset_kind || "asset"))})</li>`
   ).join("");
   const moreLine = delivery.assetLinks.length > 25
     ? `<li>${delivery.assetLinks.length - 25} more file links are listed in the manifest CSV.</li>`
@@ -399,7 +520,7 @@ function buildEmailHtml(
     <p><strong>Summary:</strong> ${escapeHtml(dataRequest.request_summary || "HRBMP archive request")}</p>
     <p><a href="${escapeHtml(delivery.manifestUrl)}">Download the request manifest CSV</a></p>
     ${delivery.countsUrl ? `<p><a href="${escapeHtml(delivery.countsUrl)}">Download processed count data CSV</a></p>` : ""}
-    <p><strong>File links:</strong></p>
+    <p><strong>Archive file links:</strong></p>
     <ul>${assetLines || "<li>No image/PDF assets matched this request.</li>"}${moreLine}</ul>
     <p>These links expire on ${escapeHtml(delivery.expiresAt)}.</p>
     <p>HRBMP Data Management</p>
@@ -426,7 +547,7 @@ function buildEmailText(
   ];
 
   if (delivery.countsUrl) lines.push(`Processed count data CSV: ${delivery.countsUrl}`);
-  lines.push("", "File links:");
+  lines.push("", "Archive file links:");
   if (delivery.assetLinks.length === 0) {
     lines.push("No image/PDF assets matched this request.");
   } else {
@@ -438,8 +559,34 @@ function buildEmailText(
   return lines.join("\n");
 }
 
+async function markPackaging(
+  supabaseAdmin: ReturnType<typeof createClient>,
+  dataRequest: DataRequest,
+  context: DeliveryContext,
+) {
+  const requestPayload = {
+    ...plainObject(dataRequest.request_payload),
+    delivery_attempt: {
+      approved_by: context.approvedBy,
+      delivery_source: context.source,
+      started_at: new Date().toISOString(),
+    },
+  };
+
+  const { error } = await supabaseAdmin
+    .from("hrbmp_data_requests")
+    .update({
+      request_status: "packaging",
+      request_payload: requestPayload,
+    })
+    .eq("request_id", dataRequest.request_id);
+
+  if (error) throw new Error(`Could not mark request packaging: ${error.message}`);
+  dataRequest.request_payload = requestPayload;
+}
+
 async function markDelivered(
-  supabase: ReturnType<typeof createClient>,
+  supabaseAdmin: ReturnType<typeof createClient>,
   dataRequest: DataRequest,
   delivery: JsonRecord,
 ) {
@@ -448,7 +595,7 @@ async function markDelivered(
     delivery,
   };
 
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from("hrbmp_data_requests")
     .update({
       request_status: "delivered",
@@ -457,6 +604,27 @@ async function markDelivered(
     .eq("request_id", dataRequest.request_id);
 
   if (error) throw new Error(`Could not mark request delivered: ${error.message}`);
+}
+
+async function markDeliveryFailed(
+  supabaseAdmin: ReturnType<typeof createClient>,
+  dataRequest: DataRequest,
+  deliveryError: JsonRecord,
+) {
+  const requestPayload = {
+    ...plainObject(dataRequest.request_payload),
+    delivery_error: deliveryError,
+  };
+
+  const { error } = await supabaseAdmin
+    .from("hrbmp_data_requests")
+    .update({
+      request_status: "approved",
+      request_payload: requestPayload,
+    })
+    .eq("request_id", dataRequest.request_id);
+
+  if (error) console.error("Could not mark delivery failed:", error.message);
 }
 
 function manifestToCsv(
@@ -569,6 +737,12 @@ function compareCatalogRows(a: CatalogRow, b: CatalogRow) {
     String(a.common_name ?? "").localeCompare(String(b.common_name ?? "")) ||
     String(a.asset_kind ?? "").localeCompare(String(b.asset_kind ?? "")) ||
     String(a.original_file_name ?? "").localeCompare(String(b.original_file_name ?? ""));
+}
+
+function formatLabel(value: string) {
+  return String(value || "")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
 function escapeHtml(value: unknown) {
