@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.1.5" />
+  <link rel="stylesheet" href="style.css?v=1.1.7" />
 </head>
 <body>
   <header class="site-nav">
@@ -2379,65 +2379,61 @@
         <h1>Restricted Database Access</h1>
       </div>
 
-      <div class="login-layout">
+      <div class="login-layout single-column">
         <section class="data-panel login-panel" aria-label="User login form">
           <h2>Sign In</h2>
           <form class="login-form" onsubmit="return false">
             <label>
-              User Name
-              <input id="login-username" name="username" type="text" autocomplete="username" placeholder="Enter user name" />
+              Email
+              <input id="login-username" name="username" type="email" autocomplete="username" placeholder="chengxue.li@stonybrook.edu" />
             </label>
             <label>
               Password
               <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Enter password" />
             </label>
-            <button type="button" class="primary-button">Log in</button>
+            <label>
+              Supabase Publishable Key
+              <input id="login-supabase-key" type="password" autocomplete="off" placeholder="Paste once, or save it from the Demo tab" />
+            </label>
+            <div class="login-actions">
+              <button type="button" class="primary-button" id="login-submit">Log in</button>
+              <button type="button" class="secondary-button" id="login-signout">Sign out</button>
+            </div>
           </form>
+          <div class="demo-request-status" id="login-status">Sign in with your Supabase admin account to review requests.</div>
           <div class="login-links" aria-label="Account recovery links">
-            <a href="#user-login">Forgot User Name?</a>
+            <a href="#user-login">Forgot Email?</a>
             <a href="#user-login">Forgot Password?</a>
           </div>
         </section>
-
-        <aside class="text-panel access-panel">
-          <h2>Access Model</h2>
-          <p>
-            Public users can browse approved summaries and availability layers.
-            Registered and approved users receive dataset-specific permissions.
-            Internal management remains restricted to data managers and admins.
-          </p>
-          <ul class="access-principles">
-            <li>Deny access unless a dataset policy explicitly allows it.</li>
-            <li>Keep public exports separate from restricted working data.</li>
-            <li>Log restricted downloads and data-management actions.</li>
-          </ul>
-        </aside>
       </div>
 
-      <section class="data-panel access-policy-panel">
+      <section class="data-panel admin-request-panel">
         <div class="metadata-panel-header">
           <div>
-            <h2>Access Tiers</h2>
-            <p>These tiers are stored in SQLite and used by the API to decide what a user can see or download.</p>
+            <h2>Admin Request Review</h2>
+            <p>Review submitted data requests and mark each request as approved or declined.</p>
           </div>
-          <a class="secondary-button link-button" href="http://127.0.0.1:8010/api/access-policy" target="_blank" rel="noopener">Open Access Policy JSON</a>
+          <button type="button" class="secondary-button" id="admin-refresh-requests">Refresh</button>
         </div>
-        <div class="access-tier-grid" id="access-tier-cards"></div>
-      </section>
-
-      <section class="data-panel access-policy-panel">
-        <h2>Dataset Access Policy</h2>
         <div class="table-scroll">
           <table>
             <thead>
               <tr>
-                <th>Dataset</th>
-                <th>Minimum Access</th>
-                <th>Release Status</th>
-                <th>Sensitive</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Requester</th>
+                <th>Filters</th>
+                <th>Rows</th>
+                <th>Notes</th>
+                <th>Action</th>
               </tr>
             </thead>
-            <tbody id="dataset-access-policy"></tbody>
+            <tbody id="admin-request-rows">
+              <tr>
+                <td colspan="7">Sign in to load submitted requests.</td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </section>
@@ -2510,7 +2506,6 @@
           <div>
             <span>Supervisor</span>
             <h2><strong>Dr. Yong Chen</strong></h2>
-            <p>Professor of Fisheries Sciences. Project supervision and scientific direction.</p>
           </div>
         </article>
 
@@ -2520,7 +2515,6 @@
             <div>
               <span>Database Development Lead</span>
               <h2><strong>Dr. Chengxue Li</strong></h2>
-              <p>Organizes major tasks and leads database development.</p>
             </div>
           </article>
 
@@ -2538,7 +2532,6 @@
           <article class="component-branch featured-branch">
             <div class="component-header">
               <span>Database</span>
-              <h2>Database Design, Exports, And Web Portal</h2>
             </div>
             <div class="tree-person leader key-person">
               <img src="https://you.stonybrook.edu/chenlab/files/2025/08/ChengxueLi-150x150.jpg" alt="Profile photo of Dr. Chengxue Li" />
@@ -2559,7 +2552,6 @@
           <article class="component-branch">
             <div class="component-header">
               <span>Metadata</span>
-              <h2>Metadata Structure And Documentation</h2>
             </div>
             <div class="tree-person leader">
               <img src="https://you.stonybrook.edu/chenlab/files/2021/09/Stephanie-300x300.jpg" alt="Profile photo of Stephanie Arsenault" />
@@ -2584,7 +2576,6 @@
           <article class="component-branch">
             <div class="component-header">
               <span>Curriculum Development</span>
-              <h2>Training Materials And Curriculum Products</h2>
             </div>
             <div class="tree-person leader">
               <img src="https://you.stonybrook.edu/chenlab/files/2021/09/Claire-300x300.jpg" alt="Profile photo of Dr. Claire Ober" />
@@ -2697,6 +2688,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script src="app.js?v=1.1.5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js?v=1.1.7"></script>
 </body>
 </html>

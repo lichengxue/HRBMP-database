@@ -307,6 +307,26 @@ const DEMO_ARCHIVE_SELECT = [
   'sheet_code',
   'effective_access_level'
 ].join(',');
+const ADMIN_REQUEST_SELECT = [
+  'request_id',
+  'created_at',
+  'request_status',
+  'requester_name',
+  'requester_email',
+  'requester_affiliation',
+  'intended_use',
+  'request_notes',
+  'selected_program',
+  'selected_species',
+  'selected_region',
+  'selected_sample_id',
+  'year_start',
+  'year_end',
+  'requested_data_types',
+  'matching_row_count',
+  'public_row_count',
+  'request_summary'
+].join(',');
 
 const DEMO_REGION_CODE_LABELS = {
   BT: 'BT - Battery',
@@ -1534,7 +1554,11 @@ const state = {
   demoRows: DEMO_FALLBACK_ARCHIVE_ROWS.map(normalizeDemoArchiveRow),
   demoRowsSource: 'fallback',
   demoLastFilteredRows: [],
-  demoApiLoaded: false
+  demoApiLoaded: false,
+  adminClient: null,
+  adminClientKey: '',
+  adminRequests: [],
+  adminSessionEmail: ''
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2213,9 +2237,14 @@ function bindControls() {
     demoSubmit.addEventListener('click', () => submitDemoDataRequest());
   }
 
+  bindAdminLoginControls();
+
   window.addEventListener('hrbmp-tab-change', (event) => {
     if (event.detail?.tabId === 'demo' && !state.demoApiLoaded && demoSupabaseKey()) {
       refreshDemoArchive();
+    }
+    if (event.detail?.tabId === 'user-login') {
+      refreshAdminSession();
     }
   });
 }
@@ -2452,6 +2481,243 @@ function saveDemoSupabaseKey(key) {
     setDemoStatus('Browser storage is unavailable. The key can still be used for this page session.', 'warning');
     window.HRBMP_SUPABASE_PUBLISHABLE_KEY = cleanKey;
   }
+}
+
+function createHrbmpSupabaseClient() {
+  const key = demoSupabaseKey();
+  if (!key) return null;
+  if (!window.supabase || typeof window.supabase.createClient !== 'function') return null;
+  if (state.adminClient && state.adminClientKey === key) return state.adminClient;
+
+  state.adminClient = window.supabase.createClient(DEMO_SUPABASE_URL, key);
+  state.adminClientKey = key;
+  return state.adminClient;
+}
+
+function bindAdminLoginControls() {
+  const keyInput = document.getElementById('login-supabase-key');
+  if (keyInput) keyInput.value = demoSupabaseKey() ? 'saved in this browser' : '';
+
+  const loginButton = document.getElementById('login-submit');
+  if (loginButton) {
+    loginButton.addEventListener('click', () => signInAdminUser());
+  }
+
+  const signOutButton = document.getElementById('login-signout');
+  if (signOutButton) {
+    signOutButton.addEventListener('click', () => signOutAdminUser());
+  }
+
+  const refreshButton = document.getElementById('admin-refresh-requests');
+  if (refreshButton) {
+    refreshButton.addEventListener('click', () => loadAdminRequests());
+  }
+
+  refreshAdminSession();
+}
+
+async function refreshAdminSession() {
+  const keyInput = document.getElementById('login-supabase-key');
+  if (keyInput && demoSupabaseKey()) keyInput.value = 'saved in this browser';
+
+  const client = createHrbmpSupabaseClient();
+  if (!client) {
+    setLoginStatus('Save the Supabase publishable key first, then sign in.', 'warning');
+    renderAdminRequestRows([]);
+    return;
+  }
+
+  try {
+    const { data, error } = await client.auth.getSession();
+    if (error) throw error;
+    const email = data.session?.user?.email || '';
+    state.adminSessionEmail = email;
+    if (email) {
+      setLoginStatus(`Signed in as ${email}.`, 'success');
+      loadAdminRequests();
+    }
+  } catch (error) {
+    console.error(error);
+    setLoginStatus(`Could not check login session: ${error.message}`, 'error');
+  }
+}
+
+async function signInAdminUser() {
+  const rawKey = document.getElementById('login-supabase-key')?.value || '';
+  if (rawKey && rawKey !== 'saved in this browser') {
+    saveDemoSupabaseKey(rawKey);
+    const demoKeyInput = document.getElementById('demo-supabase-key');
+    if (demoKeyInput) demoKeyInput.value = 'saved in this browser';
+  }
+
+  const client = createHrbmpSupabaseClient();
+  if (!client) {
+    setLoginStatus('Paste and save the Supabase publishable key before signing in.', 'warning');
+    return;
+  }
+
+  const email = document.getElementById('login-username')?.value.trim() || '';
+  const password = document.getElementById('login-password')?.value || '';
+  if (!email || !password) {
+    setLoginStatus('Enter your Supabase Auth email and password.', 'warning');
+    return;
+  }
+
+  setLoginStatus('Signing in...', 'warning');
+  try {
+    const { data, error } = await client.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    state.adminSessionEmail = data.user?.email || email;
+    setLoginStatus(`Signed in as ${state.adminSessionEmail}. Loading request queue...`, 'success');
+    await loadAdminRequests();
+  } catch (error) {
+    console.error(error);
+    setLoginStatus(`Login failed: ${error.message}`, 'error');
+  }
+}
+
+async function signOutAdminUser() {
+  const client = createHrbmpSupabaseClient();
+  if (!client) return;
+
+  try {
+    await client.auth.signOut();
+  } catch (error) {
+    console.error(error);
+  }
+
+  state.adminSessionEmail = '';
+  state.adminRequests = [];
+  renderAdminRequestRows([]);
+  setLoginStatus('Signed out. Sign in to review requests.', 'warning');
+}
+
+async function loadAdminRequests() {
+  const client = createHrbmpSupabaseClient();
+  if (!client) {
+    setLoginStatus('Save the Supabase publishable key first.', 'warning');
+    return;
+  }
+
+  setLoginStatus('Loading request queue...', 'warning');
+  try {
+    const { data: sessionData, error: sessionError } = await client.auth.getSession();
+    if (sessionError) throw sessionError;
+    if (!sessionData.session) {
+      renderAdminRequestRows([]);
+      setLoginStatus('Sign in with your Supabase admin account to load requests.', 'warning');
+      return;
+    }
+
+    const { data, error } = await client
+      .from('hrbmp_data_requests')
+      .select(ADMIN_REQUEST_SELECT)
+      .order('created_at', { ascending: false })
+      .limit(100);
+    if (error) throw error;
+
+    state.adminRequests = data || [];
+    renderAdminRequestRows(state.adminRequests);
+    setLoginStatus(`Loaded ${formatNumber(state.adminRequests.length)} request(s).`, 'success');
+  } catch (error) {
+    console.error(error);
+    renderAdminRequestRows([]);
+    setLoginStatus(`Could not load requests: ${error.message}`, 'error');
+  }
+}
+
+function renderAdminRequestRows(rows) {
+  const body = document.getElementById('admin-request-rows');
+  if (!body) return;
+  body.replaceChildren();
+
+  if (!rows.length) {
+    const tr = document.createElement('tr');
+    const cell = document.createElement('td');
+    cell.colSpan = 7;
+    cell.textContent = state.adminSessionEmail ? 'No requests are visible for this login.' : 'Sign in to load submitted requests.';
+    tr.appendChild(cell);
+    body.appendChild(tr);
+    return;
+  }
+
+  rows.forEach((row) => {
+    const tr = document.createElement('tr');
+    appendCell(tr, formatTimestamp(row.created_at));
+    appendCell(tr, formatAccessLevel(row.request_status));
+    appendCell(tr, `${row.requester_name || 'Name pending'}\n${row.requester_email || ''}`);
+    appendCell(tr, adminRequestFilters(row));
+    appendCell(tr, `${formatNumber(row.matching_row_count || 0)} matched\n${formatNumber(row.public_row_count || 0)} public`);
+    appendCell(tr, row.request_notes || row.intended_use || 'No notes');
+
+    const actions = document.createElement('td');
+    actions.className = 'admin-request-actions';
+    actions.append(
+      adminStatusButton(row, 'reviewing', 'Reviewing'),
+      adminStatusButton(row, 'approved', 'Approve'),
+      adminStatusButton(row, 'declined', 'Decline')
+    );
+    tr.appendChild(actions);
+    body.appendChild(tr);
+  });
+}
+
+function adminStatusButton(row, status, label) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = status === 'approved' ? 'primary-button compact-button' : 'secondary-button compact-button';
+  button.textContent = label;
+  button.disabled = row.request_status === status;
+  button.addEventListener('click', () => updateAdminRequestStatus(row.request_id, status));
+  return button;
+}
+
+async function updateAdminRequestStatus(requestId, status) {
+  const client = createHrbmpSupabaseClient();
+  if (!client) {
+    setLoginStatus('Save the Supabase publishable key first.', 'warning');
+    return;
+  }
+
+  setLoginStatus(`Updating request to ${formatAccessLevel(status)}...`, 'warning');
+  try {
+    const { error } = await client
+      .from('hrbmp_data_requests')
+      .update({ request_status: status })
+      .eq('request_id', requestId);
+    if (error) throw error;
+
+    setLoginStatus(`Request marked ${formatAccessLevel(status)}.`, 'success');
+    await loadAdminRequests();
+  } catch (error) {
+    console.error(error);
+    setLoginStatus(`Could not update request: ${error.message}`, 'error');
+  }
+}
+
+function adminRequestFilters(row) {
+  const yearRange = row.year_start || row.year_end
+    ? `${row.year_start || 'Any'}-${row.year_end || 'Any'}`
+    : 'All Years';
+  const dataTypes = Array.isArray(row.requested_data_types) && row.requested_data_types.length
+    ? row.requested_data_types.map(formatAccessLevel).join(', ')
+    : 'All Data Types';
+
+  return [
+    row.selected_program || 'All Programs',
+    row.selected_species || 'All Species',
+    row.selected_region || 'All Regions',
+    row.selected_sample_id || 'All Samples',
+    yearRange,
+    dataTypes
+  ].join('\n');
+}
+
+function setLoginStatus(message, level = '') {
+  const status = document.getElementById('login-status');
+  if (!status) return;
+  status.textContent = message;
+  status.className = level ? `demo-request-status ${level}` : 'demo-request-status';
 }
 
 async function refreshDemoArchive() {
@@ -4997,6 +5263,19 @@ function formatNumber(value) {
   const numeric = Number(value);
   if (!Number.isFinite(numeric)) return value ?? 'NA';
   return new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(numeric);
+}
+
+function formatTimestamp(value) {
+  if (!value) return 'Date pending';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString([], {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
 }
 
 function shortNumber(value) {
