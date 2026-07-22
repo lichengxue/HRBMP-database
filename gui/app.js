@@ -2899,6 +2899,9 @@ async function deliverApprovedAdminRequest(requestId) {
       throw new Error(detail);
     }
     if (data?.error) throw new Error(data.error);
+    if (data?.status !== 'delivered' && !data?.already_delivered) {
+      throw new Error(`Supabase Edge Function returned without delivering email: ${JSON.stringify(data || {})}`);
+    }
 
     state.adminRequestView = 'approved';
     state.adminDeliveryInFlight.delete(requestId);
