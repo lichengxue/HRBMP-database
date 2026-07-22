@@ -458,6 +458,28 @@ async function sendDeliveryEmail(
     expiresAt: string;
   },
 ) {
+  const subject = `HRBMP data request ready: ${dataRequest.request_id}`;
+  const html = buildEmailHtml(dataRequest, delivery);
+  const text = buildEmailText(dataRequest, delivery);
+  const provider = (Deno.env.get("HRBMP_EMAIL_PROVIDER") || "").trim().toLowerCase();
+  const googleWebhookUrl = Deno.env.get("HRBMP_GMAIL_WEBHOOK_URL");
+
+  if (provider === "google_apps_script" || googleWebhookUrl) {
+    await sendWithGoogleAppsScript(dataRequest, { subject, html, text });
+    return;
+  }
+
+  await sendWithResend(dataRequest, { subject, html, text });
+}
+
+async function sendWithResend(
+  dataRequest: DataRequest,
+  messageContent: {
+    subject: string;
+    html: string;
+    text: string;
+  },
+) {
   const resendApiKey = Deno.env.get("RESEND_API_KEY");
   const fromEmail = Deno.env.get("HRBMP_EMAIL_FROM");
   const adminEmail = Deno.env.get("HRBMP_ADMIN_EMAIL") || DEFAULT_ADMIN_EMAIL;
@@ -465,15 +487,12 @@ async function sendDeliveryEmail(
   if (!resendApiKey) throw new Error("Missing RESEND_API_KEY Edge Function secret");
   if (!fromEmail) throw new Error("Missing HRBMP_EMAIL_FROM Edge Function secret");
 
-  const subject = `HRBMP data request ready: ${dataRequest.request_id}`;
-  const html = buildEmailHtml(dataRequest, delivery);
-  const text = buildEmailText(dataRequest, delivery);
   const message: JsonRecord = {
     from: fromEmail,
     to: [dataRequest.requester_email],
-    subject,
-    html,
-    text,
+    subject: messageContent.subject,
+    html: messageContent.html,
+    text: messageContent.text,
   };
 
   if (adminEmail.toLowerCase() !== dataRequest.requester_email.toLowerCase()) {
@@ -492,6 +511,55 @@ async function sendDeliveryEmail(
   if (!response.ok) {
     const detail = await response.text();
     throw new Error(`Resend email failed: ${response.status} ${detail}`);
+  }
+}
+
+async function sendWithGoogleAppsScript(
+  dataRequest: DataRequest,
+  messageContent: {
+    subject: string;
+    html: string;
+    text: string;
+  },
+) {
+  const webhookUrl = Deno.env.get("HRBMP_GMAIL_WEBHOOK_URL");
+  const webhookSecret = Deno.env.get("HRBMP_GMAIL_WEBHOOK_SECRET");
+  const adminEmail = Deno.env.get("HRBMP_ADMIN_EMAIL") || DEFAULT_ADMIN_EMAIL;
+
+  if (!webhookUrl) throw new Error("Missing HRBMP_GMAIL_WEBHOOK_URL Edge Function secret");
+  if (!webhookSecret) throw new Error("Missing HRBMP_GMAIL_WEBHOOK_SECRET Edge Function secret");
+
+  const response = await fetch(webhookUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      secret: webhookSecret,
+      to: dataRequest.requester_email,
+      cc: adminEmail.toLowerCase() === dataRequest.requester_email.toLowerCase() ? "" : adminEmail,
+      replyTo: adminEmail,
+      subject: messageContent.subject,
+      text: messageContent.text,
+      html: messageContent.html,
+    }),
+  });
+
+  const detail = await response.text();
+  if (!response.ok) {
+    throw new Error(`Google Apps Script email failed: ${response.status} ${detail}`);
+  }
+
+  try {
+    const parsed = JSON.parse(detail) as { ok?: boolean; error?: string };
+    if (!parsed.ok) {
+      throw new Error(parsed.error || detail || "Google Apps Script email failed");
+    }
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error(`Google Apps Script email returned invalid JSON: ${detail}`);
+    }
+    throw error;
   }
 }
 

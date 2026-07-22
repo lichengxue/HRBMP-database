@@ -26,13 +26,76 @@ Admin signs in with Supabase Auth
 The first version sends signed file links and CSV manifests. It does not build a
 zip package yet.
 
-## Required Supabase Secrets
+## Email Choices
+
+The Edge Function can send email two ways:
+
+1. **Google Apps Script / Gmail**: easiest temporary path. This sends from the
+   Google account that owns the Apps Script deployment.
+2. **Resend**: better production path, but requires a verified sender domain for
+   arbitrary requesters.
+
+For the current HRBMP demo, the Gmail path is usually simpler.
+
+## Required Supabase Secrets For Gmail
 
 Set these in Supabase Dashboard under **Edge Functions > Secrets**.
 
 Do not commit these values to GitHub.
 
 ```text
+HRBMP_EMAIL_PROVIDER=google_apps_script
+HRBMP_GMAIL_WEBHOOK_URL=paste-your-google-apps-script-web-app-url
+HRBMP_GMAIL_WEBHOOK_SECRET=make-a-long-private-random-text-here
+HRBMP_ADMIN_EMAIL=chengxue.li@stonybrook.edu
+HRBMP_SIGNED_URL_SECONDS=604800
+```
+
+`HRBMP_GMAIL_WEBHOOK_SECRET` must exactly match the Script Property in Google
+Apps Script.
+
+### Create The Gmail Apps Script Mailer
+
+1. Open <https://script.google.com>.
+2. Click **New project**.
+3. Paste the code from:
+
+```text
+scripts/hrbmp_gmail_mailer_apps_script.gs
+```
+
+4. In Apps Script, open **Project Settings**.
+5. Under **Script Properties**, add:
+
+```text
+HRBMP_GMAIL_WEBHOOK_SECRET=the-same-long-private-random-text
+```
+
+6. Click **Deploy > New deployment**.
+7. Choose **Web app**.
+8. Use these settings:
+
+```text
+Execute as: Me
+Who has access: Anyone
+```
+
+9. Click **Deploy**, authorize the script, and copy the Web app URL.
+10. Put that URL into the Supabase secret `HRBMP_GMAIL_WEBHOOK_URL`.
+
+Google Apps Script sends through the Google account that deployed the script.
+Google's quotas are daily and depend on account type; Google lists MailApp email
+recipients as 100 per day for consumer Gmail and 1,500 per day for Google
+Workspace accounts at the time this workflow was written.
+
+## Required Supabase Secrets For Resend
+
+Set these in Supabase Dashboard under **Edge Functions > Secrets**.
+
+Do not commit these values to GitHub.
+
+```text
+HRBMP_EMAIL_PROVIDER=resend
 RESEND_API_KEY=paste-your-resend-api-key
 HRBMP_EMAIL_FROM=HRBMP Archive <archive@your-verified-domain.edu>
 HRBMP_ADMIN_EMAIL=chengxue.li@stonybrook.edu
@@ -117,6 +180,7 @@ request_status = delivered
 - The signed links point to files in the private `fjs-archive` Storage bucket.
 - The manifest CSV is written to
   `fjs-archive/request-packages/<request_id>/`.
+- The Gmail path does not need a Resend API key or verified Resend domain.
 - Resend requires a valid API key and usually a verified sending domain before
   it can email arbitrary recipients.
 - The GUI does not store email secrets. Email is sent only from the Edge
