@@ -1746,8 +1746,7 @@ function initTabs() {
   [
     ['Data Sharing Policy - Biological Request', 'biological-data-request', 'biological-data-sharing-policy', 'biological data request must read consent'],
     ['Data Sharing Policy - Environmental Request', 'environmental-data-request', 'environmental-data-sharing-policy', 'environmental data request must read consent'],
-    ['Data Sharing Policy - Demo Request', 'demo', 'demo-data-sharing-policy', 'demo data request archive must read consent'],
-    ['Data Sharing Policy - Access Request', 'user-login', 'access-data-sharing-policy', 'access request login must read consent']
+    ['Data Sharing Policy - Demo Request', 'demo', 'demo-data-sharing-policy', 'demo data request archive must read consent']
   ].forEach(([label, pageId, targetId, keywords]) => {
     addSiteSearchItem(label, () => {
       showTab(pageId);
@@ -2255,7 +2254,6 @@ function bindPolicyAcknowledgments() {
   [
     ['data-request-policy-acknowledgment', 'data-request-submit'],
     ['env-data-request-policy-acknowledgment', 'env-data-request-submit'],
-    ['access-request-policy-acknowledgment', 'access-request-submit'],
     ['demo-data-request-policy-acknowledgment', 'demo-data-request-submit']
   ].forEach(([checkboxId, buttonId]) => {
     const checkbox = document.getElementById(checkboxId);
@@ -2970,7 +2968,7 @@ function renderDemoResults() {
   ]);
 
   setText('demo-result-status', `${formatNumber(displayRows.length)} request item(s) match the current filters.`);
-  renderDemoResultTable(displayRows);
+  renderDemoResultSummary(displayRows);
   updateDemoManifestDownload(displayRows);
   updateDemoRequestSummary(displayRows);
 }
@@ -3055,27 +3053,26 @@ function demoDataTypeRank(kind) {
   ].indexOf(kind);
 }
 
-function renderDemoResultTable(rows) {
-  const body = document.getElementById('demo-result-body');
-  if (!body) return;
-  body.replaceChildren();
+function renderDemoResultSummary(rows) {
+  const container = document.getElementById('demo-result-summary');
+  if (!container) return;
 
   if (!rows.length) {
-    appendEmptyRow(body, 7, 'No public records match the selected filters.');
+    container.textContent = 'No public records match the selected filters.';
     return;
   }
 
-  rows.forEach((row) => {
-    const tr = document.createElement('tr');
-    appendCell(tr, row.sample_id);
-    appendCell(tr, row.sample_date || 'Date pending');
-    appendCell(tr, row.common_name);
-    appendCell(tr, row.river_region_name);
-    appendCell(tr, formatAccessLevel(row.display_kind));
-    appendCell(tr, row.original_file_name || 'Metadata row');
-    appendCell(tr, row.storage_object_path || 'Generated from count table');
-    body.appendChild(tr);
-  });
+  const dataTypes = uniqueSorted(rows.map((row) => formatAccessLevel(row.display_kind))).join(', ');
+  const speciesPreview = uniqueSorted(rows.map((row) => row.common_name)).slice(0, 4).join(', ');
+  const samplePreview = uniqueSorted(rows.map((row) => row.sample_id)).slice(0, 4).join(', ');
+
+  container.innerHTML = `
+    <strong>Manifest ready.</strong>
+    <span>${formatNumber(rows.length)} request item(s), ${formatNumber(uniqueCount(rows, 'sample_id'))} sample(s), and ${formatNumber(uniqueCount(rows, 'common_name'))} species match these filters.</span>
+    <span><strong>Samples:</strong> ${escapeHtml(samplePreview)}${uniqueCount(rows, 'sample_id') > 4 ? '...' : ''}</span>
+    <span><strong>Species:</strong> ${escapeHtml(speciesPreview)}${uniqueCount(rows, 'common_name') > 4 ? '...' : ''}</span>
+    <span><strong>Data types:</strong> ${escapeHtml(dataTypes)}</span>
+  `;
 }
 
 function updateDemoManifestDownload(rows) {

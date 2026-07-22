@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.1.10" />
+  <link rel="stylesheet" href="style.css?v=1.1.13" />
 </head>
 <body>
   <header class="site-nav">
@@ -254,7 +254,6 @@
     <section class="tab-page" id="program-description" data-tab-page="program-description">
       <div class="page-header">
         <p class="eyebrow">Program Description</p>
-        <h1>HRBMP Program Overview</h1>
       </div>
 
       <div class="content-grid two-column">
@@ -494,10 +493,6 @@
     </section>
 
     <section class="tab-page" id="news" data-tab-page="news">
-      <div class="page-header">
-        <p class="eyebrow">News</p>
-        <h1>News</h1>
-      </div>
     </section>
 
     <section class="tab-page" id="biological-database" data-tab-page="biological-database">
@@ -683,9 +678,6 @@
         <div>
           <p class="eyebrow">Demo</p>
           <h1>FJS Data Request Demo</h1>
-          <p class="page-note">
-            Public Fall Juvenile Survey archive metadata are read from Supabase and shaped into a data request.
-          </p>
         </div>
         <div class="control-row demo-api-controls">
           <label>
@@ -767,21 +759,8 @@
           </div>
           <a id="demo-manifest-download" class="secondary-button link-button" href="#" download="hrbmp_fjs_demo_manifest.csv">Download Manifest CSV</a>
         </div>
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Sample</th>
-                <th>Date</th>
-                <th>Species</th>
-                <th>Region</th>
-                <th>Data Type</th>
-                <th>File</th>
-                <th>Storage Path</th>
-              </tr>
-            </thead>
-            <tbody id="demo-result-body"></tbody>
-          </table>
+        <div class="demo-result-summary" id="demo-result-summary">
+          Use the manifest CSV to review the matching sample, species, file, and storage-path details.
         </div>
       </section>
 
@@ -796,11 +775,6 @@
             <p>
               <a href="https://you.stonybrook.edu/hrbmp/files/2024/02/HRBMP_DataSharingPolicy-f253c4f473adf36f.pdf" target="_blank" rel="noopener">Click here for the HRBMP Data Sharing Policy</a>.
             </p>
-            <ul class="policy-summary">
-              <li>Detailed HRBMP data and archive image requests are reviewed by the data management team before release.</li>
-              <li>Requestors must describe the intended use, project members, requested data, and data use plan.</li>
-              <li>The request cannot be submitted until the policy consent checkbox below is checked.</li>
-            </ul>
           </div>
         </div>
         <form class="data-request-form" onsubmit="return false">
@@ -868,7 +842,6 @@
       <div class="page-header with-controls">
         <div>
           <p class="eyebrow">Environmental Database</p>
-          <h1>Hudson River Environmental Availability Layers</h1>
         </div>
         <div class="control-row">
           <label>
@@ -1069,8 +1042,6 @@
     <section class="tab-page" id="sampling-image-catalog" data-tab-page="sampling-image-catalog">
       <div class="page-header with-controls">
         <div>
-          <p class="eyebrow">Sampling Image Catalog</p>
-          <h1>Sampling Image Catalog</h1>
           <p class="page-note">
             Image records are initialized from HRBMP Species Highlights and will be
             updated as verified catalog metadata become available.
@@ -1107,7 +1078,6 @@
     <section class="tab-page" id="educational-materials" data-tab-page="educational-materials">
       <div class="page-header">
         <p class="eyebrow">Educational Materials</p>
-        <h1>HRBMP Learning Resources</h1>
       </div>
 
       <div class="education-resource-grid">
@@ -1810,15 +1780,10 @@
     </section>
 
     <section class="tab-page" id="photo-gallery" data-tab-page="photo-gallery">
-      <div class="page-header">
-        <p class="eyebrow">Photo Gallery</p>
-        <h1>Photo Gallery</h1>
-      </div>
     </section>
 
     <section class="tab-page" id="gallery-hudson-river" data-tab-page="gallery-hudson-river">
       <div class="page-header">
-        <p class="eyebrow">Photo Gallery</p>
         <h1>Hudson River</h1>
       </div>
       <div class="gallery-grid">
@@ -1883,7 +1848,6 @@
 
     <section class="tab-page" id="gallery-field-sampling" data-tab-page="gallery-field-sampling">
       <div class="page-header">
-        <p class="eyebrow">Photo Gallery</p>
         <h1>Field Sampling Photos</h1>
       </div>
       <div id="field-sampling-gallery" class="gallery-grid">
@@ -2236,7 +2200,6 @@
 
     <section class="tab-page" id="gallery-sample-warehouse" data-tab-page="gallery-sample-warehouse">
       <div class="page-header">
-        <p class="eyebrow">Photo Gallery</p>
         <h1>Sample Warehouse</h1>
       </div>
       <div class="gallery-grid">
@@ -2253,7 +2216,6 @@
 
     <section class="tab-page" id="gallery-lab-sample-processing" data-tab-page="gallery-lab-sample-processing">
       <div class="page-header">
-        <p class="eyebrow">Photo Gallery</p>
         <h1>Lab Sample Processing</h1>
       </div>
       <div id="lab-sample-processing-gallery" class="gallery-grid">
@@ -2343,7 +2305,6 @@
     <section class="tab-page" id="issue-report" data-tab-page="issue-report">
       <div class="page-header">
         <p class="eyebrow">Issue Report</p>
-        <h1>Comments, Issues, Questions, And Feedback</h1>
       </div>
 
       <div class="issue-layout">
@@ -2409,7 +2370,6 @@
     <section class="tab-page" id="user-login" data-tab-page="user-login">
       <div class="page-header">
         <p class="eyebrow">User Login</p>
-        <h1>Restricted Database Access</h1>
       </div>
 
       <div class="login-layout single-column">
@@ -2480,66 +2440,11 @@
         </div>
       </section>
 
-      <section class="data-panel access-request-panel">
-        <div>
-          <h2>Request Access</h2>
-          <p>
-            This form is a GUI placeholder for the future request workflow. In production,
-            it should write to the access request table through the API and notify the data
-            management team for review.
-          </p>
-        </div>
-        <div class="policy-callout" id="access-data-sharing-policy" tabindex="-1">
-          <div>
-            <strong>MUST READ: Data Sharing Policy</strong>
-            <p>
-              <a href="https://you.stonybrook.edu/hrbmp/files/2024/02/HRBMP_DataSharingPolicy-f253c4f473adf36f.pdf" target="_blank" rel="noopener">Click here for the HRBMP Data Sharing Policy</a>.
-            </p>
-            <ul class="policy-summary">
-              <li>Access requests are reviewed by the data management team before approval.</li>
-              <li>Requestors must describe their role, dataset need, and project or use case.</li>
-              <li>The request cannot be submitted until the policy consent checkbox below is checked.</li>
-            </ul>
-          </div>
-        </div>
-        <form class="login-form access-request-form" onsubmit="return false">
-          <label>
-            Name
-            <input name="requester-name" type="text" autocomplete="name" />
-          </label>
-          <label>
-            Email
-            <input name="requester-email" type="email" autocomplete="email" />
-          </label>
-          <label>
-            Affiliation
-            <input name="requester-affiliation" type="text" autocomplete="organization" />
-          </label>
-          <label>
-            Requested Role
-            <select id="access-request-role" name="requested-role"></select>
-          </label>
-          <label>
-            Dataset
-            <select id="access-request-dataset" name="requested-dataset"></select>
-          </label>
-          <label class="full-span">
-            Project Or Use Case
-            <textarea name="request-purpose" rows="4"></textarea>
-          </label>
-          <label class="full-span policy-acknowledgment">
-            <input id="access-request-policy-acknowledgment" type="checkbox" required />
-            <span>I have read, understand, and agree to follow the HRBMP Data Sharing Policy. I understand that access will be reviewed under that policy before approval.</span>
-          </label>
-          <button id="access-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Request</button>
-        </form>
-      </section>
     </section>
 
     <section class="tab-page" id="team-contact" data-tab-page="team-contact">
       <div class="page-header">
         <p class="eyebrow">Team / Contact</p>
-        <h1>Database Development Team And Contact Structure</h1>
       </div>
 
       <div class="org-tree" aria-label="HRBMP database team hierarchy">
@@ -2726,6 +2631,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=1.1.10"></script>
+  <script src="app.js?v=1.1.13"></script>
 </body>
 </html>
