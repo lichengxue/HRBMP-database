@@ -2795,8 +2795,20 @@ async function approveAndDeliverAdminRequest(requestId) {
     return;
   }
 
-  setLoginStatus('Approving request, preparing download links, and sending email...', 'warning');
+  setLoginStatus('Approving request...', 'warning');
   try {
+    const { error: approvalError } = await client
+      .from('hrbmp_data_requests')
+      .update({ request_status: 'approved' })
+      .eq('request_id', requestId);
+    if (approvalError) throw approvalError;
+
+    state.adminRequestView = 'approved';
+    renderAdminRequestRows(state.adminRequests.map((row) =>
+      row.request_id === requestId ? { ...row, request_status: 'approved' } : row
+    ));
+    setLoginStatus('Request approved. Preparing download links and sending email...', 'warning');
+
     const { data, error } = await client.functions.invoke('deliver-approved-request', {
       body: { request_id: requestId }
     });
