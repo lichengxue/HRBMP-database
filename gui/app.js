@@ -2901,8 +2901,36 @@ async function deliverApprovedAdminRequest(requestId) {
   } catch (error) {
     console.error(error);
     state.adminRequestView = 'approved';
+    await recordAdminDeliveryFailure(client, requestId, error.message);
     setLoginStatus(`Could not deliver request: ${error.message}`, 'error');
     await loadAdminRequests();
+  }
+}
+
+async function recordAdminDeliveryFailure(client, requestId, message) {
+  const existingRow = state.adminRequests.find((row) => row.request_id === requestId);
+  const requestPayload = {
+    ...adminRequestPayload(existingRow),
+    delivery_error: {
+      delivery_source: 'admin_gui_client',
+      failed_at: new Date().toISOString(),
+      error: message || 'Email delivery failed before Supabase recorded a server-side error.'
+    }
+  };
+
+  state.adminRequests = state.adminRequests.map((row) =>
+    row.request_id === requestId ? { ...row, request_payload: requestPayload } : row
+  );
+  renderAdminRequestRows(state.adminRequests);
+
+  try {
+    const { error } = await client
+      .from('hrbmp_data_requests')
+      .update({ request_payload: requestPayload })
+      .eq('request_id', requestId);
+    if (error) throw error;
+  } catch (error) {
+    console.error('Could not record delivery failure:', error);
   }
 }
 
