@@ -2731,7 +2731,12 @@ async function submitDemoDataRequest() {
   try {
     const inserted = await insertDemoDataRequest(key, payload);
     const requestId = Array.isArray(inserted) && inserted[0]?.request_id ? inserted[0].request_id : 'submitted';
-    setDemoRequestStatus(`Request submitted to Supabase. Admin review record: ${requestId}`, 'success');
+    setDemoRequestStatus(
+      requestId === 'submitted'
+        ? 'Request submitted to Supabase. Admins can review it in hrbmp_data_requests.'
+        : `Request submitted to Supabase. Admin review record: ${requestId}`,
+      'success'
+    );
   } catch (error) {
     console.error(error);
     renderDemoPayloadDownload(payload, `Supabase request insert failed: ${error.message}`);
@@ -2789,7 +2794,7 @@ async function insertDemoDataRequest(key, payload) {
     headers: {
       apikey: key,
       'Content-Type': 'application/json',
-      Prefer: 'return=representation'
+      Prefer: 'return=minimal'
     },
     body: JSON.stringify(payload)
   });
@@ -2797,7 +2802,8 @@ async function insertDemoDataRequest(key, payload) {
     const detail = await response.text();
     throw new Error(`${response.status} ${detail || response.statusText}`);
   }
-  return response.json();
+  const detail = await response.text();
+  return detail ? JSON.parse(detail) : null;
 }
 
 function renderDemoPayloadDownload(payload, message) {
