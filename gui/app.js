@@ -1560,6 +1560,7 @@ const state = {
   adminClientKey: '',
   adminRequests: [],
   adminRequestView: 'submitted',
+  adminDeliveryInFlight: new Set(),
   adminSessionEmail: ''
 };
 
@@ -2768,7 +2769,9 @@ function adminEmailButton(row) {
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'primary-button compact-button';
-  button.textContent = adminRequestDeliveryError(row) ? 'Retry Email' : 'Send Email';
+  const isSending = state.adminDeliveryInFlight.has(row.request_id);
+  button.textContent = isSending ? 'Sending...' : adminRequestDeliveryError(row) ? 'Retry Email' : 'Send Email';
+  button.disabled = isSending;
   button.addEventListener('click', () => deliverApprovedAdminRequest(row.request_id));
   return button;
 }
@@ -2778,6 +2781,10 @@ function adminRequestActionsLocked(row) {
 }
 
 function adminRequestDeliveryStatus(row) {
+  if (state.adminDeliveryInFlight.has(row.request_id)) {
+    return 'Sending email...\nWaiting for Supabase Edge Function response.';
+  }
+
   const payload = adminRequestPayload(row);
   const delivery = payload.delivery;
   const deliveryError = payload.delivery_error;
@@ -2881,10 +2888,11 @@ async function deliverApprovedAdminRequest(requestId) {
   }
 
   setLoginStatus('Preparing download links and sending email...', 'warning');
+  state.adminDeliveryInFlight.add(requestId);
+  renderAdminRequestRows(state.adminRequests);
+
   try {
-    const { data, error } = await client.functions.invoke('deliver-approved-request', {
-      body: { request_id: requestId }
-    });
+    const { data, error } = await invokeAdminDeliveryFunction(client, requestId);
 
     if (error) {
       const detail = await functionErrorDetail(error);
@@ -2893,6 +2901,7 @@ async function deliverApprovedAdminRequest(requestId) {
     if (data?.error) throw new Error(data.error);
 
     state.adminRequestView = 'approved';
+    state.adminDeliveryInFlight.delete(requestId);
     setLoginStatus(
       `Request delivered. Email sent to ${data?.requester_email || 'the requester'} with ${formatNumber(data?.asset_link_count || 0)} archive file link(s) and ${formatNumber(data?.count_row_count || 0)} count row(s).`,
       'success'
@@ -2901,10 +2910,29 @@ async function deliverApprovedAdminRequest(requestId) {
   } catch (error) {
     console.error(error);
     state.adminRequestView = 'approved';
+    state.adminDeliveryInFlight.delete(requestId);
     await recordAdminDeliveryFailure(client, requestId, error.message);
     setLoginStatus(`Could not deliver request: ${error.message}`, 'error');
     await loadAdminRequests();
+  } finally {
+    state.adminDeliveryInFlight.delete(requestId);
   }
+}
+
+function invokeAdminDeliveryFunction(client, requestId) {
+  return Promise.race([
+    client.functions.invoke('deliver-approved-request', {
+      body: { request_id: requestId }
+    }),
+    new Promise((resolve) => {
+      window.setTimeout(() => {
+        resolve({
+          data: null,
+          error: new Error('Supabase Edge Function did not return within 45 seconds. Check whether deliver-approved-request is deployed and whether the Gmail Apps Script webhook is reachable.')
+        });
+      }, 45000);
+    })
+  ]);
 }
 
 async function recordAdminDeliveryFailure(client, requestId, message) {
