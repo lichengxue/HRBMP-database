@@ -840,6 +840,49 @@ textarea {
   min-width: 1120px;
 }
 
+.admin-request-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 10px;
+}
+
+.admin-request-tab {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--muted);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-request-tab span {
+  min-width: 24px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--ink);
+  text-align: center;
+  font-size: 0.78rem;
+}
+
+.admin-request-tab.active {
+  border-color: rgba(30, 143, 132, 0.5);
+  background: #eef8f5;
+  color: #145f58;
+}
+
+.admin-request-view-summary {
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
 .admin-request-panel td {
   white-space: pre-line;
   vertical-align: top;

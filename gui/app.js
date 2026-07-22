@@ -1558,6 +1558,7 @@ const state = {
   adminClient: null,
   adminClientKey: '',
   adminRequests: [],
+  adminRequestView: 'submitted',
   adminSessionEmail: ''
 };
 
@@ -2514,6 +2515,13 @@ function bindAdminLoginControls() {
     refreshButton.addEventListener('click', () => loadAdminRequests());
   }
 
+  document.querySelectorAll('[data-admin-request-view]').forEach((button) => {
+    button.addEventListener('click', () => {
+      state.adminRequestView = button.dataset.adminRequestView || 'submitted';
+      renderAdminRequestRows(state.adminRequests);
+    });
+  });
+
   refreshAdminSession();
 }
 
@@ -2632,17 +2640,23 @@ function renderAdminRequestRows(rows) {
   if (!body) return;
   body.replaceChildren();
 
-  if (!rows.length) {
+  const allRows = Array.isArray(rows) ? rows : [];
+  updateAdminRequestTabs(allRows);
+  const visibleRows = allRows.filter((row) => adminRequestViewForStatus(row.request_status) === state.adminRequestView);
+
+  if (!visibleRows.length) {
     const tr = document.createElement('tr');
     const cell = document.createElement('td');
     cell.colSpan = 7;
-    cell.textContent = state.adminSessionEmail ? 'No requests are visible for this login.' : 'Sign in to load submitted requests.';
+    cell.textContent = state.adminSessionEmail
+      ? `No ${adminRequestViewLabel(state.adminRequestView).toLowerCase()} are visible for this login.`
+      : 'Sign in to load submitted requests.';
     tr.appendChild(cell);
     body.appendChild(tr);
     return;
   }
 
-  rows.forEach((row) => {
+  visibleRows.forEach((row) => {
     const tr = document.createElement('tr');
     appendCell(tr, formatTimestamp(row.created_at));
     appendCell(tr, formatAccessLevel(row.request_status));
@@ -2661,6 +2675,77 @@ function renderAdminRequestRows(rows) {
     tr.appendChild(actions);
     body.appendChild(tr);
   });
+}
+
+function updateAdminRequestTabs(rows) {
+  const counts = {
+    submitted: 0,
+    in_progress: 0,
+    approved: 0,
+    declined: 0
+  };
+
+  rows.forEach((row) => {
+    const view = adminRequestViewForStatus(row.request_status);
+    if (Object.prototype.hasOwnProperty.call(counts, view)) counts[view] += 1;
+  });
+
+  document.querySelectorAll('[data-admin-request-view]').forEach((button) => {
+    const view = button.dataset.adminRequestView || 'submitted';
+    button.classList.toggle('active', view === state.adminRequestView);
+    const count = button.querySelector('span');
+    if (count) count.textContent = formatNumber(counts[view] || 0);
+  });
+
+  const summary = document.getElementById('admin-request-view-summary');
+  if (summary) summary.textContent = adminRequestViewDescription(state.adminRequestView);
+}
+
+function adminRequestViewForStatus(status) {
+  switch (status) {
+    case 'submitted':
+      return 'submitted';
+    case 'reviewing':
+    case 'packaging':
+      return 'in_progress';
+    case 'approved':
+    case 'delivered':
+      return 'approved';
+    case 'declined':
+      return 'declined';
+    default:
+      return 'in_progress';
+  }
+}
+
+function adminRequestViewLabel(view) {
+  switch (view) {
+    case 'submitted':
+      return 'new requests';
+    case 'in_progress':
+      return 'in-review requests';
+    case 'approved':
+      return 'approved and sent requests';
+    case 'declined':
+      return 'declined requests';
+    default:
+      return 'requests';
+  }
+}
+
+function adminRequestViewDescription(view) {
+  switch (view) {
+    case 'submitted':
+      return 'New Requests shows rows waiting for admin review.';
+    case 'in_progress':
+      return 'In Review shows requests being checked or packaged.';
+    case 'approved':
+      return 'Approved & Sent keeps approved, delivered, and retry-ready request history.';
+    case 'declined':
+      return 'Declined keeps requests that were not approved for release.';
+    default:
+      return 'Choose a request status tab to review the queue.';
+  }
 }
 
 function adminStatusButton(row, status, label) {
@@ -2696,6 +2781,7 @@ async function updateAdminRequestStatus(requestId, status) {
       .eq('request_id', requestId);
     if (error) throw error;
 
+    state.adminRequestView = adminRequestViewForStatus(status);
     setLoginStatus(`Request marked ${formatAccessLevel(status)}.`, 'success');
     await loadAdminRequests();
   } catch (error) {
@@ -2723,6 +2809,7 @@ async function approveAndDeliverAdminRequest(requestId) {
     }
     if (data?.error) throw new Error(data.error);
 
+    state.adminRequestView = 'approved';
     setLoginStatus(
       `Request delivered. Email sent to ${data?.requester_email || 'the requester'} with ${formatNumber(data?.asset_link_count || 0)} archive file link(s) and ${formatNumber(data?.count_row_count || 0)} count row(s).`,
       'success'
@@ -2730,6 +2817,7 @@ async function approveAndDeliverAdminRequest(requestId) {
     await loadAdminRequests();
   } catch (error) {
     console.error(error);
+    state.adminRequestView = 'approved';
     setLoginStatus(`Could not deliver request: ${error.message}`, 'error');
     await loadAdminRequests();
   }

@@ -15,7 +15,12 @@ data/processed/*
 *.Rproj
 
 # Supabase Edge Function local secrets
+.env
+.env.*
+supabase/.env*
 supabase/functions/.env*
+secrets*.txt
+*.secret
 
 # OS/editor clutter
 .DS_Store

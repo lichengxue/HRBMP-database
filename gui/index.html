@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.1.9" />
+  <link rel="stylesheet" href="style.css?v=1.1.10" />
 </head>
 <body>
   <header class="site-nav">
@@ -2445,9 +2445,18 @@
         <div class="metadata-panel-header">
           <div>
             <h2>Admin Request Review</h2>
-            <p>Review submitted data requests and mark each request as approved or declined.</p>
+            <p>Review new data requests, send approved download links, and keep a clear request history.</p>
           </div>
           <button type="button" class="secondary-button" id="admin-refresh-requests">Refresh</button>
+        </div>
+        <div class="admin-request-tabs" role="tablist" aria-label="Admin request status filters">
+          <button type="button" class="admin-request-tab active" data-admin-request-view="submitted">New Requests <span>0</span></button>
+          <button type="button" class="admin-request-tab" data-admin-request-view="in_progress">In Review <span>0</span></button>
+          <button type="button" class="admin-request-tab" data-admin-request-view="approved">Approved & Sent <span>0</span></button>
+          <button type="button" class="admin-request-tab" data-admin-request-view="declined">Declined <span>0</span></button>
+        </div>
+        <div class="admin-request-view-summary" id="admin-request-view-summary">
+          New Requests shows rows waiting for admin review.
         </div>
         <div class="table-scroll">
           <table>
@@ -2717,6 +2726,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=1.1.9"></script>
+  <script src="app.js?v=1.1.10"></script>
 </body>
 </html>

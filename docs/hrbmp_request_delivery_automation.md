@@ -45,8 +45,8 @@ Do not commit these values to GitHub.
 
 ```text
 HRBMP_EMAIL_PROVIDER=google_apps_script
-HRBMP_GMAIL_WEBHOOK_URL=paste-your-google-apps-script-web-app-url
-HRBMP_GMAIL_WEBHOOK_SECRET=make-a-long-private-random-text-here
+HRBMP_GMAIL_WEBHOOK_URL=<saved only in Supabase Edge Function Secrets>
+HRBMP_GMAIL_WEBHOOK_SECRET=<saved only in Supabase Edge Function Secrets>
 HRBMP_ADMIN_EMAIL=chengxue.li@stonybrook.edu
 HRBMP_SIGNED_URL_SECONDS=604800
 ```
@@ -68,7 +68,7 @@ scripts/hrbmp_gmail_mailer_apps_script.gs
 5. Under **Script Properties**, add:
 
 ```text
-HRBMP_GMAIL_WEBHOOK_SECRET=the-same-long-private-random-text
+HRBMP_GMAIL_WEBHOOK_SECRET=<same private value saved in Supabase>
 ```
 
 6. Click **Deploy > New deployment**.
