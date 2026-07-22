@@ -325,7 +325,8 @@ const ADMIN_REQUEST_SELECT = [
   'requested_data_types',
   'matching_row_count',
   'public_row_count',
-  'request_summary'
+  'request_summary',
+  'request_payload'
 ].join(',');
 
 const DEMO_REGION_CODE_LABELS = {
@@ -2645,7 +2646,7 @@ function renderAdminRequestRows(rows) {
   if (!visibleRows.length) {
     const tr = document.createElement('tr');
     const cell = document.createElement('td');
-    cell.colSpan = 7;
+    cell.colSpan = 8;
     cell.textContent = state.adminSessionEmail
       ? `No ${adminRequestViewLabel(state.adminRequestView).toLowerCase()} are visible for this login.`
       : 'Sign in to load submitted requests.';
@@ -2662,14 +2663,16 @@ function renderAdminRequestRows(rows) {
     appendCell(tr, adminRequestFilters(row));
     appendCell(tr, `${formatNumber(row.matching_row_count || 0)} matched\n${formatNumber(row.public_row_count || 0)} public`);
     appendCell(tr, row.request_notes || row.intended_use || 'No notes');
+    appendCell(tr, adminRequestDeliveryStatus(row));
 
     const actions = document.createElement('td');
     actions.className = 'admin-request-actions';
-    actions.append(
+    [
       adminStatusButton(row, 'reviewing', 'Reviewing'),
       adminStatusButton(row, 'approved', 'Approve & Email'),
-      adminStatusButton(row, 'declined', 'Decline')
-    );
+      adminStatusButton(row, 'declined', 'Decline'),
+      adminEmailButton(row)
+    ].filter(Boolean).forEach((button) => actions.appendChild(button));
     tr.appendChild(actions);
     body.appendChild(tr);
   });
@@ -2738,7 +2741,7 @@ function adminRequestViewDescription(view) {
     case 'in_progress':
       return 'In Review shows requests being checked or packaged.';
     case 'approved':
-      return 'Approved & Sent keeps approved, delivered, and retry-ready request history.';
+      return 'Approved & Sent keeps approved and delivered request history.';
     case 'declined':
       return 'Declined keeps requests that were not approved for release.';
     default:
@@ -2751,12 +2754,63 @@ function adminStatusButton(row, status, label) {
   button.type = 'button';
   button.className = status === 'approved' ? 'primary-button compact-button' : 'secondary-button compact-button';
   button.textContent = label;
-  const isDeliveryButton = status === 'approved';
-  button.disabled = row.request_status === 'delivered'
-    || row.request_status === 'packaging'
-    || (!isDeliveryButton && row.request_status === status);
+  button.disabled = adminRequestActionsLocked(row) || row.request_status === status;
+  if (button.disabled && adminRequestActionsLocked(row)) {
+    button.title = 'This request has already been completed.';
+  }
   button.addEventListener('click', () => updateAdminRequestStatus(row.request_id, status));
   return button;
+}
+
+function adminEmailButton(row) {
+  if (row.request_status !== 'approved') return null;
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'primary-button compact-button';
+  button.textContent = adminRequestDeliveryError(row) ? 'Retry Email' : 'Send Email';
+  button.addEventListener('click', () => deliverApprovedAdminRequest(row.request_id));
+  return button;
+}
+
+function adminRequestActionsLocked(row) {
+  return ['approved', 'delivered', 'declined', 'packaging'].includes(row.request_status);
+}
+
+function adminRequestDeliveryStatus(row) {
+  const payload = adminRequestPayload(row);
+  const delivery = payload.delivery;
+  const deliveryError = payload.delivery_error;
+
+  if (row.request_status === 'delivered' && delivery) {
+    const deliveredAt = delivery.delivered_at ? formatTimestamp(delivery.delivered_at) : 'time pending';
+    const links = formatNumber(delivery.asset_link_count || 0);
+    const counts = formatNumber(delivery.count_row_count || 0);
+    return `Email sent\n${deliveredAt}\n${links} file link(s), ${counts} count row(s)`;
+  }
+
+  if (deliveryError) {
+    return `Email failed\n${deliveryError.error || 'Check Edge Function logs.'}`;
+  }
+
+  if (row.request_status === 'approved') return 'Approved; email not delivered yet.';
+  if (row.request_status === 'packaging') return 'Preparing email and download links...';
+  if (row.request_status === 'declined') return 'No email delivery.';
+  return 'Pending approval.';
+}
+
+function adminRequestDeliveryError(row) {
+  return Boolean(adminRequestPayload(row).delivery_error);
+}
+
+function adminRequestPayload(row) {
+  if (!row?.request_payload) return {};
+  if (typeof row.request_payload === 'object') return row.request_payload;
+  try {
+    return JSON.parse(row.request_payload);
+  } catch {
+    return {};
+  }
 }
 
 async function updateAdminRequestStatus(requestId, status) {
@@ -2803,12 +2857,31 @@ async function approveAndDeliverAdminRequest(requestId) {
       .eq('request_id', requestId);
     if (approvalError) throw approvalError;
 
-    state.adminRequestView = 'approved';
-    renderAdminRequestRows(state.adminRequests.map((row) =>
+    state.adminRequests = state.adminRequests.map((row) =>
       row.request_id === requestId ? { ...row, request_status: 'approved' } : row
-    ));
-    setLoginStatus('Request approved. Preparing download links and sending email...', 'warning');
+    );
+    state.adminRequestView = 'approved';
+    renderAdminRequestRows(state.adminRequests);
+  } catch (error) {
+    console.error(error);
+    state.adminRequestView = 'approved';
+    setLoginStatus(`Could not approve request: ${error.message}`, 'error');
+    await loadAdminRequests();
+    return;
+  }
 
+  await deliverApprovedAdminRequest(requestId);
+}
+
+async function deliverApprovedAdminRequest(requestId) {
+  const client = createHrbmpSupabaseClient();
+  if (!client) {
+    setLoginStatus('Save the Supabase publishable key first.', 'warning');
+    return;
+  }
+
+  setLoginStatus('Preparing download links and sending email...', 'warning');
+  try {
     const { data, error } = await client.functions.invoke('deliver-approved-request', {
       body: { request_id: requestId }
     });

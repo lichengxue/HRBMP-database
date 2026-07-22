@@ -840,7 +840,7 @@ textarea {
 }
 
 .admin-request-panel table {
-  min-width: 1120px;
+  min-width: 1280px;
 }
 
 .admin-request-tabs {
@@ -892,7 +892,8 @@ textarea {
 }
 
 .admin-request-panel td:nth-child(4),
-.admin-request-panel td:nth-child(6) {
+.admin-request-panel td:nth-child(6),
+.admin-request-panel td:nth-child(7) {
   max-width: 280px;
 }
 
