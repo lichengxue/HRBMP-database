@@ -1561,6 +1561,7 @@ const state = {
   adminRequests: [],
   adminRequestView: 'submitted',
   adminDeliveryInFlight: new Set(),
+  adminReviewedRequestIds: new Set(),
   adminSessionEmail: ''
 };
 
@@ -2597,6 +2598,8 @@ async function signOutAdminUser() {
 
   state.adminSessionEmail = '';
   state.adminRequests = [];
+  state.adminReviewedRequestIds.clear();
+  resetAdminRequestReport();
   renderAdminRequestRows([]);
   setLoginStatus('Signed out. Sign in to review requests.', 'warning');
 }
@@ -2647,7 +2650,7 @@ function renderAdminRequestRows(rows) {
   if (!visibleRows.length) {
     const tr = document.createElement('tr');
     const cell = document.createElement('td');
-    cell.colSpan = 8;
+    cell.colSpan = 6;
     cell.textContent = state.adminSessionEmail
       ? `No ${adminRequestViewLabel(state.adminRequestView).toLowerCase()} are visible for this login.`
       : 'Sign in to load submitted requests.';
@@ -2661,14 +2664,13 @@ function renderAdminRequestRows(rows) {
     appendCell(tr, formatTimestamp(row.created_at));
     appendCell(tr, formatAccessLevel(row.request_status));
     appendCell(tr, `${row.requester_name || 'Name pending'}\n${row.requester_email || ''}`);
-    appendCell(tr, adminRequestFilters(row));
-    appendCell(tr, `${formatNumber(row.matching_row_count || 0)} matched\n${formatNumber(row.public_row_count || 0)} public`);
     appendCell(tr, row.request_notes || row.intended_use || 'No notes');
     appendCell(tr, adminRequestDeliveryStatus(row));
 
     const actions = document.createElement('td');
     actions.className = 'admin-request-actions';
     [
+      adminReviewReportButton(row),
       adminStatusButton(row, 'reviewing', 'Reviewing'),
       adminStatusButton(row, 'approved', 'Approve & Email'),
       adminStatusButton(row, 'declined', 'Decline'),
@@ -2755,11 +2757,25 @@ function adminStatusButton(row, status, label) {
   button.type = 'button';
   button.className = status === 'approved' ? 'primary-button compact-button' : 'secondary-button compact-button';
   button.textContent = label;
-  button.disabled = adminRequestActionsLocked(row) || row.request_status === status;
-  if (button.disabled && adminRequestActionsLocked(row)) {
+  const needsReportReview = ['approved', 'declined'].includes(status)
+    && !state.adminReviewedRequestIds.has(row.request_id)
+    && !adminRequestActionsLocked(row);
+  button.disabled = adminRequestActionsLocked(row) || row.request_status === status || needsReportReview;
+  if (needsReportReview) {
+    button.title = 'Open and review the request report first.';
+  } else if (button.disabled && adminRequestActionsLocked(row)) {
     button.title = 'This request has already been completed.';
   }
   button.addEventListener('click', () => updateAdminRequestStatus(row.request_id, status));
+  return button;
+}
+
+function adminReviewReportButton(row) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'secondary-button compact-button';
+  button.textContent = state.adminReviewedRequestIds.has(row.request_id) ? 'Report Reviewed' : 'Review Report';
+  button.addEventListener('click', () => showAdminRequestReport(row.request_id));
   return button;
 }
 
@@ -2818,6 +2834,96 @@ function adminRequestPayload(row) {
   } catch {
     return {};
   }
+}
+
+function showAdminRequestReport(requestId) {
+  const row = state.adminRequests.find((request) => request.request_id === requestId);
+  const report = document.getElementById('admin-request-report');
+  if (!row || !report) return;
+
+  state.adminReviewedRequestIds.add(requestId);
+  renderAdminRequestRows(state.adminRequests);
+
+  const payload = adminRequestPayload(row);
+  const form = payload.request_form || {};
+  const filterRows = [
+    ['Survey Program', row.selected_program || 'All Programs'],
+    ['Species', row.selected_species || 'All Species'],
+    ['HRBMP Region', row.selected_region || 'All Regions'],
+    ['Sample', row.selected_sample_id || 'All Samples'],
+    ['Year Range', row.year_start || row.year_end ? `${row.year_start || 'Any Start'} to ${row.year_end || 'Any End'}` : 'All Years'],
+    ['Data Types', Array.isArray(row.requested_data_types) && row.requested_data_types.length ? row.requested_data_types.map(formatAccessLevel).join(', ') : 'All Data Types'],
+    ['Matching Request Items', formatNumber(row.matching_row_count || 0)],
+    ['Public Request Items', formatNumber(row.public_row_count || 0)]
+  ];
+  const requesterRows = [
+    ['Name', row.requester_name || 'Name pending'],
+    ['Title', form.requester_title || 'Not provided'],
+    ['Email', row.requester_email || 'Email pending'],
+    ['Phone', form.requester_phone || 'Not provided'],
+    ['Affiliation', row.requester_affiliation || 'Not provided'],
+    ['Intended Use', row.intended_use || 'Not provided']
+  ];
+  const narrativeRows = [
+    ['Project Abstract', form.project_abstract || 'Not provided'],
+    ['Specific Data Requested', form.specific_data_requested || row.request_notes || 'Not provided'],
+    ['Data Use Plan', form.data_use_plan || 'Not provided'],
+    ['Other Project Members With Data Access', form.collaborators_with_data_access || 'Not provided']
+  ];
+
+  report.hidden = false;
+  report.innerHTML = `
+    <div class="admin-request-report-header">
+      <div>
+        <h3>Request Review Report</h3>
+        <p>${escapeHtml(row.request_id)} | ${escapeHtml(formatTimestamp(row.created_at))}</p>
+      </div>
+      <span>${escapeHtml(formatAccessLevel(row.request_status))}</span>
+    </div>
+    <div class="admin-request-report-grid">
+      <section>
+        <h4>Requester</h4>
+        ${adminReportDefinitionList(requesterRows)}
+      </section>
+      <section>
+        <h4>Selected Filters</h4>
+        ${adminReportDefinitionList(filterRows)}
+      </section>
+    </div>
+    <section class="admin-request-report-section">
+      <h4>Requester Narrative</h4>
+      ${adminReportDefinitionList(narrativeRows, true)}
+    </section>
+    <section class="admin-request-report-section">
+      <h4>Current Screening Summary</h4>
+      <pre>${escapeHtml(row.request_summary || adminRequestFilters(row))}</pre>
+    </section>
+  `;
+  report.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function adminReportDefinitionList(rows, multiline = false) {
+  return `
+    <dl class="${multiline ? 'multiline' : ''}">
+      ${rows.map(([label, value]) => `
+        <div>
+          <dt>${escapeHtml(label)}</dt>
+          <dd>${escapeHtml(value)}</dd>
+        </div>
+      `).join('')}
+    </dl>
+  `;
+}
+
+function resetAdminRequestReport() {
+  const report = document.getElementById('admin-request-report');
+  if (!report) return;
+  report.hidden = true;
+  report.innerHTML = `
+    <div class="admin-request-report-empty">
+      Open a request report to review the full requester form and selected filters before approval.
+    </div>
+  `;
 }
 
 async function updateAdminRequestStatus(requestId, status) {

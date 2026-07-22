@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.1.19" />
+  <link rel="stylesheet" href="style.css?v=1.1.20" />
 </head>
 <body>
   <header class="site-nav">
@@ -2425,8 +2425,6 @@
                 <th>Created</th>
                 <th>Status</th>
                 <th>Requester</th>
-                <th>Filters</th>
-                <th>Rows</th>
                 <th>Notes</th>
                 <th>Delivery</th>
                 <th>Action</th>
@@ -2434,10 +2432,15 @@
             </thead>
             <tbody id="admin-request-rows">
               <tr>
-                <td colspan="8">Sign in to load submitted requests.</td>
+                <td colspan="6">Sign in to load submitted requests.</td>
               </tr>
             </tbody>
           </table>
+        </div>
+        <div class="admin-request-report" id="admin-request-report" hidden>
+          <div class="admin-request-report-empty">
+            Open a request report to review the full requester form and selected filters before approval.
+          </div>
         </div>
       </section>
 
@@ -2632,6 +2635,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=1.1.19"></script>
+  <script src="app.js?v=1.1.20"></script>
 </body>
 </html>

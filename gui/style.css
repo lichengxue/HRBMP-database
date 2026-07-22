@@ -840,7 +840,7 @@ textarea {
 }
 
 .admin-request-panel table {
-  min-width: 1280px;
+  min-width: 980px;
 }
 
 .admin-request-tabs {
@@ -886,14 +886,109 @@ textarea {
   font-size: 0.88rem;
 }
 
+.admin-request-report {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.admin-request-report-empty {
+  color: var(--muted);
+}
+
+.admin-request-report-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-request-report-header h3,
+.admin-request-report-section h4,
+.admin-request-report-grid h4 {
+  margin: 0;
+}
+
+.admin-request-report-header p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.admin-request-report-header span {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.admin-request-report-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin-request-report dl {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+}
+
+.admin-request-report dl div {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.38fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
+.admin-request-report dt {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.admin-request-report dd {
+  margin: 0;
+  color: var(--ink);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.admin-request-report .multiline div {
+  grid-template-columns: 1fr;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.admin-request-report-section {
+  margin-top: 16px;
+}
+
+.admin-request-report pre {
+  margin: 10px 0 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-soft);
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .admin-request-panel td {
   white-space: pre-line;
   vertical-align: top;
 }
 
 .admin-request-panel td:nth-child(4),
-.admin-request-panel td:nth-child(6),
-.admin-request-panel td:nth-child(7) {
+.admin-request-panel td:nth-child(5) {
   max-width: 280px;
 }
 
@@ -3104,7 +3199,12 @@ tbody tr:hover {
   .survey-card-grid,
   .research-link-grid,
   .availability-grid,
-  .life-stage-gallery {
+  .life-stage-gallery,
+  .admin-request-report-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-request-report dl div {
     grid-template-columns: 1fr;
   }
 
