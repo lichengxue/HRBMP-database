@@ -6,15 +6,49 @@
 #
 # Example from the repository root:
 #   Rscript scripts/prepare_fjs_storage_upload.R 98_20171023_1592
+#   Rscript scripts/prepare_fjs_storage_upload.R --manifest data/processed/FJS_storage_upload_ready/supabase_import/fjs_assets.csv --output data/processed/FJS_storage_upload_ready/storage_upload_ready all
 #
 # Then upload the prepared folder in Supabase Dashboard > Storage > fjs-archive.
 
-manifest_path <- "data/processed/FJS_2017_sample/supabase_import/fjs_assets.csv"
-output_root <- "data/processed/FJS_2017_sample/storage_upload_ready"
-overwrite_existing <- TRUE
+default_manifest_path <- "data/processed/FJS_2017_sample/supabase_import/fjs_assets.csv"
+default_output_root <- "data/processed/FJS_2017_sample/storage_upload_ready"
 
-args <- commandArgs(trailingOnly = TRUE)
-sample_ids <- args
+parse_args <- function(args) {
+  values <- list(
+    manifest = default_manifest_path,
+    output = default_output_root,
+    overwrite = TRUE,
+    samples = character()
+  )
+
+  i <- 1
+  while (i <= length(args)) {
+    key <- args[[i]]
+    value <- if (i < length(args)) args[[i + 1]] else NA_character_
+
+    if (key == "--manifest") {
+      values$manifest <- value
+      i <- i + 2
+    } else if (key == "--output") {
+      values$output <- value
+      i <- i + 2
+    } else if (key == "--no-overwrite") {
+      values$overwrite <- FALSE
+      i <- i + 1
+    } else {
+      values$samples <- c(values$samples, key)
+      i <- i + 1
+    }
+  }
+
+  values
+}
+
+parsed_args <- parse_args(commandArgs(trailingOnly = TRUE))
+manifest_path <- parsed_args$manifest
+output_root <- parsed_args$output
+overwrite_existing <- parsed_args$overwrite
+sample_ids <- parsed_args$samples
 
 if (!file.exists(manifest_path)) {
   stop(
@@ -142,6 +176,12 @@ sample_folder_lines <- paste0(
   file.path(output_root, "samples", unique(selected_assets$sample_id))
 )
 
+example_sample_id <- unique(selected_assets$sample_id)[1]
+example_path_lines <- paste0(
+  "- ",
+  head(selected_assets$storage_object_path, 2)
+)
+
 instructions <- c(
   "FJS Supabase Storage manual upload instructions",
   "",
@@ -159,7 +199,7 @@ instructions <- c(
   "1. In Supabase, open Storage.",
   "2. Open the bucket named fjs-archive.",
   "3. Create or open a folder named samples.",
-  "4. Upload the prepared sample folder, for example 98_20171023_1592.",
+  paste0("4. Upload the prepared sample folder, for example ", example_sample_id, "."),
   "",
   "Prepared sample folder(s):",
   sample_folder_lines,
@@ -170,8 +210,7 @@ instructions <- c(
   "3. Upload the folder named samples from this prepared output folder.",
   "",
   "After upload, object paths should look like:",
-  "- samples/98_20171023_1592/jar_label_image/98_20171023_1592_J01.JPG",
-  "- samples/98_20171023_1592/field_sheet_pdf/98_20171023_1592_SC1.pdf"
+  example_path_lines
 )
 writeLines(instructions, file.path(output_root, "README_upload_instructions.txt"))
 

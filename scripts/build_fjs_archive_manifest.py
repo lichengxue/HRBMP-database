@@ -280,7 +280,7 @@ def sample_id_from_row(row: dict[str, Any]) -> str:
     sample_date = parse_date(row.get("DATE") or row.get("SAMPLE.DATE"))
     if task_code is None or sample_number is None or not sample_date:
         raise ValueError(f"Cannot build sample_id from row: {row}")
-    return f"{task_code}_{sample_date.replace('-', '')}_{sample_number}"
+    return f"{task_code}_{sample_date.replace('-', '')}_{sample_number:04d}"
 
 
 def row_total_count(row: dict[str, Any]) -> int:
@@ -478,13 +478,14 @@ def classify_asset(path: Path, sample_id: str) -> dict[str, str]:
     sample_prefix = re.escape(sample_id)
 
     representative = re.match(
-        rf"^{sample_prefix}_J(?P<jar>\d+)_(?P<taxon>\d{{3}})_(?P<life_stage>\d{{2}})_(?P<specimen>\d{{2}})_(?P<orientation>\d{{2}})\.jpe?g$",
+        rf"^{sample_prefix}_(?:J)?(?P<jar>\d+)_(?P<taxon>\d{{3}})_(?P<life_stage>\d{{2}})_(?P<specimen>\d{{2}})_(?P<orientation>\d{{2}})(?:_(?P<source_sequence>\d{{2}}))?\.jpe?g$",
         name,
         flags=re.IGNORECASE,
     )
     if representative:
         orientation_code = representative.group("orientation")
         orientation_name = ORIENTATION_NAMES.get(orientation_code, "")
+        source_sequence = representative.group("source_sequence") or orientation_code
         return {
             "asset_kind": "representative_species_image",
             "taxon_code": str(int(representative.group("taxon"))),
@@ -493,12 +494,16 @@ def classify_asset(path: Path, sample_id: str) -> dict[str, str]:
             "orientation_code": orientation_code,
             "orientation_name": orientation_name,
             "image_view": orientation_name or orientation_code,
-            "source_sequence": str(int(orientation_code)),
-            "sheet_code": f"J{representative.group('jar')}",
+            "source_sequence": str(int(source_sequence)),
+            "sheet_code": f"J{int(representative.group('jar')):02d}",
             "notes": "",
         }
 
-    jar_label = re.match(rf"^{sample_prefix}_J(?P<jar>\d+)\.jpe?g$", name, flags=re.IGNORECASE)
+    jar_label = re.match(
+        rf"^{sample_prefix}_(?:J)?(?P<jar>\d+)\.jpe?g$",
+        name,
+        flags=re.IGNORECASE,
+    )
     if jar_label:
         return {
             "asset_kind": "jar_label_image",
@@ -509,7 +514,7 @@ def classify_asset(path: Path, sample_id: str) -> dict[str, str]:
             "orientation_name": "",
             "image_view": "",
             "source_sequence": "",
-            "sheet_code": f"J{jar_label.group('jar')}",
+            "sheet_code": f"J{int(jar_label.group('jar')):02d}",
             "notes": "Sample jar label image.",
         }
 
@@ -569,78 +574,82 @@ def build_asset_rows(
     representative_files: dict[tuple[str, int], list[str]] = defaultdict(list)
 
     sample_dir_re = re.compile(r"^\d+_\d{8}_\d+$")
-    for path in sorted(source_root.rglob("*")):
-        if not path.is_file() or path.parent == source_root:
-            continue
-        if path.suffix.lower() not in {".jpg", ".jpeg", ".pdf"}:
-            continue
+    sample_dirs = [
+        path for path in sorted(source_root.iterdir())
+        if path.is_dir() and sample_dir_re.match(path.name)
+    ]
 
-        sample_id = path.parent.name
-        if not sample_dir_re.match(sample_id):
-            continue
+    for sample_dir in sample_dirs:
+        for path in sorted(sample_dir.iterdir()):
+            if not path.is_file():
+                continue
+            if path.suffix.lower() not in {".jpg", ".jpeg", ".pdf"}:
+                continue
 
-        classification = classify_asset(path, sample_id)
-        asset_kind = classification["asset_kind"]
-        taxon_code = parse_int(classification["taxon_code"])
-        sample_taxon_id = ""
-        representative_id = ""
-        notes = classification["notes"]
+            sample_id = sample_dir.name
 
-        if asset_kind == "representative_species_image":
-            if taxon_code is None:
-                asset_kind = "other"
-                notes = "Representative filename could not be parsed for taxon code."
-            else:
-                sample_taxon_id = sample_taxa_ids.get((sample_id, taxon_code), "")
-                if sample_taxon_id:
-                    representative_id = stable_uuid("representative", sample_id, taxon_code)
-                    key = (sample_id, taxon_code)
-                    representative_files[key].append(path.name)
-                    representatives.setdefault(
-                        key,
-                        {
-                            "representative_id": representative_id,
-                            "sample_taxon_id": sample_taxon_id,
-                            "sample_id": sample_id,
-                            "taxon_code": str(taxon_code),
-                            "representative_label": f"{sample_id}_{taxon_code:03d}",
-                            "notes": "One representative specimen for this sample and taxon.",
-                        },
-                    )
-                else:
+            classification = classify_asset(path, sample_id)
+            asset_kind = classification["asset_kind"]
+            taxon_code = parse_int(classification["taxon_code"])
+            sample_taxon_id = ""
+            representative_id = ""
+            notes = classification["notes"]
+
+            if asset_kind == "representative_species_image":
+                if taxon_code is None:
                     asset_kind = "other"
-                    notes = (
-                        f"Possible representative image for taxon {taxon_code}, "
-                        "but no matching processed sample-taxon row was found."
-                    )
+                    notes = "Representative filename could not be parsed for taxon code."
+                else:
+                    sample_taxon_id = sample_taxa_ids.get((sample_id, taxon_code), "")
+                    if sample_taxon_id:
+                        representative_id = stable_uuid("representative", sample_id, taxon_code)
+                        key = (sample_id, taxon_code)
+                        representative_files[key].append(path.name)
+                        representatives.setdefault(
+                            key,
+                            {
+                                "representative_id": representative_id,
+                                "sample_taxon_id": sample_taxon_id,
+                                "sample_id": sample_id,
+                                "taxon_code": str(taxon_code),
+                                "representative_label": f"{sample_id}_{taxon_code:03d}",
+                                "notes": "One representative specimen for this sample and taxon.",
+                            },
+                        )
+                    else:
+                        asset_kind = "other"
+                        notes = (
+                            f"Possible representative image for taxon {taxon_code}, "
+                            "but no matching processed sample-taxon row was found."
+                        )
 
-        storage_object_path = f"samples/{sample_id}/{asset_kind}/{path.name}"
-        mime_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
-        assets.append(
-            {
-                "asset_id": stable_uuid("asset", bucket, storage_object_path),
-                "sample_id": sample_id,
-                "sample_taxon_id": sample_taxon_id,
-                "representative_id": representative_id,
-                "asset_kind": asset_kind,
-                "storage_bucket": bucket,
-                "storage_object_path": storage_object_path,
-                "original_file_name": path.name,
-                "local_source_path": relative_path(path, repo_root),
-                "mime_type": mime_type,
-                "file_size_bytes": str(path.stat().st_size),
-                "sha256": sha256_file(path),
-                "life_stage_code": classification["life_stage_code"],
-                "specimen_number": classification["specimen_number"],
-                "orientation_code": classification["orientation_code"],
-                "orientation_name": classification["orientation_name"],
-                "image_view": classification["image_view"],
-                "source_sequence": classification["source_sequence"],
-                "sheet_code": classification["sheet_code"],
-                "access_level": access_level,
-                "notes": notes,
-            }
-        )
+            storage_object_path = f"samples/{sample_id}/{asset_kind}/{path.name}"
+            mime_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+            assets.append(
+                {
+                    "asset_id": stable_uuid("asset", bucket, storage_object_path),
+                    "sample_id": sample_id,
+                    "sample_taxon_id": sample_taxon_id,
+                    "representative_id": representative_id,
+                    "asset_kind": asset_kind,
+                    "storage_bucket": bucket,
+                    "storage_object_path": storage_object_path,
+                    "original_file_name": path.name,
+                    "local_source_path": relative_path(path, repo_root),
+                    "mime_type": mime_type,
+                    "file_size_bytes": str(path.stat().st_size),
+                    "sha256": sha256_file(path),
+                    "life_stage_code": classification["life_stage_code"],
+                    "specimen_number": classification["specimen_number"],
+                    "orientation_code": classification["orientation_code"],
+                    "orientation_name": classification["orientation_name"],
+                    "image_view": classification["image_view"],
+                    "source_sequence": classification["source_sequence"],
+                    "sheet_code": classification["sheet_code"],
+                    "access_level": access_level,
+                    "notes": notes,
+                }
+            )
 
     return assets, list(representatives.values()), representative_files
 
