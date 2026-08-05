@@ -744,8 +744,8 @@
               <span>Representative fish images</span>
             </label>
             <label>
-              <input id="demo-type-documents" type="checkbox" checked />
-              <span>Jar labels, field sheets, and lab sheets</span>
+              <input id="demo-type-documents" type="checkbox" disabled aria-disabled="true" />
+              <span>Jar labels, field sheets, and lab sheets (private)</span>
             </label>
           </fieldset>
         </div>
@@ -2378,7 +2378,7 @@
           <form class="login-form" onsubmit="return false">
             <label>
               Email
-              <input id="login-username" name="username" type="email" autocomplete="username" placeholder="chengxue.li@stonybrook.edu" />
+              <input id="login-username" name="username" type="email" autocomplete="username" placeholder="admin@example.edu" />
             </label>
             <label>
               Password
@@ -2635,6 +2635,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=1.1.20"></script>
+  <script src="app.js?v=1.1.21"></script>
 </body>
 </html>

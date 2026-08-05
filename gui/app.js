@@ -2228,10 +2228,12 @@ function bindControls() {
         const element = document.getElementById(id);
         if (element) element.value = 'all';
       });
-      ['demo-type-counts', 'demo-type-images', 'demo-type-documents'].forEach((id) => {
+      ['demo-type-counts', 'demo-type-images'].forEach((id) => {
         const element = document.getElementById(id);
         if (element) element.checked = true;
       });
+      const documentTypes = document.getElementById('demo-type-documents');
+      if (documentTypes) documentTypes.checked = false;
       renderDemoResults();
     });
   }
@@ -3247,7 +3249,8 @@ function selectedDemoDataTypes() {
   const types = [];
   if (checked('demo-type-counts')) types.push('processed_abundance_count');
   if (checked('demo-type-images')) types.push('representative_species_image');
-  if (checked('demo-type-documents')) {
+  const documentsInput = document.getElementById('demo-type-documents');
+  if (documentsInput && !documentsInput.disabled && documentsInput.checked) {
     types.push('jar_label_image', 'field_sheet_pdf', 'lab_sheet_pdf');
   }
   return types;

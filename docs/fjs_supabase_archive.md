@@ -247,20 +247,15 @@ private
 
 That is intentional. Private rows/files are visible only through privileged
 database access or a service role. To expose selected public records through
-the GUI later, update the relevant rows to:
+the GUI later, update the relevant rows in all three FJS tables. The default
+public GUI release includes processed abundance/count data and representative
+fish images only. Jar labels, field sheets, and lab sheets stay private by
+default.
 
-```sql
-update fjs_samples
-set access_level = 'public'
-where sample_id in ('98_20171023_1591', '98_20171023_1592');
+Use this commented example in the Supabase SQL Editor:
 
-update fjs_sample_taxa
-set access_level = 'public'
-where sample_id in ('98_20171023_1591', '98_20171023_1592');
-
-update fjs_assets
-set access_level = 'public'
-where sample_id in ('98_20171023_1591', '98_20171023_1592');
+```text
+supabase/example_update_fjs_access_level.sql
 ```
 
 Use `restricted` for records that should require an authenticated Supabase user.

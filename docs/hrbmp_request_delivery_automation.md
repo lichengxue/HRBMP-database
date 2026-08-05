@@ -47,7 +47,7 @@ Do not commit these values to GitHub.
 HRBMP_EMAIL_PROVIDER=google_apps_script
 HRBMP_GMAIL_WEBHOOK_URL=<saved only in Supabase Edge Function Secrets>
 HRBMP_GMAIL_WEBHOOK_SECRET=<saved only in Supabase Edge Function Secrets>
-HRBMP_ADMIN_EMAIL=chengxue.li@stonybrook.edu
+HRBMP_ADMIN_EMAILS=chengxue.li@stonybrook.edu
 HRBMP_SIGNED_URL_SECONDS=604800
 ```
 
@@ -98,7 +98,7 @@ Do not commit these values to GitHub.
 HRBMP_EMAIL_PROVIDER=resend
 RESEND_API_KEY=paste-your-resend-api-key
 HRBMP_EMAIL_FROM=HRBMP Archive <archive@your-verified-domain.edu>
-HRBMP_ADMIN_EMAIL=chengxue.li@stonybrook.edu
+HRBMP_ADMIN_EMAILS=chengxue.li@stonybrook.edu
 HRBMP_SIGNED_URL_SECONDS=604800
 ```
 
@@ -113,6 +113,29 @@ SUPABASE_SECRET_KEYS
 ```
 
 Secret/service-role keys must never be placed in browser code.
+
+## Request Admin Accounts
+
+Request admins must have two things:
+
+1. A Supabase Auth user whose email address is their login/username.
+2. A matching row in `public.hrbmp_request_admins`.
+
+Run this migration in Supabase SQL Editor to create the admin allowlist:
+
+```text
+supabase/migrations/20260805120000_create_hrbmp_request_admins.sql
+```
+
+Then add or update the current admin emails with this commented example:
+
+```text
+supabase/example_add_hrbmp_request_admins.sql
+```
+
+Create the matching Supabase Auth users in the dashboard under
+**Authentication > Users**. Temporary passwords belong only in Supabase Auth and
+should not be saved in GitHub or SQL files.
 
 ## Deploy Through The Supabase Dashboard
 
@@ -142,8 +165,9 @@ The function URL will be:
 https://vnqulddrlhkftcqpekpl.supabase.co/functions/v1/deliver-approved-request
 ```
 
-The function checks the signed-in Supabase Auth user and only allows the admin
-email in `HRBMP_ADMIN_EMAIL`.
+The function checks the signed-in Supabase Auth user and allows emails listed in
+`public.hrbmp_request_admins`. It can also fall back to comma-separated
+`HRBMP_ADMIN_EMAILS` while the database allowlist migration is being installed.
 
 ## Deploy Through The Supabase CLI
 

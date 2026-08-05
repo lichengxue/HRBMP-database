@@ -190,12 +190,44 @@ async function requireAdminUser(request: Request, supabaseAdmin: ReturnType<type
     throw new HttpError("Could not verify signed-in Supabase user.", 401);
   }
 
-  const adminEmail = Deno.env.get("HRBMP_ADMIN_EMAIL") || DEFAULT_ADMIN_EMAIL;
-  if (data.user.email.toLowerCase() !== adminEmail.toLowerCase()) {
+  const isAdmin = await isHrbmpRequestAdmin(supabaseAdmin, data.user.email);
+  if (!isAdmin) {
     throw new HttpError(`Signed-in user ${data.user.email} is not the HRBMP request admin.`, 403);
   }
 
   return data.user.email;
+}
+
+async function isHrbmpRequestAdmin(supabaseAdmin: ReturnType<typeof createClient>, email: string) {
+  const { data, error } = await supabaseAdmin
+    .from("hrbmp_request_admins")
+    .select("admin_email")
+    .eq("admin_email", email)
+    .eq("can_review_requests", true)
+    .maybeSingle();
+
+  if (!error) return Boolean(data);
+
+  console.warn(`Could not check hrbmp_request_admins; falling back to env allowlist: ${error.message}`);
+  return adminEmailsFromEnv().has(email.toLowerCase());
+}
+
+function adminEmailsFromEnv() {
+  return new Set(adminEmailListFromEnv().map((email) => email.toLowerCase()));
+}
+
+function primaryAdminEmailFromEnv() {
+  return adminEmailListFromEnv()[0] || DEFAULT_ADMIN_EMAIL;
+}
+
+function adminEmailListFromEnv() {
+  const raw = Deno.env.get("HRBMP_ADMIN_EMAILS")
+    || Deno.env.get("HRBMP_ADMIN_EMAIL")
+    || DEFAULT_ADMIN_EMAIL;
+  return raw
+    .split(",")
+    .map((email) => email.trim())
+    .filter(Boolean);
 }
 
 function bearerToken(request: Request) {
@@ -482,7 +514,7 @@ async function sendWithResend(
 ) {
   const resendApiKey = Deno.env.get("RESEND_API_KEY");
   const fromEmail = Deno.env.get("HRBMP_EMAIL_FROM");
-  const adminEmail = Deno.env.get("HRBMP_ADMIN_EMAIL") || DEFAULT_ADMIN_EMAIL;
+  const adminEmail = primaryAdminEmailFromEnv();
 
   if (!resendApiKey) throw new Error("Missing RESEND_API_KEY Edge Function secret");
   if (!fromEmail) throw new Error("Missing HRBMP_EMAIL_FROM Edge Function secret");
@@ -524,7 +556,7 @@ async function sendWithGoogleAppsScript(
 ) {
   const webhookUrl = Deno.env.get("HRBMP_GMAIL_WEBHOOK_URL");
   const webhookSecret = Deno.env.get("HRBMP_GMAIL_WEBHOOK_SECRET");
-  const adminEmail = Deno.env.get("HRBMP_ADMIN_EMAIL") || DEFAULT_ADMIN_EMAIL;
+  const adminEmail = primaryAdminEmailFromEnv();
 
   if (!webhookUrl) throw new Error("Missing HRBMP_GMAIL_WEBHOOK_URL Edge Function secret");
   if (!webhookSecret) throw new Error("Missing HRBMP_GMAIL_WEBHOOK_SECRET Edge Function secret");
