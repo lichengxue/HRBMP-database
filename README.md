@@ -46,6 +46,16 @@ Rscript scripts/02_load_example_data.R
 Rscript scripts/03_export_gui_data.R
 ```
 
+### 3b) Archive supplemental image metadata
+```bash
+Rscript scripts/05_archive_image_exif_metadata.R
+```
+
+This reads EXIF-style metadata from the FJS storage-upload-ready image archive
+into SQLite tables for internal QA/QC and release review. See
+`docs/image_exif_sql_archive.md` for setup notes, including `RSQLite` and
+ExifTool setup.
+
 ### 4) Open the GUI locally
 Open `gui/index.html` in a browser. If your browser blocks local JSON file loading, serve the folder locally:
 
@@ -196,3 +206,5 @@ See `docs/fjs_supabase_archive.md` for the Fall Juvenile Survey image/PDF
 archive workflow using Supabase PostgreSQL and Storage.
 See `docs/fjs_photo_filename_conventions.md` for the fish photo protocol's
 folder tree and filename code meanings.
+See `docs/image_exif_sql_archive.md` for the supplemental image metadata
+archive workflow.

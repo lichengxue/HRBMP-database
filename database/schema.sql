@@ -128,6 +128,109 @@ CREATE TABLE IF NOT EXISTS access_levels (
   description TEXT
 );
 
+CREATE TABLE IF NOT EXISTS image_metadata_runs (
+  run_id TEXT PRIMARY KEY,
+  run_started_at_utc TEXT NOT NULL,
+  run_completed_at_utc TEXT,
+  scan_roots_json TEXT,
+  files_found INTEGER NOT NULL DEFAULT 0,
+  files_archived INTEGER NOT NULL DEFAULT 0,
+  tags_archived INTEGER NOT NULL DEFAULT 0,
+  extraction_tool TEXT,
+  notes TEXT
+);
+
+CREATE TABLE IF NOT EXISTS image_file_metadata (
+  archive_file_id TEXT PRIMARY KEY,
+  run_id TEXT,
+  source_collection TEXT,
+  gallery_category TEXT,
+  sample_id TEXT,
+  asset_kind TEXT,
+  storage_bucket TEXT,
+  storage_object_path TEXT,
+  original_file_name TEXT,
+  relative_path TEXT NOT NULL,
+  absolute_path TEXT,
+  directory TEXT,
+  file_name TEXT NOT NULL,
+  file_extension TEXT,
+  mime_type TEXT,
+  file_size_bytes INTEGER,
+  md5_checksum TEXT,
+  manifest_sha256 TEXT,
+  file_modified_at TEXT,
+  exif_tool_version TEXT,
+  image_width INTEGER,
+  image_height INTEGER,
+  image_size TEXT,
+  megapixels REAL,
+  orientation TEXT,
+  camera_make TEXT,
+  camera_model TEXT,
+  lens_model TEXT,
+  software TEXT,
+  create_date TEXT,
+  date_time_original TEXT,
+  modify_date TEXT,
+  gps_latitude REAL,
+  gps_longitude REAL,
+  gps_altitude REAL,
+  gps_date_time TEXT,
+  gps_position TEXT,
+  title TEXT,
+  description TEXT,
+  artist TEXT,
+  copyright TEXT,
+  keywords TEXT,
+  contains_gps INTEGER NOT NULL DEFAULT 0,
+  access_level_id TEXT NOT NULL DEFAULT 'internal',
+  raw_metadata_json TEXT,
+  extracted_at_utc TEXT NOT NULL,
+  extraction_status TEXT NOT NULL DEFAULT 'ok',
+  notes TEXT,
+  FOREIGN KEY (run_id) REFERENCES image_metadata_runs(run_id),
+  FOREIGN KEY (access_level_id) REFERENCES access_levels(access_level_id)
+);
+
+CREATE TABLE IF NOT EXISTS image_metadata_tags (
+  archive_file_id TEXT NOT NULL,
+  tag_name TEXT NOT NULL,
+  tag_value TEXT,
+  tag_group TEXT,
+  extracted_at_utc TEXT NOT NULL,
+  PRIMARY KEY (archive_file_id, tag_name),
+  FOREIGN KEY (archive_file_id) REFERENCES image_file_metadata(archive_file_id) ON DELETE CASCADE
+);
+
+CREATE VIEW IF NOT EXISTS public_image_file_metadata AS
+SELECT
+  archive_file_id,
+  source_collection,
+  gallery_category,
+  sample_id,
+  asset_kind,
+  storage_bucket,
+  storage_object_path,
+  original_file_name,
+  relative_path,
+  file_name,
+  file_extension,
+  mime_type,
+  file_size_bytes,
+  image_width,
+  image_height,
+  image_size,
+  orientation,
+  create_date,
+  date_time_original,
+  title,
+  description,
+  keywords,
+  extracted_at_utc
+FROM image_file_metadata
+WHERE access_level_id = 'public';
+
 CREATE TABLE IF NOT EXISTS roles (
   role_id TEXT PRIMARY KEY,
   display_name TEXT NOT NULL,
@@ -266,6 +369,14 @@ CREATE INDEX IF NOT EXISTS idx_dataset_catalog_domain_id ON dataset_catalog(doma
 CREATE INDEX IF NOT EXISTS idx_data_variables_domain_id ON data_variables(domain_id);
 CREATE INDEX IF NOT EXISTS idx_data_variables_source_database ON data_variables(source_database);
 CREATE INDEX IF NOT EXISTS idx_access_levels_sort_order ON access_levels(sort_order);
+CREATE INDEX IF NOT EXISTS idx_image_metadata_runs_started ON image_metadata_runs(run_started_at_utc);
+CREATE INDEX IF NOT EXISTS idx_image_file_metadata_source_collection ON image_file_metadata(source_collection);
+CREATE INDEX IF NOT EXISTS idx_image_file_metadata_sample_id ON image_file_metadata(sample_id);
+CREATE INDEX IF NOT EXISTS idx_image_file_metadata_asset_kind ON image_file_metadata(asset_kind);
+CREATE INDEX IF NOT EXISTS idx_image_file_metadata_access_level ON image_file_metadata(access_level_id);
+CREATE INDEX IF NOT EXISTS idx_image_file_metadata_contains_gps ON image_file_metadata(contains_gps);
+CREATE INDEX IF NOT EXISTS idx_image_file_metadata_storage_path ON image_file_metadata(storage_bucket, storage_object_path);
+CREATE INDEX IF NOT EXISTS idx_image_metadata_tags_tag_name ON image_metadata_tags(tag_name);
 CREATE INDEX IF NOT EXISTS idx_roles_rank ON roles(role_rank);
 CREATE INDEX IF NOT EXISTS idx_users_account_status ON users(account_status);
 CREATE INDEX IF NOT EXISTS idx_dataset_access_policy_access_level ON dataset_access_policy(access_level_id);

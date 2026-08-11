@@ -72,6 +72,7 @@ INSERT OR REPLACE INTO dataset_catalog (dataset_id, dataset_name, domain_id, sou
 ('biological-records', 'Biological Records', 'biological', 'HRBMP database', 'public_summary', '/api/biological-records', 'Filtered biological observation records joined to event, station, region, species, and life-stage metadata.'),
 ('environmental-records', 'Environmental Records', 'environmental', 'HRBMP database', 'public_summary', '/api/environmental-records', 'Filtered environmental records joined to event, station, region, and date metadata.'),
 ('sampling-image-catalog', 'Sampling Image Catalog', 'sampling_images', 'HRBMP image archive', 'public_summary', NULL, 'Species and life-stage image inventory for catalog review and future archive linking.'),
+('image-exif-metadata', 'Image EXIF Metadata Archive', 'sampling_images', 'HRBMP image archive', 'internal', NULL, 'Supplemental image file metadata extracted from reviewed local image folders for QA/QC, provenance, and release review.'),
 ('metadata-catalog', 'Metadata Catalog', 'metadata', 'HRBMP database', 'public', '/api/metadata', 'Dataset, variable, program, source, and HRBMP river-region metadata used by the GUI.');
 
 INSERT OR REPLACE INTO data_variables (variable_id, domain_id, source_database, variable_name, display_name, unit, value_type, public_description) VALUES
@@ -142,7 +143,8 @@ INSERT OR REPLACE INTO dataset_access_policy (
 ('metadata-catalog', 'public', 'published', 0, NULL, 1, 1, 'Metadata catalog is public by default.'),
 ('biological-records', 'public', 'published', 0, NULL, 1, 1, 'Public downloads should use reviewed non-sensitive biological export fields.'),
 ('environmental-records', 'public', 'published', 0, NULL, 1, 1, 'Public downloads should use reviewed non-sensitive environmental export fields.'),
-('sampling-image-catalog', 'registered', 'qa_qc', 0, NULL, 1, 1, 'Image metadata can be public, but source image downloads may require registered or approved access.');
+('sampling-image-catalog', 'registered', 'qa_qc', 0, NULL, 1, 1, 'Image metadata can be public, but source image downloads may require registered or approved access.'),
+('image-exif-metadata', 'internal', 'qa_qc', 1, NULL, 0, 0, 'Extracted image file metadata can include GPS, camera/device details, timestamps, and other sensitive provenance fields. Review before public release.');
 
 INSERT OR REPLACE INTO dataset_role_permissions (
   dataset_id,
@@ -175,7 +177,12 @@ INSERT OR REPLACE INTO dataset_role_permissions (
 ('sampling-image-catalog', 'registered_external', 1, 1, 1, 1, 1, 0, 0, 0),
 ('sampling-image-catalog', 'approved_research', 1, 1, 1, 1, 1, 0, 0, 0),
 ('sampling-image-catalog', 'data_manager', 1, 1, 1, 1, 0, 1, 0, 0),
-('sampling-image-catalog', 'admin', 1, 1, 1, 1, 0, 1, 1, 1);
+('sampling-image-catalog', 'admin', 1, 1, 1, 1, 0, 1, 1, 1),
+('image-exif-metadata', 'public', 0, 0, 0, 0, 0, 0, 0, 0),
+('image-exif-metadata', 'registered_external', 0, 0, 0, 0, 1, 0, 0, 0),
+('image-exif-metadata', 'approved_research', 0, 0, 0, 0, 1, 0, 0, 0),
+('image-exif-metadata', 'data_manager', 1, 1, 1, 1, 0, 1, 0, 0),
+('image-exif-metadata', 'admin', 1, 1, 1, 1, 0, 1, 1, 1);
 
 INSERT OR REPLACE INTO access_requests (
   request_id,

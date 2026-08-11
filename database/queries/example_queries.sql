@@ -57,3 +57,43 @@ FROM dataset_role_permissions rp
 JOIN dataset_catalog d ON d.dataset_id = rp.dataset_id
 JOIN roles r ON r.role_id = rp.role_id
 ORDER BY d.dataset_name, r.role_rank;
+
+-- 7) Supplemental image metadata counts by source collection.
+SELECT
+  source_collection,
+  gallery_category,
+  COUNT(*) AS image_files,
+  SUM(CASE WHEN contains_gps = 1 THEN 1 ELSE 0 END) AS files_with_gps
+FROM image_file_metadata
+GROUP BY source_collection, gallery_category
+ORDER BY source_collection, gallery_category;
+
+-- 8) FJS image files linked to samples and asset kinds.
+SELECT
+  sample_id,
+  asset_kind,
+  file_name,
+  image_width,
+  image_height,
+  orientation,
+  date_time_original,
+  access_level_id
+FROM image_file_metadata
+WHERE source_collection LIKE 'FJS%'
+ORDER BY sample_id, asset_kind, file_name;
+
+-- 9) Review fields before any public image metadata release.
+SELECT
+  relative_path,
+  camera_make,
+  camera_model,
+  date_time_original,
+  gps_latitude,
+  gps_longitude,
+  contains_gps,
+  access_level_id
+FROM image_file_metadata
+WHERE contains_gps = 1
+   OR camera_make IS NOT NULL
+   OR camera_model IS NOT NULL
+ORDER BY contains_gps DESC, relative_path;
