@@ -124,7 +124,7 @@ function deliveryHelpers(client = {}) {
     createClient: () => client,
     Deno: { env: { get: (key) => ({ SUPABASE_URL: 'https://example.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'test-only' })[key] }, serve: (callback) => { context.handler = callback; } }
   });
-  vm.runInContext(`${code}\nglobalThis.helpers = { loadCatalogRows, manifestToCsv, buildEmailText };`, context);
+  vm.runInContext(`${code}\nglobalThis.helpers = { loadCatalogRows, manifestToCsv, buildEmailText, isHrbmpRequestAdmin };`, context);
   return context;
 }
 
@@ -148,6 +148,135 @@ test('an unauthenticated caller cannot obtain privileged download resolution', a
   const response = await context.handler(new Request('https://example.supabase.co/functions/v1/deliver-approved-request', { method: 'POST', body: JSON.stringify({ request_id: 'TEST_REQUEST' }) }));
   assert.equal(response.status, 401);
   assert.equal(reads, 0);
+});
+
+test('delivery denies ordinary users and fails closed if the admin allowlist is unavailable', async () => {
+  for (const [result, expectedStatus] of [
+    [{ data: null, error: null }, 403],
+    [{ data: null, error: new Error('Database unavailable') }, 503]
+  ]) {
+    let requestReads = 0;
+    const client = {
+      auth: { getUser: async () => ({ data: { user: { email: 'chengxue.li@stonybrook.edu' } }, error: null }) },
+      from: (table) => {
+        if (table !== 'hrbmp_request_admins') requestReads += 1;
+        const query = { select: () => query, eq: () => query, maybeSingle: async () => result };
+        return query;
+      }
+    };
+    const context = deliveryHelpers(client);
+    const response = await context.handler(new Request('https://example.supabase.co/functions/v1/deliver-approved-request', {
+      method: 'POST', headers: { Authorization: 'Bearer TEST_USER_TOKEN' },
+      body: JSON.stringify({ request_id: 'TEST_REQUEST' })
+    }));
+    assert.equal(response.status, expectedStatus);
+    assert.equal(requestReads, 0);
+  }
+});
+
+function guiHelpers(client) {
+  const panel = { hidden: true };
+  const context = vm.createContext({
+    console: { error: () => {} }, Set, Map, Date, URL, setTimeout, clearTimeout,
+    window: { HRBMP_CONFIG: { publishableKey: publicTestKey }, HRBMPArchive: archive,
+      supabase: { createClient: () => client } },
+    document: { addEventListener: () => {}, getElementById: (id) => id === 'admin-request-panel' ? panel : null }
+  });
+  vm.runInContext(fs.readFileSync('gui/app.js', 'utf8') + `
+    renderAdminRequestRows = () => {};
+    resetAdminRequestReport = () => {};
+    setLoginStatus = (message) => { globalThis.loginStatus = message; };
+    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, variablesForSource, emptyLiveData };
+  `, context);
+  return { ...context, panel };
+}
+
+function adminClient({ session = { user: { email: 'admin@example.invalid' } }, authorized = true,
+  authorizationError = null, rows = [], readRows = null } = {}) {
+  const client = { reads: 0, checks: 0 };
+  client.auth = {
+    getSession: async () => ({ data: { session }, error: null }),
+    signOut: async () => { session = null; return { error: null }; },
+    onAuthStateChange: (callback) => {
+      client.authChanged = callback;
+      return { data: { subscription: { unsubscribe: () => {} } } };
+    }
+  };
+  client.rpc = async (name) => {
+    assert.equal(name, 'is_hrbmp_request_admin');
+    client.checks += 1;
+    return { data: authorized, error: authorizationError };
+  };
+  client.from = (table) => {
+    assert.equal(table, 'hrbmp_data_requests');
+    client.reads += 1;
+    const query = { select: () => query, order: () => query,
+      limit: async () => readRows ? readRows() : { data: rows, error: null } };
+    return query;
+  };
+  return client;
+}
+
+test('GUI hides admin review until the server confirms membership; denied/error logins never read requests', async () => {
+  for (const options of [{ session: null }, { authorized: false },
+    { authorized: 'true' }, { authorizationError: new Error('Access check unavailable') }]) {
+    const client = adminClient(options);
+    const context = guiHelpers(client);
+    await context.helpers.loadAdminRequests();
+    assert.equal(context.panel.hidden, true);
+    assert.equal(context.helpers.state.adminAuthorized, false);
+    assert.equal(context.helpers.state.adminRequests.length, 0);
+    assert.equal(client.reads, 0);
+  }
+  const client = adminClient({ rows: [{ request_id: 'TEST_PRIVATE_REQUEST' }] });
+  const context = guiHelpers(client);
+  await context.helpers.loadAdminRequests();
+  assert.equal(context.panel.hidden, false);
+  assert.equal(context.helpers.state.adminRequests.length, 1);
+  assert.equal(client.checks, 1);
+  client.authChanged('SIGNED_OUT', null);
+  assert.equal(context.panel.hidden, true);
+  assert.equal(context.helpers.state.adminRequests.length, 0);
+});
+
+test('GUI clears private request state on a failed refresh or sign-out, including an in-flight response', async () => {
+  let resolveRows;
+  const client = adminClient({ rows: [{ request_id: 'TEST_PRIVATE_REQUEST' }] });
+  const context = guiHelpers(client);
+  await context.helpers.loadAdminRequests();
+  client.rpc = async () => ({ data: null, error: new Error('Access check unavailable') });
+  await context.helpers.loadAdminRequests();
+  assert.equal(context.panel.hidden, true);
+  assert.equal(context.helpers.state.adminRequests.length, 0);
+  client.rpc = async () => ({ data: true, error: null });
+  const pending = new Promise(resolve => { resolveRows = resolve; });
+  client.from = () => {
+    const query = { select: () => query, order: () => query, limit: () => pending };
+    return query;
+  };
+  const loading = context.helpers.loadAdminRequests();
+  await new Promise(resolve => setTimeout(resolve, 0));
+  await context.helpers.signOutAdminUser();
+  resolveRows({ data: [{ request_id: 'TEST_PRIVATE_REQUEST' }], error: null });
+  await loading;
+  assert.equal(context.panel.hidden, true);
+  assert.equal(context.helpers.state.adminRequests.length, 0);
+  assert.equal(context.helpers.state.adminAuthorized, false);
+});
+
+test('GUI starts empty and offers only actually recorded HRBMP variables, without example-data fetches', () => {
+  const context = guiHelpers(adminClient());
+  assert.equal(context.helpers.emptyLiveData().counts.observations, 0);
+  assert.equal(context.helpers.emptyLiveData().environmental_availability.length, 0);
+  assert.equal(context.helpers.variablesForSource('hrbmp').length, 0);
+  context.helpers.state.demoApiLoaded = true;
+  context.helpers.state.environmentalRows = [{ available_variables: ['mean_temperature_c'] }];
+  assert.equal(JSON.stringify(context.helpers.variablesForSource('hrbmp')), '["mean_temperature_c"]');
+  for (const source of ['usgs', 'epa', 'noaa']) assert.equal(context.helpers.variablesForSource(source).length, 0);
+  const html = fs.readFileSync('gui/index.html', 'utf8');
+  assert.match(html, /id="admin-request-panel"[^>]* hidden/);
+  assert.doesNotMatch(html, /Hudson River Biological Availability Layers|Biological record totals are summarized|USGS|EPA|NOAA/);
+  assert.doesNotMatch(fs.readFileSync('gui/app.js', 'utf8'), /example_summary\.json|deriveEnvironmentalCovariates|FALLBACK_DATA|FALLBACK_METADATA/);
 });
 
 test('environmental delivery appears in the manifest and email', () => {

@@ -218,14 +218,8 @@ async function isHrbmpRequestAdmin(supabaseAdmin: ReturnType<typeof createClient
     .eq("can_review_requests", true)
     .maybeSingle();
 
-  if (!error) return Boolean(data);
-
-  console.warn(`Could not check hrbmp_request_admins; falling back to env allowlist: ${error.message}`);
-  return adminEmailsFromEnv().has(email.toLowerCase());
-}
-
-function adminEmailsFromEnv() {
-  return new Set(adminEmailListFromEnv().map((email) => email.toLowerCase()));
+  if (error) throw new HttpError("Could not verify request-admin access. Try again later.", 503);
+  return Boolean(data);
 }
 
 function primaryAdminEmailFromEnv() {

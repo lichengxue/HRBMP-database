@@ -89,6 +89,8 @@ and other uploads by species, recorded life-stage coverage, program, location,
 date, type, and availability. **Environmental Database** filters actual samples
 by recorded variable, program, location, and date. Its table lists available
 variables, not mean values or fabricated measurements. Location maps are optional.
+There are no USGS, EPA, or NOAA database options: those sources are not connected.
+Startup does not fetch example summary/GeoJSON data or generate substitute values.
 
 Both pages allow individual selection or selection of all matching available
 items, including matches on other result pages. Changing a filter resets the
@@ -115,6 +117,22 @@ The existing admin allowlist, Auth users, and email provider secrets are still
 required. See `hrbmp_request_delivery_automation.md` for their configuration.
 The GUI does not issue downloads before approval.
 
+## Admin Privacy
+
+**Admin Request Review** is hidden by default. After sign-in, the GUI calls
+`is_hrbmp_request_admin` before reading or showing the request queue. Membership
+comes from enabled rows in `hrbmp_request_admins`, not a client-side email check.
+Signing out, changing sessions, or failing an access check hides the panel and
+clears its request records and report. An old in-flight response cannot reopen it.
+
+Supabase request-table RLS also enforces admin membership, so unhiding HTML does
+not grant access. The delivery function verifies the signed-in user and the same
+allowlist, and rejects delivery if that check is unavailable instead of falling
+back to environment email settings. Keep all three existing enabled admins unless
+the project owner explicitly changes that membership. Project owners and holders
+of privileged Supabase credentials still have backend access; this is not a
+restriction on Supabase infrastructure administrators.
+
 ## Verify
 
 ```powershell
@@ -123,7 +141,8 @@ node --test tests/archive.test.js
 
 Use Node 22.13+ or Node 24 for these tests. They exercise large catalogs,
 invalid/error responses, privileged-key rejection, exact delivery selection,
-the unauthenticated delivery boundary, and environmental manifests.
+the unauthenticated delivery boundary, environmental manifests, and fail-closed
+admin visibility/session handling.
 
 For a live check, refresh **Biological Database**, confirm the year/species/sample
 filters contain the latest import, submit one request, and check that it
