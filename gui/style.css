@@ -2037,6 +2037,122 @@ textarea {
   margin-top: 12px;
 }
 
+#biological-database .page-header,
+#environmental-database .page-header {
+  display: block;
+}
+
+#biological-database .page-header h1,
+#environmental-database .page-header h1 {
+  font-size: 28px;
+}
+
+#biological-database .control-row,
+#environmental-database .control-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 18px;
+}
+
+#biological-database .control-row select,
+#environmental-database .control-row select {
+  width: 100%;
+  min-width: 0;
+}
+
+.database-availability {
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+
+.database-availability .summary-strip article {
+  border: 0;
+  border-radius: 0;
+  border-left: 3px solid var(--line);
+  background: transparent;
+  padding: 6px 12px;
+}
+
+.database-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0 12px;
+}
+
+.database-results-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.database-results-header p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+[data-request-selection] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+}
+
+[data-request-selection] svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.database-table table {
+  min-width: 900px;
+}
+
+.database-table input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+.database-variable-list {
+  min-width: 220px;
+  max-width: 360px;
+  white-space: normal;
+}
+
+.database-map {
+  margin: 16px 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.database-map > summary {
+  cursor: pointer;
+  padding: 8px 0;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  #biological-database .control-row,
+  #environmental-database .control-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .database-availability .summary-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-request-selection] {
+    width: 100%;
+  }
+
+  .database-availability .archive-pagination {
+    gap: 8px;
+    font-size: 12px;
+  }
+}
+
 .icon-button {
   display: inline-flex;
   align-items: center;

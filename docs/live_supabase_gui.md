@@ -2,7 +2,7 @@
 
 The main GUI reads the full `fjs-archive` catalog from Supabase. It does not
 substitute example records when Supabase is empty or unavailable. New uploads
-appear on page load or when **Refresh archive** is clicked, without a Git push.
+appear on page load or when **Refresh availability** is clicked, without a Git push.
 
 ## Enable The Live Catalog
 
@@ -77,18 +77,27 @@ node scripts/build_gui_config.js
 python -m http.server 8011 --bind 127.0.0.1 --directory gui
 ```
 
-Open `http://127.0.0.1:8011/#data-archive`. The generated configuration is
+Open `http://127.0.0.1:8011/#biological-database`. The generated configuration is
 ignored by Git. It uses the public configuration endpoint by default. For an
 override, set `HRBMP_SUPABASE_PUBLISHABLE_KEY` in the terminal environment before
 generating the file, or save a publishable key in **User Login** for that browser.
 
 ## Requests And Delivery
 
-The **Data Archive** page filters all available files/records and lets users
-select individual items. The main Biological and Environmental request forms
-submit their actual screening selections to `hrbmp_data_requests`. Requests
+The **Biological Database** filters count records, images, supporting documents,
+and other uploads by species, recorded life-stage coverage, program, location,
+date, type, and availability. **Environmental Database** filters actual samples
+by recorded variable, program, location, and date. Its table lists available
+variables, not mean values or fabricated measurements. Location maps are optional.
+
+Both pages allow individual selection or selection of all matching available
+items, including matches on other result pages. Changing a filter resets the
+selection to the new matching available items. **Request Selected Data** opens
+the corresponding request form with the selection preserved. The forms
+submit these exact selections to `hrbmp_data_requests`. Requests
 include policy consent and a complete list of catalog IDs, rather than a
-truncated preview or user-supplied Storage paths.
+truncated preview or user-supplied Storage paths. The redundant archive/demo
+page is removed; old `#data-archive` and `#demo` links redirect to Biological Database.
 
 Deploy the updated delivery function:
 
@@ -116,7 +125,7 @@ Use Node 22.13+ or Node 24 for these tests. They exercise large catalogs,
 invalid/error responses, privileged-key rejection, exact delivery selection,
 the unauthenticated delivery boundary, and environmental manifests.
 
-For a live check, refresh **Data Archive**, confirm the year/species/sample
+For a live check, refresh **Biological Database**, confirm the year/species/sample
 filters contain the latest import, submit one request, and check that it
 appears in **User Login > Admin Request Review**. Approve a controlled test
 request and verify the emailed links before inviting external users.
