@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.1.20" />
+  <link rel="stylesheet" href="style.css?v=1.2.0" />
 </head>
 <body>
   <header class="site-nav">
@@ -43,7 +43,7 @@
             <a href="#biological-data-request" data-tab-link="biological-data-request">Data Request</a>
           </div>
         </div>
-        <a href="#demo" data-tab-link="demo">Demo</a>
+        <a href="#data-archive" data-tab-link="data-archive">Data Archive</a>
         <div class="nav-dropdown">
           <a href="#environmental-database" data-tab-link="environmental-database">Environmental Database</a>
           <div class="nav-submenu" aria-label="Environmental Database subsections">
@@ -500,6 +500,7 @@
         <div>
           <p class="eyebrow">Biological Database</p>
           <h1>Hudson River Biological Availability Layers</h1>
+          <p data-archive-status aria-live="polite">Loading archive...</p>
         </div>
         <div class="control-row">
           <label>
@@ -670,32 +671,27 @@
           </label>
           <button id="data-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Data Request</button>
         </form>
+        <div id="data-request-status" class="demo-request-status" aria-live="polite"></div>
       </section>
     </section>
 
-    <section class="tab-page" id="demo" data-tab-page="demo">
+    <section class="tab-page" id="data-archive" data-tab-page="data-archive">
       <div class="page-header with-controls">
         <div>
-          <p class="eyebrow">Demo</p>
-          <h1>FJS Data Request Demo</h1>
+          <p class="eyebrow">HRBMP Database</p>
+          <h1>Data Archive</h1>
         </div>
         <div class="control-row demo-api-controls">
-          <label>
-            Supabase Publishable Key
-            <input id="demo-supabase-key" type="password" autocomplete="off" placeholder="sb_publishable_..." />
-          </label>
-          <button id="demo-save-key" type="button" class="secondary-button">Save Key</button>
-          <button id="demo-refresh-results" type="button" class="primary-button">Refresh</button>
+          <button id="demo-refresh-results" type="button" class="primary-button icon-button" title="Refresh archive" aria-label="Refresh archive"><i data-lucide="refresh-cw" aria-hidden="true"></i></button>
         </div>
       </div>
 
       <section class="data-panel demo-status-panel">
         <div class="metadata-panel-header">
           <div>
-            <h2>Archive Request Workspace</h2>
-            <p id="demo-api-status">Waiting for Supabase API settings.</p>
+            <h2>Archive Availability</h2>
+            <p id="demo-api-status" aria-live="polite">Loading archive...</p>
           </div>
-          <a id="demo-api-url" class="secondary-button link-button" href="https://vnqulddrlhkftcqpekpl.supabase.co/rest/v1/fjs_archive_catalog" target="_blank" rel="noopener">Open API Endpoint</a>
         </div>
         <div class="summary-strip" id="demo-summary"></div>
       </section>
@@ -704,7 +700,6 @@
         <div class="metadata-panel-header">
           <div>
             <h2>Request Filters</h2>
-            <p>Choose program, species, year, region, sample, and data type before submitting the request.</p>
           </div>
           <button id="demo-clear-filters" type="button" class="secondary-button">Clear Filters</button>
         </div>
@@ -744,8 +739,16 @@
               <span>Representative fish images</span>
             </label>
             <label>
-              <input id="demo-type-documents" type="checkbox" disabled aria-disabled="true" />
-              <span>Jar labels, field sheets, and lab sheets (private)</span>
+              <input id="demo-type-documents" type="checkbox" checked />
+              <span>Jar labels, field sheets, and lab sheets</span>
+            </label>
+            <label>
+              <input id="demo-type-environmental" type="checkbox" checked />
+              <span>Environmental data</span>
+            </label>
+            <label>
+              <input id="demo-type-other" type="checkbox" checked />
+              <span>Other uploaded files</span>
             </label>
           </fieldset>
         </div>
@@ -754,13 +757,20 @@
       <section class="data-panel demo-results-panel">
         <div class="metadata-panel-header">
           <div>
-            <h2>Matching Public Records</h2>
+            <h2>Records and Files</h2>
             <p id="demo-result-status">No query has been run yet.</p>
           </div>
-          <a id="demo-manifest-download" class="secondary-button link-button" href="#" download="hrbmp_fjs_demo_manifest.csv">Download Manifest CSV</a>
+          <a id="demo-manifest-download" class="secondary-button link-button" href="#" download="hrbmp_archive_availability.csv">Download Availability CSV</a>
         </div>
         <div class="demo-result-summary" id="demo-result-summary">
-          Use the manifest CSV to review the matching sample, species, file, and storage-path details.
+          No records loaded.
+        </div>
+        <label class="archive-select-all"><input id="archive-select-all" type="checkbox" checked /> Select all matching available items</label>
+        <div id="archive-table" class="table-scroll"></div>
+        <div class="archive-pagination">
+          <button id="archive-page-previous" type="button" class="secondary-button icon-button" title="Previous page" aria-label="Previous page"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
+          <span id="archive-page-status" aria-live="polite"></span>
+          <button id="archive-page-next" type="button" class="secondary-button icon-button" title="Next page" aria-label="Next page"><i data-lucide="chevron-right" aria-hidden="true"></i></button>
         </div>
       </section>
 
@@ -842,6 +852,7 @@
       <div class="page-header with-controls">
         <div>
           <p class="eyebrow">Environmental Database</p>
+          <p data-archive-status aria-live="polite">Loading archive...</p>
         </div>
         <div class="control-row">
           <label>
@@ -1036,16 +1047,15 @@
           </label>
           <button id="env-data-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Data Request</button>
         </form>
+        <div id="env-data-request-status" class="demo-request-status" aria-live="polite"></div>
       </section>
     </section>
 
     <section class="tab-page" id="sampling-image-catalog" data-tab-page="sampling-image-catalog">
       <div class="page-header with-controls">
         <div>
-          <p class="page-note">
-            Image records are initialized from HRBMP Species Highlights and will be
-            updated as verified catalog metadata become available.
-          </p>
+          <h1>Sampling Image Catalog</h1>
+          <p data-archive-status aria-live="polite">Loading archive...</p>
         </div>
         <div class="control-row">
           <label>
@@ -1061,8 +1071,8 @@
 
       <div class="summary-strip" id="catalog-summary"></div>
       <div class="catalog-section-heading">
-        <h2>13 Key Species</h2>
-        <span>Click a species to inspect life stages, distribution, and data availability.</span>
+        <h2>Uploaded Images</h2>
+        <a class="source-link" href="#data-archive" data-tab-link="data-archive">Request Images</a>
       </div>
       <div class="catalog-grid" id="image-catalog"></div>
       <section class="catalog-detail data-panel" id="catalog-detail" aria-live="polite"></section>
@@ -2386,7 +2396,7 @@
             </label>
             <label>
               Supabase Publishable Key
-              <input id="login-supabase-key" type="password" autocomplete="off" placeholder="Paste once, or save it from the Demo tab" />
+              <input id="login-supabase-key" type="password" autocomplete="off" placeholder="Publishable key, if deployment is not configured" />
             </label>
             <div class="login-actions">
               <button type="button" class="primary-button" id="login-submit">Log in</button>
@@ -2635,6 +2645,9 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=1.1.21"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script src="config.js"></script>
+  <script src="archive.js?v=1.2.0"></script>
+  <script src="app.js?v=1.2.0"></script>
 </body>
 </html>

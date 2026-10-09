@@ -22,6 +22,12 @@ supabase/functions/.env*
 secrets*.txt
 *.secret
 
+# Browser configuration is generated locally or during Pages deployment.
+gui/config.js
+supabase/.temp/
+tmp/archive-checks/
+tmp/archive-browser-checks/
+
 # OS/editor clutter
 .DS_Store
 Thumbs.db

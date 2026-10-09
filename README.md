@@ -3,10 +3,12 @@
 [![Open Web GUI](https://img.shields.io/badge/Open-Web%20GUI-2f6f73?style=for-the-badge&logo=githubpages&logoColor=white)](https://lichengxue.github.io/HRBMP-database/)
 
 ## Project purpose
-This repository provides a working foundation for a Hudson River Biological Monitoring Program (HRBMP) data workflow. It includes a normalized SQLite database design, R scripts for database setup and data export, and a static web GUI.
+This repository provides a Hudson River Biological Monitoring Program (HRBMP) data workflow. It includes a normalized SQLite database design, R scripts for database setup and data export, and a static web GUI connected to the Supabase FJS archive.
 
 ## Why this repo exists
-The goal is to make HRBMP data management reproducible and understandable before introducing more complex infrastructure. The current GUI uses test records for interface review and should be replaced with validated HRBMP source data before public release.
+The goal is to make HRBMP data management reproducible and understandable. The main availability pages read the full Supabase archive, including private records' availability metadata, and submit requests for admin review. SQLite examples remain available for local workflow development.
+
+See `docs/live_supabase_gui.md` for the migration, Pages configuration, local preview, and delivery setup. These setup steps are required before the live catalog can load.
 
 ## Folder structure
 
@@ -30,6 +32,7 @@ the included GitHub Actions workflow instead:
 4. The `Deploy GUI to GitHub Pages` workflow publishes `gui/index.html` and
    the matching `gui/style.css`, `gui/app.js`, `gui/assets/`, and `gui/data/`
    files as the Pages site.
+5. Deploy the `public-archive-config` function as described in `docs/live_supabase_gui.md`. The GUI connects automatically; an Actions variable `HRBMP_SUPABASE_PUBLISHABLE_KEY` is an optional override.
 
 ### 1) Create the SQLite database
 ```bash
@@ -165,11 +168,10 @@ To regenerate the test biological map points:
 node scripts/generate_gui_test_points.js
 ```
 
-The User Login tab is a static interface placeholder for future restricted
-access. It now displays the SQLite access tiers and dataset access policy, and
-includes a request-access form placeholder. Real authentication, role checks,
-and restricted downloads must be implemented in the backend/API before
-restricted data are exposed.
+The User Login tab uses Supabase Auth for admin request review. Admins can
+review, decline, or approve requests and email temporary download links through
+the delivery Edge Function. Its access-tier information still comes from the
+SQLite metadata catalog; the general request-access form remains a placeholder.
 
 The Issue Report tab provides a static form for comments, issues, questions,
 and feedback that can be connected to a backend later.
@@ -185,18 +187,18 @@ lesson ideas by K-2, grades 3-5, grades 6-8, grades 9-12, and teacher
 resources, and the navigation includes nested grade-band choices under K-12
 Curriculum.
 
-The Sampling Image Catalog starts with 13 commonly discussed key species, then
-provides an All Species browser. Selecting a species opens pseudo distribution,
-availability, and life-stage image records for Egg, Yolk-sac larvae,
-Post-yolk-sac larvae, Young of the year, Yearling, and Adult stages. The
-species detail view includes clickable life-stage controls that update the
-Hudson River distribution bar, data availability summary, and image archive.
+The Sampling Image Catalog lists actual uploaded images with sample, date,
+species, region, type, and availability. Data Archive includes all uploaded
+files, count records, environmental availability, and files awaiting metadata.
+Both use paginated live queries instead of prototype image records. The main
+Biological and Environmental request forms submit their screened catalog items
+to Supabase for admin review.
 
 ## Future development plan
-- Replace test records with validated HRBMP source data.
+- Validate archive metadata coverage and resolve files awaiting metadata.
 - Expand Quality Assurance / Quality Control (QA/QC) checks and metadata tracking.
 - Add richer trend visualizations and map views.
-- Optionally connect the GUI to a backend API in a later phase.
+- Extend the live availability catalog to additional survey archives.
 
 See `docs/github_vs_database.md` for guidance on what belongs in GitHub versus
 what should stay in a local or hosted SQLite/API environment.

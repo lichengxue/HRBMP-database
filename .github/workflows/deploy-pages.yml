@@ -25,6 +25,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Configure live archive
+        env:
+          HRBMP_SUPABASE_URL: ${{ vars.HRBMP_SUPABASE_URL }}
+          HRBMP_SUPABASE_PUBLISHABLE_KEY: ${{ vars.HRBMP_SUPABASE_PUBLISHABLE_KEY || secrets.HRBMP_SUPABASE_PUBLISHABLE_KEY }}
+        run: node scripts/build_gui_config.js
+
+      - name: Check archive behavior
+        run: node --test tests/archive.test.js
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
