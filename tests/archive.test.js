@@ -80,6 +80,42 @@ test('does not synthesize coordinates, measurements, or species for unlinked upl
   assert.equal(archive.requestItems([normalized, { available: false }]).length, 1);
 });
 
+test('biological filters select real records/files by species, location, date, type, and life-stage coverage', () => {
+  const rows = [
+    archive.normalizeItem(item(1, { sample_id: 'S1', river_region_name: 'Battery', asset_kind: 'processed_abundance_count', available_life_stages: ['Yearling'] })),
+    archive.normalizeItem(item(2, { sample_id: 'S1', river_region_name: 'Battery' })),
+    archive.normalizeItem(item(3, { sample_id: 'S2', river_region_name: 'Albany', sample_date: '2023-10-03' })),
+    archive.normalizeItem(item(4, { asset_kind: 'environmental_data', available_variables: ['mean_temperature_c'] }))
+  ];
+  const filters = { program: 'Fall Juvenile Survey', species: 'TEST SPECIES', region: 'Battery', sample: 'S1', yearStart: '2024', yearEnd: '2024', monthStart: '10', dayEnd: '03' };
+  assert.equal(archive.filterDatabaseItems(rows, 'biological', filters).length, 2);
+  assert.deepEqual(archive.filterDatabaseItems(rows, 'biological', { ...filters, dataType: 'processed_abundance_count', lifeStage: 'Yearling' }).map(row => row.catalog_id), [rows[0].catalog_id]);
+  assert.equal(archive.filterDatabaseItems(rows, 'biological', { ...filters, dayStart: '04' }).length, 0);
+});
+
+test('environmental filters show only samples with the requested recorded variable without exposing values', () => {
+  const rows = [
+    archive.normalizeItem(item(1, { sample_id: 'S1', asset_kind: 'environmental_data', available_variables: ['mean_temperature_c', 'mean_ph'] })),
+    archive.normalizeItem(item(2, { sample_id: 'S2', asset_kind: 'environmental_data', available_variables: ['mean_temperature_c'] })),
+    archive.normalizeItem(item(3))
+  ];
+  assert.equal(archive.filterDatabaseItems(rows, 'environmental', { variable: 'all' }).length, 2);
+  const selected = archive.filterDatabaseItems(rows, 'environmental', { variable: 'mean_ph', sample: 'S1', program: 'FJS' });
+  assert.equal(selected.length, 1);
+  assert.equal(selected[0].mean_ph, undefined);
+  assert.equal(archive.filterDatabaseItems(rows, 'environmental', { variable: 'mean_salinity_psu' }).length, 0);
+});
+
+test('unlinked uploads remain selectable without invented metadata; missing uploads cannot be requested', () => {
+  const pending = archive.normalizeItem(item(1, { metadata_linked: false, sample_id: null, sample_date: null, common_name: null, taxon_code: null, asset_kind: 'other' }));
+  const missing = archive.normalizeItem(item(2, { available: false }));
+  const rows = [pending, missing];
+  assert.deepEqual(archive.filterDatabaseItems(rows, 'biological', { availability: 'metadata_pending' }), [pending]);
+  assert.deepEqual(archive.filterDatabaseItems(rows, 'biological', { availability: 'awaiting_upload' }), [missing]);
+  assert.equal(archive.filterDatabaseItems(rows, 'biological', { yearStart: '2024' }).includes(pending), false);
+  assert.deepEqual(archive.requestItems(rows), [pending]);
+});
+
 function deliveryHelpers(client = {}) {
   const source = fs.readFileSync('supabase/functions/deliver-approved-request/index.ts', 'utf8');
   const code = stripTypeScriptTypes(source, { mode: 'strip' }).replace(/^import[^\n]+\n/, '');

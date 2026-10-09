@@ -188,11 +188,12 @@ resources, and the navigation includes nested grade-band choices under K-12
 Curriculum.
 
 The Sampling Image Catalog lists actual uploaded images with sample, date,
-species, region, type, and availability. Data Archive includes all uploaded
-files, count records, environmental availability, and files awaiting metadata.
-Both use paginated live queries instead of prototype image records. The main
-Biological and Environmental request forms submit their screened catalog items
-to Supabase for admin review.
+species, region, type, and availability. Biological Database filters live count
+records and uploaded files, including files awaiting metadata. Environmental
+Database filters samples by recorded variables and lists their availability,
+not source measurements. Both provide paginated results and exact item selection
+before opening the corresponding request form for Supabase admin review.
+The redundant archive/demo page is removed, and sampling maps are optional.
 
 ## Future development plan
 - Validate archive metadata coverage and resolve files awaiting metadata.

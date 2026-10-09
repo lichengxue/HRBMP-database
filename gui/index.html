@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.2.0" />
+  <link rel="stylesheet" href="style.css?v=1.3.0" />
 </head>
 <body>
   <header class="site-nav">
@@ -43,7 +43,6 @@
             <a href="#biological-data-request" data-tab-link="biological-data-request">Data Request</a>
           </div>
         </div>
-        <a href="#data-archive" data-tab-link="data-archive">Data Archive</a>
         <div class="nav-dropdown">
           <a href="#environmental-database" data-tab-link="environmental-database">Environmental Database</a>
           <div class="nav-submenu" aria-label="Environmental Database subsections">
@@ -499,7 +498,7 @@
       <div class="page-header with-controls">
         <div>
           <p class="eyebrow">Biological Database</p>
-          <h1>Hudson River Biological Availability Layers</h1>
+          <h1>Biological Database</h1>
           <p data-archive-status aria-live="polite">Loading archive...</p>
         </div>
         <div class="control-row">
@@ -515,6 +514,10 @@
             Monitoring Program
             <select id="bio-program"></select>
           </label>
+          <label>Region<select id="bio-region"></select></label>
+          <label>Sample<select id="bio-sample"></select></label>
+          <label>Data Type<select id="bio-data-type"></select></label>
+          <label>Availability<select id="bio-availability"><option value="all">All Statuses</option><option value="available">Available on request</option><option value="awaiting_upload">Awaiting upload</option><option value="metadata_pending">Metadata pending</option></select></label>
           <label>
             Year From
             <select id="bio-year-start"></select>
@@ -539,9 +542,26 @@
             Day To
             <select id="bio-day-end"></select>
           </label>
+          <button type="button" class="secondary-button icon-button" data-clear-database="biological" title="Clear filters" aria-label="Clear biological filters"><i data-lucide="rotate-ccw" aria-hidden="true"></i></button>
+          <button type="button" class="secondary-button icon-button" data-refresh-archive title="Refresh availability" aria-label="Refresh availability"><i data-lucide="refresh-cw" aria-hidden="true"></i></button>
         </div>
       </div>
 
+      <section class="database-availability" aria-label="Biological data availability">
+        <div class="summary-strip" id="bio-availability-summary"></div>
+        <div class="database-results-header">
+          <div><h2>Available Records and Files</h2><p id="bio-selection-status" aria-live="polite"></p></div>
+          <button type="button" class="primary-button" data-request-selection="biological" disabled><i data-lucide="send" aria-hidden="true"></i>Request Selected Data</button>
+        </div>
+        <label class="archive-select-all"><input id="bio-select-all" type="checkbox" checked /> Select all matching available items</label>
+        <div id="bio-availability-table" class="table-scroll database-table"></div>
+        <div class="archive-pagination">
+          <button id="bio-page-previous" type="button" class="secondary-button icon-button" title="Previous page" aria-label="Previous page"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
+          <span id="bio-page-status" aria-live="polite"></span>
+          <button id="bio-page-next" type="button" class="secondary-button icon-button" title="Next page" aria-label="Next page"><i data-lucide="chevron-right" aria-hidden="true"></i></button>
+        </div>
+      </section>
+      <details class="database-map"><summary>Sampling Locations</summary>
       <div class="map-workspace">
         <aside class="layer-panel" aria-label="Biological map layers">
           <h2>Layers</h2>
@@ -589,12 +609,15 @@
         </div>
         <div class="region-reference-grid" id="bio-region-reference"></div>
       </section>
+      </details>
     </section>
 
     <section class="tab-page" id="biological-data-request" data-tab-page="biological-data-request">
       <div class="page-header">
         <p class="eyebrow">Biological Database</p>
         <h1>Biological Data Request</h1>
+        <p id="bio-request-selection-status" aria-live="polite"></p>
+        <a class="source-link" href="#biological-database" data-tab-link="biological-database">Edit Selection</a>
       </div>
       <section class="data-panel data-request-panel">
         <div>
@@ -675,183 +698,12 @@
       </section>
     </section>
 
-    <section class="tab-page" id="data-archive" data-tab-page="data-archive">
-      <div class="page-header with-controls">
-        <div>
-          <p class="eyebrow">HRBMP Database</p>
-          <h1>Data Archive</h1>
-        </div>
-        <div class="control-row demo-api-controls">
-          <button id="demo-refresh-results" type="button" class="primary-button icon-button" title="Refresh archive" aria-label="Refresh archive"><i data-lucide="refresh-cw" aria-hidden="true"></i></button>
-        </div>
-      </div>
-
-      <section class="data-panel demo-status-panel">
-        <div class="metadata-panel-header">
-          <div>
-            <h2>Archive Availability</h2>
-            <p id="demo-api-status" aria-live="polite">Loading archive...</p>
-          </div>
-        </div>
-        <div class="summary-strip" id="demo-summary"></div>
-      </section>
-
-      <section class="data-panel demo-filter-panel">
-        <div class="metadata-panel-header">
-          <div>
-            <h2>Request Filters</h2>
-          </div>
-          <button id="demo-clear-filters" type="button" class="secondary-button">Clear Filters</button>
-        </div>
-        <div class="demo-filter-grid">
-          <label>
-            Survey Program
-            <select id="demo-program"></select>
-          </label>
-          <label>
-            Species
-            <select id="demo-species"></select>
-          </label>
-          <label>
-            Year From
-            <select id="demo-year-start"></select>
-          </label>
-          <label>
-            Year To
-            <select id="demo-year-end"></select>
-          </label>
-          <label>
-            HRBMP Region
-            <select id="demo-region"></select>
-          </label>
-          <label>
-            Sample
-            <select id="demo-sample"></select>
-          </label>
-          <fieldset class="demo-data-type-group">
-            <legend>Data Type</legend>
-            <label>
-              <input id="demo-type-counts" type="checkbox" checked />
-              <span>Processed abundance/count data</span>
-            </label>
-            <label>
-              <input id="demo-type-images" type="checkbox" checked />
-              <span>Representative fish images</span>
-            </label>
-            <label>
-              <input id="demo-type-documents" type="checkbox" checked />
-              <span>Jar labels, field sheets, and lab sheets</span>
-            </label>
-            <label>
-              <input id="demo-type-environmental" type="checkbox" checked />
-              <span>Environmental data</span>
-            </label>
-            <label>
-              <input id="demo-type-other" type="checkbox" checked />
-              <span>Other uploaded files</span>
-            </label>
-          </fieldset>
-        </div>
-      </section>
-
-      <section class="data-panel demo-results-panel">
-        <div class="metadata-panel-header">
-          <div>
-            <h2>Records and Files</h2>
-            <p id="demo-result-status">No query has been run yet.</p>
-          </div>
-          <a id="demo-manifest-download" class="secondary-button link-button" href="#" download="hrbmp_archive_availability.csv">Download Availability CSV</a>
-        </div>
-        <div class="demo-result-summary" id="demo-result-summary">
-          No records loaded.
-        </div>
-        <label class="archive-select-all"><input id="archive-select-all" type="checkbox" checked /> Select all matching available items</label>
-        <div id="archive-table" class="table-scroll"></div>
-        <div class="archive-pagination">
-          <button id="archive-page-previous" type="button" class="secondary-button icon-button" title="Previous page" aria-label="Previous page"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
-          <span id="archive-page-status" aria-live="polite"></span>
-          <button id="archive-page-next" type="button" class="secondary-button icon-button" title="Next page" aria-label="Next page"><i data-lucide="chevron-right" aria-hidden="true"></i></button>
-        </div>
-      </section>
-
-      <section class="data-panel data-request-panel demo-request-panel">
-        <div>
-          <h2>Submit Data Request</h2>
-          <p>Send the current archive screening request to the data management team after reading and consenting to the HRBMP data sharing requirements.</p>
-        </div>
-        <div class="policy-callout" id="demo-data-sharing-policy" tabindex="-1">
-          <div>
-            <strong>MUST READ: Data Sharing Policy</strong>
-            <p>
-              <a href="https://you.stonybrook.edu/hrbmp/files/2024/02/HRBMP_DataSharingPolicy-f253c4f473adf36f.pdf" target="_blank" rel="noopener">Click here for the HRBMP Data Sharing Policy</a>.
-            </p>
-          </div>
-        </div>
-        <form class="data-request-form" onsubmit="return false">
-          <label>
-            Name
-            <input id="demo-request-name" type="text" autocomplete="name" />
-          </label>
-          <label>
-            Title
-            <input id="demo-request-title" type="text" />
-          </label>
-          <label>
-            Email
-            <input id="demo-request-email" type="email" autocomplete="email" />
-          </label>
-          <label>
-            Phone
-            <input id="demo-request-phone" type="tel" autocomplete="tel" />
-          </label>
-          <label>
-            Affiliation
-            <input id="demo-request-affiliation" type="text" autocomplete="organization" />
-          </label>
-          <label>
-            Intended Use
-            <select id="demo-request-use">
-              <option>Research</option>
-              <option>Management</option>
-              <option>Education</option>
-              <option>Public Information</option>
-              <option>Other</option>
-            </select>
-          </label>
-          <label class="full-span">
-            Other Project Members With Data Access
-            <textarea id="demo-request-collaborators" rows="3"></textarea>
-          </label>
-          <label class="full-span">
-            Project Abstract
-            <textarea id="demo-request-abstract" rows="4"></textarea>
-          </label>
-          <label class="full-span">
-            Specific Data Requested
-            <textarea id="demo-request-notes" rows="5"></textarea>
-          </label>
-          <label class="full-span">
-            Data Use Plan
-            <textarea id="demo-request-use-plan" rows="4"></textarea>
-          </label>
-          <label class="full-span">
-            Current Screening Summary
-            <textarea id="demo-request-summary" rows="5" readonly></textarea>
-          </label>
-          <label class="full-span policy-acknowledgment">
-            <input id="demo-data-request-policy-acknowledgment" type="checkbox" required />
-            <span>I have read, understand, and agree to follow the HRBMP Data Sharing Policy. I understand that the data management team will review this request under that policy before any detailed data or archive images are released.</span>
-          </label>
-          <button id="demo-data-request-submit" type="button" class="primary-button" disabled aria-disabled="true">Submit Data Request</button>
-        </form>
-        <div id="demo-request-status" class="demo-request-status" aria-live="polite"></div>
-      </section>
-    </section>
 
     <section class="tab-page" id="environmental-database" data-tab-page="environmental-database">
       <div class="page-header with-controls">
         <div>
           <p class="eyebrow">Environmental Database</p>
+          <h1>Environmental Database</h1>
           <p data-archive-status aria-live="polite">Loading archive...</p>
         </div>
         <div class="control-row">
@@ -880,17 +732,32 @@
             <select id="env-day-end"></select>
           </label>
           <label>
-            Covariate
+            Variable
             <select id="env-variable"></select>
           </label>
+          <label>Monitoring Program<select id="env-program"></select></label>
+          <label>Region<select id="env-region"></select></label>
+          <label>Sample<select id="env-sample"></select></label>
+          <button type="button" class="secondary-button icon-button" data-clear-database="environmental" title="Clear filters" aria-label="Clear environmental filters"><i data-lucide="rotate-ccw" aria-hidden="true"></i></button>
+          <button type="button" class="secondary-button icon-button" data-refresh-archive title="Refresh availability" aria-label="Refresh availability"><i data-lucide="refresh-cw" aria-hidden="true"></i></button>
         </div>
       </div>
 
-      <div class="environmental-source-panel data-panel">
-        <div class="source-tabs" id="env-source-tabs" aria-label="Environmental databases"></div>
-        <div class="covariate-list" id="env-covariate-list"></div>
-      </div>
-
+      <section class="database-availability" aria-label="Environmental data availability">
+        <div class="summary-strip" id="env-availability-summary"></div>
+        <div class="database-results-header">
+          <div><h2>Available Environmental Data</h2><p id="env-selection-status" aria-live="polite"></p></div>
+          <button type="button" class="primary-button" data-request-selection="environmental" disabled><i data-lucide="send" aria-hidden="true"></i>Request Selected Data</button>
+        </div>
+        <label class="archive-select-all"><input id="env-select-all" type="checkbox" checked /> Select all matching available samples</label>
+        <div id="env-availability-table" class="table-scroll database-table"></div>
+        <div class="archive-pagination">
+          <button id="env-page-previous" type="button" class="secondary-button icon-button" title="Previous page" aria-label="Previous page"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
+          <span id="env-page-status" aria-live="polite"></span>
+          <button id="env-page-next" type="button" class="secondary-button icon-button" title="Next page" aria-label="Next page"><i data-lucide="chevron-right" aria-hidden="true"></i></button>
+        </div>
+      </section>
+      <details class="database-map"><summary>Sampling Locations</summary>
       <div class="map-workspace">
         <aside class="layer-panel" aria-label="Environmental map layers">
           <h2>Layers</h2>
@@ -930,47 +797,15 @@
           <div class="selected-feature" id="env-selected">No map feature selected.</div>
         </section>
       </div>
-
-      <div class="metric-grid environmental" id="environmental-metrics"></div>
-
-      <div class="content-grid two-column">
-        <section class="data-panel">
-          <h2>Annual Sampling Records</h2>
-          <div id="annual-chart" class="chart-panel"></div>
-        </section>
-        <section class="data-panel">
-          <h2>Taxa Record Counts</h2>
-          <div id="taxa-chart" class="chart-panel"></div>
-        </section>
-      </div>
-
-      <div class="data-panel">
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Station</th>
-                <th>Region</th>
-                <th>Year</th>
-                <th>Month</th>
-                <th>Environmental Records</th>
-                <th>Mean Temperature</th>
-                <th>Mean Dissolved Oxygen</th>
-                <th>Mean Conductivity</th>
-                <th>Sampling Depth</th>
-                <th>Mean Salinity</th>
-              </tr>
-            </thead>
-            <tbody id="environmental-body"></tbody>
-          </table>
-        </div>
-      </div>
+      </details>
     </section>
 
     <section class="tab-page" id="environmental-data-request" data-tab-page="environmental-data-request">
       <div class="page-header">
         <p class="eyebrow">Environmental Database</p>
         <h1>Environmental Data Request</h1>
+        <p id="env-request-selection-status" aria-live="polite"></p>
+        <a class="source-link" href="#environmental-database" data-tab-link="environmental-database">Edit Selection</a>
       </div>
       <section class="data-panel data-request-panel">
         <div>
@@ -1072,7 +907,7 @@
       <div class="summary-strip" id="catalog-summary"></div>
       <div class="catalog-section-heading">
         <h2>Uploaded Images</h2>
-        <a class="source-link" href="#data-archive" data-tab-link="data-archive">Request Images</a>
+        <a class="source-link" href="#biological-database" data-tab-link="biological-database">Request Images</a>
       </div>
       <div class="catalog-grid" id="image-catalog"></div>
       <section class="catalog-detail data-panel" id="catalog-detail" aria-live="polite"></section>
@@ -2647,7 +2482,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="config.js"></script>
-  <script src="archive.js?v=1.2.0"></script>
-  <script src="app.js?v=1.2.0"></script>
+  <script src="archive.js?v=1.3.0"></script>
+  <script src="app.js?v=1.3.0"></script>
 </body>
 </html>

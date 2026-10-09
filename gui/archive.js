@@ -120,5 +120,28 @@
     return items.filter((item) => item.available);
   }
 
-  root.HRBMPArchive = { DATA_TYPES, PROGRAM_NAMES, isPublishableKey, fetchPublishableKey, fetchAvailability, normalizeItem, buildMapRows, requestItems };
+  function filterDatabaseItems(items, scope, filters = {}) {
+    const matches = (value, selected) => !selected || selected === 'all' || String(value || '').toLowerCase() === String(selected).toLowerCase();
+    const inRange = (value, start, end) => {
+      const lower = start && start !== 'all' ? Number(start) : null;
+      const upper = end && end !== 'all' ? Number(end) : null;
+      if (lower === null && upper === null) return true;
+      return value !== null && value !== undefined && (lower === null || value >= lower) && (upper === null || value <= upper);
+    };
+    return items.filter((item) => {
+      if ((item.asset_kind === 'environmental_data') !== (scope === 'environmental')) return false;
+      if (!matches(item.monitoring_program, filters.program) && !matches(item.program, filters.program)) return false;
+      if (!matches(item.river_region_name, filters.region) || !matches(item.sample_id, filters.sample)) return false;
+      if (!inRange(item.year, filters.yearStart, filters.yearEnd) || !inRange(item.month, filters.monthStart, filters.monthEnd) || !inRange(item.day, filters.dayStart, filters.dayEnd)) return false;
+      if (scope === 'environmental') return !filters.variable || filters.variable === 'all' || item.available_variables.includes(filters.variable);
+      if (!matches(item.common_name, filters.species) || !matches(item.asset_kind, filters.dataType)) return false;
+      if (filters.lifeStage && filters.lifeStage !== 'all' && !item.available_life_stages.includes(filters.lifeStage)) return false;
+      if (filters.availability === 'available' && !item.available) return false;
+      if (filters.availability === 'awaiting_upload' && item.available) return false;
+      if (filters.availability === 'metadata_pending' && (item.metadata_linked || !item.available)) return false;
+      return true;
+    });
+  }
+
+  root.HRBMPArchive = { DATA_TYPES, PROGRAM_NAMES, isPublishableKey, fetchPublishableKey, fetchAvailability, normalizeItem, buildMapRows, requestItems, filterDatabaseItems };
 })(typeof window === 'undefined' ? globalThis : window);
