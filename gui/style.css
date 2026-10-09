@@ -2125,18 +2125,6 @@ textarea {
   white-space: normal;
 }
 
-.database-map {
-  margin: 16px 0;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.database-map > summary {
-  cursor: pointer;
-  padding: 8px 0;
-  font-weight: 700;
-}
-
 @media (max-width: 600px) {
   #biological-database .control-row,
   #environmental-database .control-row {
@@ -3454,6 +3442,11 @@ tbody tr:hover {
 
   .gis-map {
     min-height: 420px;
+  }
+
+  #biological-database .map-panel,
+  #environmental-database .map-panel {
+    order: -1;
   }
 
   .river-map svg {

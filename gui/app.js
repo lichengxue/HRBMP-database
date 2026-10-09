@@ -95,7 +95,7 @@ const HUDSON_BOUNDS = [
   [42.95, -73.35]
 ];
 
-const DEFAULT_BASEMAP = 'street';
+const DEFAULT_BASEMAP = 'satellite';
 const MAP_BASEMAPS = {
   street: {
     label: 'Street Map',
@@ -122,7 +122,7 @@ const MAP_BASEMAPS = {
     }
   },
   satellite: {
-    label: 'Satellite Imagery',
+    label: 'ArcGIS Satellite Imagery',
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     options: {
       maxZoom: 19,
@@ -1545,7 +1545,6 @@ function bindControls() {
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
   }));
-  document.querySelectorAll('.database-map').forEach((details) => details.addEventListener('toggle', refreshActiveMap));
 
   bindAdminLoginControls();
 
