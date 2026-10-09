@@ -32,7 +32,7 @@ type WebhookPayload = {
 };
 
 type CatalogRow = {
-  sample_id: string;
+  sample_id: string | null;
   program: string | null;
   sample_date: string | null;
   river_mile: number | null;
@@ -53,6 +53,17 @@ type CatalogRow = {
   mime_type: string | null;
   file_size_bytes: number | null;
   effective_access_level: string | null;
+  catalog_id?: string;
+  environmental_values?: JsonRecord | null;
+};
+
+type DeliveryDetails = {
+  assetLinks: Array<CatalogRow & { download_url: string }>;
+  countRowCount: number;
+  countsUrl: string | null;
+  environmentalUrl?: string | null;
+  manifestUrl: string;
+  expiresAt: string;
 };
 
 type DeliveryContext = {
@@ -103,6 +114,7 @@ const ASSET_DATA_TYPES = new Set([
   "representative_species_image",
   "field_sheet_pdf",
   "lab_sheet_pdf",
+  "other",
 ]);
 
 const corsHeaders = {
@@ -257,14 +269,19 @@ async function deliverRequest(
 
   try {
     const catalogRows = await loadCatalogRows(supabaseAdmin, dataRequest);
+    const liveRequest = plainObject(dataRequest.request_payload).source === "supabase_archive";
     const requestedTypes = new Set(dataRequest.requested_data_types ?? []);
     const wantsAllTypes = requestedTypes.size === 0 || requestedTypes.has("all_data");
-    const wantsCounts = wantsAllTypes || requestedTypes.has("processed_abundance_count");
+    const wantsCounts = liveRequest || wantsAllTypes || requestedTypes.has("processed_abundance_count");
     const wantsAssets = (kind: string | null) =>
-      Boolean(kind && ASSET_DATA_TYPES.has(kind) && (wantsAllTypes || requestedTypes.has(kind)));
+      Boolean(kind && ASSET_DATA_TYPES.has(kind) && (liveRequest || wantsAllTypes || requestedTypes.has(kind)));
 
-    const countRows = wantsCounts ? uniqueCountRows(catalogRows) : [];
+    const countRows = wantsCounts ? uniqueCountRows(liveRequest ? catalogRows.filter((row) => row.asset_kind === "processed_abundance_count") : catalogRows) : [];
+    const environmentalRows = catalogRows.filter((row) => row.asset_kind === "environmental_data" && (liveRequest || wantsAllTypes || requestedTypes.has("environmental_data")));
     const assetRows = uniqueAssetRows(catalogRows.filter((row) => wantsAssets(row.asset_kind)));
+    if (!countRows.length && !environmentalRows.length && !assetRows.length) {
+      throw new Error("No available items match this request. Review the request before approving it again.");
+    }
     const assetLinks = await createAssetSignedLinks(supabaseAdmin, assetRows);
     const expiresAt = new Date(Date.now() + SIGNED_URL_SECONDS * 1000).toISOString();
 
@@ -278,17 +295,28 @@ async function deliverRequest(
       )
       : null;
 
+    const environmentalLink = environmentalRows.length
+      ? await uploadCsvAndSign(
+        supabaseAdmin, requestFolder, `hrbmp_request_${dataRequest.request_id}_environmental.csv`,
+        objectsToCsv(environmentalRows.map((row) => ({
+          sample_id: row.sample_id, program: row.program, sample_date: row.sample_date,
+          river_region_name: row.river_region_name, ...plainObject(row.environmental_values),
+        })), ["sample_id", "program", "sample_date", "river_region_name", "water_temperature_c", "dissolved_oxygen_mg_l", "conductivity_us_cm", "ph", "turbidity", "sample_depth_m"]),
+      )
+      : null;
+
     const manifestLink = await uploadCsvAndSign(
       supabaseAdmin,
       requestFolder,
       `hrbmp_request_${dataRequest.request_id}_manifest.csv`,
-      manifestToCsv(assetLinks, countRows, countsLink?.path ?? "", countsLink?.url ?? ""),
+      manifestToCsv(assetLinks, countRows, countsLink?.path ?? "", countsLink?.url ?? "", environmentalRows, environmentalLink?.path ?? "", environmentalLink?.url ?? ""),
     );
 
     await sendDeliveryEmail(dataRequest, {
       assetLinks,
       countRowCount: countRows.length,
       countsUrl: countsLink?.url ?? null,
+      environmentalUrl: environmentalLink?.url ?? null,
       manifestUrl: manifestLink.url,
       expiresAt,
     });
@@ -300,6 +328,8 @@ async function deliverRequest(
       signed_url_expires_at: expiresAt,
       manifest_path: manifestLink.path,
       counts_path: countsLink?.path ?? null,
+      environmental_path: environmentalLink?.path ?? null,
+      environmental_row_count: environmentalRows.length,
       asset_link_count: assetLinks.length,
       count_row_count: countRows.length,
     });
@@ -310,6 +340,7 @@ async function deliverRequest(
       status: "delivered",
       asset_link_count: assetLinks.length,
       count_row_count: countRows.length,
+      environmental_row_count: environmentalRows.length,
       requester_email: dataRequest.requester_email,
     };
   } catch (error) {
@@ -369,6 +400,28 @@ function getServiceKey() {
 }
 
 async function loadCatalogRows(supabaseAdmin: ReturnType<typeof createClient>, dataRequest: DataRequest) {
+  const payload = plainObject(dataRequest.request_payload);
+  if (payload.source === "supabase_archive") {
+    const ids = payload.catalog_ids;
+    if (!Array.isArray(ids) || !ids.length || ids.some((id) => typeof id !== "string" || !/^(count|asset|upload|environment):[^\s]{1,160}$/.test(id))) {
+      throw new HttpError("This request does not contain valid catalog item IDs.", 400);
+    }
+    const selectedIds = [...new Set(ids as string[])];
+    const rows: CatalogRow[] = [];
+    for (let offset = 0; offset < selectedIds.length; offset += 500) {
+      const { data, error } = await supabaseAdmin.rpc("get_hrbmp_request_items", {
+        p_catalog_ids: selectedIds.slice(offset, offset + 500),
+      });
+      if (error) throw new Error(`Could not resolve requested archive items: ${error.message}`);
+      if (!Array.isArray(data)) throw new Error("The archive returned an invalid delivery response.");
+      rows.push(...data as CatalogRow[]);
+    }
+    const resolvedIds = new Set(rows.map((row) => row.catalog_id));
+    if (selectedIds.some((id) => !resolvedIds.has(id))) {
+      throw new Error("Some requested items have been removed or are awaiting upload. Review and resubmit the selection.");
+    }
+    return rows;
+  }
   let query = supabaseAdmin
     .from("fjs_archive_catalog")
     .select(CATALOG_SELECT)
@@ -482,13 +535,7 @@ async function uploadCsvAndSign(
 
 async function sendDeliveryEmail(
   dataRequest: DataRequest,
-  delivery: {
-    assetLinks: Array<CatalogRow & { download_url: string }>;
-    countRowCount: number;
-    countsUrl: string | null;
-    manifestUrl: string;
-    expiresAt: string;
-  },
+  delivery: DeliveryDetails,
 ) {
   const subject = `HRBMP data request ready: ${dataRequest.request_id}`;
   const html = buildEmailHtml(dataRequest, delivery);
@@ -597,13 +644,7 @@ async function sendWithGoogleAppsScript(
 
 function buildEmailHtml(
   dataRequest: DataRequest,
-  delivery: {
-    assetLinks: Array<CatalogRow & { download_url: string }>;
-    countRowCount: number;
-    countsUrl: string | null;
-    manifestUrl: string;
-    expiresAt: string;
-  },
+  delivery: DeliveryDetails,
 ) {
   const name = escapeHtml(dataRequest.requester_name || "HRBMP data requester");
   const assetLines = delivery.assetLinks.slice(0, 25).map((link) =>
@@ -620,6 +661,7 @@ function buildEmailHtml(
     <p><strong>Summary:</strong> ${escapeHtml(dataRequest.request_summary || "HRBMP archive request")}</p>
     <p><a href="${escapeHtml(delivery.manifestUrl)}">Download the request manifest CSV</a></p>
     ${delivery.countsUrl ? `<p><a href="${escapeHtml(delivery.countsUrl)}">Download processed count data CSV</a></p>` : ""}
+    ${delivery.environmentalUrl ? `<p><a href="${escapeHtml(delivery.environmentalUrl)}">Download environmental data CSV</a></p>` : ""}
     <p><strong>Archive file links:</strong></p>
     <ul>${assetLines || "<li>No image/PDF assets matched this request.</li>"}${moreLine}</ul>
     <p>These links expire on ${escapeHtml(delivery.expiresAt)}.</p>
@@ -629,13 +671,7 @@ function buildEmailHtml(
 
 function buildEmailText(
   dataRequest: DataRequest,
-  delivery: {
-    assetLinks: Array<CatalogRow & { download_url: string }>;
-    countRowCount: number;
-    countsUrl: string | null;
-    manifestUrl: string;
-    expiresAt: string;
-  },
+  delivery: DeliveryDetails,
 ) {
   const lines = [
     `Hello ${dataRequest.requester_name || "HRBMP data requester"},`,
@@ -647,6 +683,7 @@ function buildEmailText(
   ];
 
   if (delivery.countsUrl) lines.push(`Processed count data CSV: ${delivery.countsUrl}`);
+  if (delivery.environmentalUrl) lines.push(`Environmental data CSV: ${delivery.environmentalUrl}`);
   lines.push("", "Archive file links:");
   if (delivery.assetLinks.length === 0) {
     lines.push("No image/PDF assets matched this request.");
@@ -732,8 +769,18 @@ function manifestToCsv(
   countRows: CatalogRow[],
   countsPath: string,
   countsUrl: string,
+  environmentalRows: CatalogRow[] = [],
+  environmentalPath = "",
+  environmentalUrl = "",
 ) {
   const rows = [
+    ...environmentalRows.map((row) => ({
+      row_type: "environmental_data", sample_id: row.sample_id, sample_date: row.sample_date,
+      common_name: "", scientific_name: "", river_region_name: row.river_region_name,
+      data_type: "environmental_data", original_file_name: "environmental_data.csv",
+      storage_bucket: DEFAULT_BUCKET, storage_object_path: environmentalPath,
+      download_url: environmentalUrl, total_count_corrected: null,
+    })),
     ...countRows.map((row) => ({
       row_type: "processed_abundance_count",
       sample_id: row.sample_id,

@@ -279,7 +279,7 @@ const HOME_SNAPSHOT_COUNTS = {
   taxa: 171,
   observations: 10864
 };
-const DEMO_SUPABASE_URL = 'https://vnqulddrlhkftcqpekpl.supabase.co';
+const DEMO_SUPABASE_URL = window.HRBMP_CONFIG?.supabaseUrl || 'https://vnqulddrlhkftcqpekpl.supabase.co';
 const DEMO_SUPABASE_KEY_STORAGE = 'hrbmp_demo_supabase_publishable_key';
 const DEMO_ADMIN_EMAIL = 'chengxue.li@stonybrook.edu';
 const DEMO_ARCHIVE_SELECT = [
@@ -675,7 +675,9 @@ const ENV_SOURCES = {
       'mean_dissolved_oxygen_mg_l',
       'mean_conductivity_us_cm',
       'sampling_depth_m',
-      'mean_salinity_psu'
+      'mean_salinity_psu',
+      'mean_ph',
+      'mean_turbidity_ntu'
     ]
   },
   usgs: {
@@ -718,6 +720,8 @@ const ENV_SOURCES = {
 };
 
 const ENV_VARIABLES = {
+  mean_ph: { source: 'hrbmp', label: 'pH', unit: '', colors: ['#1e8f84', '#2f6f9f', '#bd7a1e'] },
+  mean_turbidity_ntu: { source: 'hrbmp', label: 'Turbidity', unit: 'NTU', colors: ['#2f6f9f', '#1e8f84', '#bd7a1e'] },
   mean_temperature_c: {
     source: 'hrbmp',
     label: 'Water Temperature',
@@ -1552,10 +1556,16 @@ const state = {
   selectedEnvSource: 'hrbmp',
   selectedCatalogSpecies: null,
   selectedCatalogLifeStage: null,
-  demoRows: DEMO_FALLBACK_ARCHIVE_ROWS.map(normalizeDemoArchiveRow),
-  demoRowsSource: 'fallback',
+  demoRows: [],
+  demoRowsSource: 'supabase',
   demoLastFilteredRows: [],
   demoApiLoaded: false,
+  archiveLoading: false,
+  archiveRefreshVersion: 0,
+  archivePage: 0,
+  catalogPage: 0,
+  archiveSelectedIds: null,
+  archiveSubmitting: new Set(),
   adminClient: null,
   adminClientKey: '',
   adminRequests: [],
@@ -1585,6 +1595,8 @@ document.addEventListener('DOMContentLoaded', () => {
       renderAll();
       bindControls();
       refreshActiveMap();
+      refreshDemoArchive();
+      window.lucide?.createIcons();
     })
     .catch((error) => {
       console.error(error);
@@ -1596,6 +1608,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderAll();
       bindControls();
       refreshActiveMap();
+      refreshDemoArchive();
     });
 });
 
@@ -1749,7 +1762,7 @@ function initTabs() {
   [
     ['Data Sharing Policy - Biological Request', 'biological-data-request', 'biological-data-sharing-policy', 'biological data request must read consent'],
     ['Data Sharing Policy - Environmental Request', 'environmental-data-request', 'environmental-data-sharing-policy', 'environmental data request must read consent'],
-    ['Data Sharing Policy - Demo Request', 'demo', 'demo-data-sharing-policy', 'demo data request archive must read consent']
+    ['Data Sharing Policy - Archive Request', 'data-archive', 'demo-data-sharing-policy', 'data request archive must read consent']
   ].forEach(([label, pageId, targetId, keywords]) => {
     addSiteSearchItem(label, () => {
       showTab(pageId);
@@ -2032,6 +2045,17 @@ function hydrateData(data, biologicalGeoJson, environmentalGeoJson) {
     sampling_image_catalog: Array.isArray(data.sampling_image_catalog) ? data.sampling_image_catalog : []
   };
 
+  if (window.HRBMPArchive) {
+    return {
+      ...next,
+      counts: { stations: 0, sampling_events: 0, taxa: 0, observations: 0 },
+      stations: [], sampling_events: [], biological_availability: [],
+      environmental_availability: [], sampling_image_catalog: [],
+      annual_total_abundance: [], taxa_totals: [], environmental_summary: [],
+      generated_at_utc: '', using_fallback: false
+    };
+  }
+
   if (biologicalGeoJson) {
     next.biological_availability = rowsFromGeoJson(biologicalGeoJson);
   }
@@ -2169,6 +2193,7 @@ function bindControls() {
       if (id === 'catalog-type') {
         state.selectedCatalogLifeStage = null;
       }
+      state.catalogPage = 0;
       renderCatalog();
     });
   });
@@ -2182,11 +2207,17 @@ function bindControls() {
     'demo-sample',
     'demo-type-counts',
     'demo-type-images',
-    'demo-type-documents'
+    'demo-type-documents',
+    'demo-type-environmental',
+    'demo-type-other'
   ].forEach((id) => {
     const element = document.getElementById(id);
     if (!element) return;
-    element.addEventListener('change', () => renderDemoResults());
+    element.addEventListener('change', () => {
+      state.archivePage = 0;
+      state.archiveSelectedIds = null;
+      renderDemoResults();
+    });
   });
 
   const demoKeyInput = document.getElementById('demo-supabase-key');
@@ -2228,12 +2259,12 @@ function bindControls() {
         const element = document.getElementById(id);
         if (element) element.value = 'all';
       });
-      ['demo-type-counts', 'demo-type-images'].forEach((id) => {
+      ['demo-type-counts', 'demo-type-images', 'demo-type-documents', 'demo-type-environmental', 'demo-type-other'].forEach((id) => {
         const element = document.getElementById(id);
         if (element) element.checked = true;
       });
-      const documentTypes = document.getElementById('demo-type-documents');
-      if (documentTypes) documentTypes.checked = false;
+      state.archivePage = 0;
+      state.archiveSelectedIds = null;
       renderDemoResults();
     });
   }
@@ -2243,10 +2274,25 @@ function bindControls() {
     demoSubmit.addEventListener('click', () => submitDemoDataRequest());
   }
 
+  document.getElementById('archive-select-all')?.addEventListener('change', (event) => {
+    state.archiveSelectedIds = event.target.checked ? null : new Set();
+    renderDemoResults();
+  });
+  document.getElementById('archive-page-previous')?.addEventListener('click', () => {
+    state.archivePage = Math.max(0, state.archivePage - 1);
+    renderDemoResults();
+  });
+  document.getElementById('archive-page-next')?.addEventListener('click', () => {
+    state.archivePage += 1;
+    renderDemoResults();
+  });
+  document.getElementById('data-request-submit')?.addEventListener('click', () => submitMainDataRequest('biological'));
+  document.getElementById('env-data-request-submit')?.addEventListener('click', () => submitMainDataRequest('environmental'));
+
   bindAdminLoginControls();
 
   window.addEventListener('hrbmp-tab-change', (event) => {
-    if (event.detail?.tabId === 'demo' && !state.demoApiLoaded && demoSupabaseKey()) {
+    if (event.detail?.tabId === 'data-archive' && !state.demoApiLoaded && !state.archiveLoading && demoSupabaseKey()) {
       refreshDemoArchive();
     }
     if (event.detail?.tabId === 'user-login') {
@@ -2266,22 +2312,25 @@ function bindPolicyAcknowledgments() {
     if (!checkbox || !button) return;
 
     const updateButtonState = () => {
-      button.disabled = !checkbox.checked;
-      button.setAttribute('aria-disabled', String(!checkbox.checked));
+      const scope = buttonId === 'demo-data-request-submit' ? 'archive' : buttonId === 'data-request-submit' ? 'biological' : 'environmental';
+      const hasItems = scope === 'archive' ? selectedArchiveRows().length > 0 : mainRequestItems(scope).length > 0;
+      button.disabled = !checkbox.checked || !state.demoApiLoaded || state.archiveLoading || !hasItems || state.archiveSubmitting.has(scope);
+      button.setAttribute('aria-disabled', String(button.disabled));
     };
 
     checkbox.addEventListener('change', updateButtonState);
+    window.addEventListener('hrbmp-archive-state', updateButtonState);
     updateButtonState();
   });
 }
 
 function fillCounts() {
-  const counts = HOME_SNAPSHOT_COUNTS;
+  const counts = window.HRBMPArchive ? state.data.counts : HOME_SNAPSHOT_COUNTS;
   setText('count-stations', formatNumber(counts.stations));
   setText('count-events', formatNumber(counts.sampling_events));
   setText('count-taxa', formatNumber(counts.taxa));
   setText('count-observations', formatNumber(counts.observations));
-  setText('snapshot-date', state.data.generated_at_utc || 'No export timestamp found');
+  setText('snapshot-date', state.data.generated_at_utc || (window.HRBMPArchive ? 'Archive not loaded' : 'No export timestamp found'));
 }
 
 function populateFilters() {
@@ -2289,7 +2338,9 @@ function populateFilters() {
   const bioMonths = uniqueSorted(state.biologicalRows.map((row) => row.month), true);
   const bioDays = uniqueSorted(state.biologicalRows.map((row) => row.day), true);
   const bioSpecies = biologicalSpeciesOptions(state.biologicalRows);
-  const bioLifeStages = sortLifeStages(CATALOG_LIFE_STAGE_DISTRIBUTION.map((stage) => stage.life_stage));
+  const bioLifeStages = window.HRBMPArchive
+    ? sortLifeStages(uniqueSorted(state.biologicalRows.flatMap((row) => row.available_life_stages || [])))
+    : sortLifeStages(CATALOG_LIFE_STAGE_DISTRIBUTION.map((stage) => stage.life_stage));
   const envYears = uniqueSorted(state.environmentalRows.map((row) => row.year), true);
   const envMonths = uniqueSorted(state.environmentalRows.map((row) => row.month), true);
   const envDays = uniqueSorted(state.environmentalRows.map((row) => row.day), true);
@@ -2299,12 +2350,12 @@ function populateFilters() {
     label: ENV_VARIABLES[key].label
   }));
   const catalogRows = state.data.sampling_image_catalog || [];
-  const catalogSpecies = sortHighlightSpecies(uniqueSorted(catalogRows.map((row) => row.species_common)));
-  const catalogTypes = uniqueSorted(catalogRows.map((row) => row.image_type));
+  const catalogSpecies = sortHighlightSpecies(uniqueSorted(catalogRows.map((row) => window.HRBMPArchive ? row.common_name : row.species_common)));
+  const catalogTypes = uniqueSorted(catalogRows.map((row) => window.HRBMPArchive ? row.asset_kind : row.image_type));
 
   populateSelect('bio-species', bioSpecies, 'All Species');
   populateSelect('bio-life-stage', bioLifeStages, 'All Life Stages');
-  populateSelect('bio-program', BIOLOGICAL_MONITORING_PROGRAMS, 'All Programs');
+  populateSelect('bio-program', window.HRBMPArchive ? uniqueSorted(state.biologicalRows.map((row) => row.monitoring_program)) : BIOLOGICAL_MONITORING_PROGRAMS, 'All Programs');
   populateSelect('bio-year-start', bioYears, 'Any Start');
   populateSelect('bio-year-end', bioYears, 'Any End');
   populateSelect('bio-month-start', bioMonths.map(monthOption), 'Any Start');
@@ -2319,7 +2370,7 @@ function populateFilters() {
   populateSelect('env-day-end', envDays, 'Any End');
   populateSelect('env-variable', envVariableOptions, 'Select Covariate');
   populateSelect('catalog-species', catalogSpecies, 'All Species');
-  populateSelect('catalog-type', catalogTypes, 'All Image Types');
+  populateSelect('catalog-type', window.HRBMPArchive ? catalogTypes.map((value) => ({ value, label: window.HRBMPArchive.DATA_TYPES[value] || value })) : catalogTypes, 'All Image Types');
 
   const variableSelect = document.getElementById('env-variable');
   if (variableSelect && variableSelect.value === 'all' && envVariableOptions.length > 0) {
@@ -2360,8 +2411,10 @@ function biologicalSpeciesOptions(rows) {
     names.push(label);
   }
 
-  KEY_SPECIES_NAMES.forEach(addName);
-  ALL_SPECIES_NAMES.forEach(addName);
+  if (!window.HRBMPArchive) {
+    KEY_SPECIES_NAMES.forEach(addName);
+    ALL_SPECIES_NAMES.forEach(addName);
+  }
   uniqueSorted(rows.map((row) => row.common_name || row.scientific_name)).forEach(addName);
   return names;
 }
@@ -2377,7 +2430,8 @@ function renderBiologicalMap() {
     monthEnd: valueOf('bio-month-end'),
     dayStart: valueOf('bio-day-start'),
     dayEnd: valueOf('bio-day-end')
-  }).filter(hasCoordinates);
+  });
+  const mappedRows = rows.filter(hasCoordinates);
 
   renderMapStats('bio-map-stats', [
     ['Biological Records', sumRecordCounts(rows, 'biological')],
@@ -2403,7 +2457,7 @@ function renderBiologicalMap() {
   }
 
   if (checked('layer-records')) {
-    addBiologicalRecordDotLayer(map, rows);
+    addBiologicalRecordDotLayer(map, mappedRows);
   }
 
   if (checked('layer-regional-totals')) {
@@ -2417,7 +2471,7 @@ function renderBiologicalMap() {
     checked('layer-region-reference') && { color: '#755d2a', label: 'HRBMP Region Boundaries' },
     checked('layer-river-centerline') && { color: '#176b78', label: 'Hudson River Centerline' }
   ].filter(Boolean)));
-  fitRows(map, rows);
+  fitRows(map, mappedRows);
 }
 
 function currentBiologicalFilterSummary(rows = null) {
@@ -2431,7 +2485,7 @@ function currentBiologicalFilterSummary(rows = null) {
     monthEnd: valueOf('bio-month-end'),
     dayStart: valueOf('bio-day-start'),
     dayEnd: valueOf('bio-day-end')
-  }).filter(hasCoordinates);
+  });
 
   const lines = [
     `Species: ${valueOf('bio-species') === 'all' ? 'All Species' : valueOf('bio-species')}`,
@@ -2450,28 +2504,20 @@ function updateDataRequestSummary(rows = null) {
   const summary = document.getElementById('data-request-summary');
   if (!summary || !state.ready) return;
   summary.value = currentBiologicalFilterSummary(rows);
+  window.dispatchEvent(new Event('hrbmp-archive-state'));
 }
 
 function renderDemo() {
   populateDemoFilters();
   renderDemoResults();
-
-  const keyInput = document.getElementById('demo-supabase-key');
-  if (keyInput && demoSupabaseKey() && !keyInput.value) {
-    keyInput.value = 'saved in this browser';
-  }
-
-  if (state.demoRowsSource === 'fallback') {
-    setDemoStatus('Showing built-in demo rows. Save the Supabase publishable key here to test the live API.', 'warning');
-  } else {
-    setDemoStatus(`Loaded ${formatNumber(state.demoRows.length)} public archive row(s) from Supabase.`, 'success');
-  }
 }
 
 function demoSupabaseKey() {
-  if (window.HRBMP_SUPABASE_PUBLISHABLE_KEY) return String(window.HRBMP_SUPABASE_PUBLISHABLE_KEY).trim();
+  const configured = window.HRBMP_CONFIG?.publishableKey || window.HRBMP_SUPABASE_PUBLISHABLE_KEY;
+  if (configured && window.HRBMPArchive.isPublishableKey(String(configured).trim())) return String(configured).trim();
   try {
-    return window.localStorage.getItem(DEMO_SUPABASE_KEY_STORAGE) || '';
+    const saved = window.localStorage.getItem(DEMO_SUPABASE_KEY_STORAGE) || '';
+    return window.HRBMPArchive.isPublishableKey(saved) ? saved : '';
   } catch (error) {
     return '';
   }
@@ -2480,12 +2526,17 @@ function demoSupabaseKey() {
 function saveDemoSupabaseKey(key) {
   const cleanKey = String(key || '').trim();
   if (!cleanKey || cleanKey === 'saved in this browser') return;
+  if (!window.HRBMPArchive.isPublishableKey(cleanKey)) {
+    setLoginStatus('Use a publishable key. Secret/service-role keys cannot be used in this browser.', 'error');
+    return;
+  }
   try {
     window.localStorage.setItem(DEMO_SUPABASE_KEY_STORAGE, cleanKey);
   } catch (error) {
     setDemoStatus('Browser storage is unavailable. The key can still be used for this page session.', 'warning');
     window.HRBMP_SUPABASE_PUBLISHABLE_KEY = cleanKey;
   }
+  return true;
 }
 
 function createHrbmpSupabaseClient() {
@@ -2557,7 +2608,8 @@ async function refreshAdminSession() {
 async function signInAdminUser() {
   const rawKey = document.getElementById('login-supabase-key')?.value || '';
   if (rawKey && rawKey !== 'saved in this browser') {
-    saveDemoSupabaseKey(rawKey);
+    if (!saveDemoSupabaseKey(rawKey)) return;
+    refreshDemoArchive();
     const demoKeyInput = document.getElementById('demo-supabase-key');
     if (demoKeyInput) demoKeyInput.value = 'saved in this browser';
   }
@@ -3112,54 +3164,280 @@ function setLoginStatus(message, level = '') {
 }
 
 async function refreshDemoArchive() {
-  const key = demoSupabaseKey();
-  if (!key) {
-    state.demoRows = DEMO_FALLBACK_ARCHIVE_ROWS.map(normalizeDemoArchiveRow);
-    state.demoRowsSource = 'fallback';
-    state.demoApiLoaded = false;
-    populateDemoFilters();
-    renderDemoResults();
-    setDemoStatus('No Supabase publishable key is saved in this browser. Showing built-in demo rows.', 'warning');
-    return;
-  }
-
-  setDemoStatus('Loading public FJS archive records from Supabase...', 'warning');
+  let key = demoSupabaseKey();
+  const version = ++state.archiveRefreshVersion;
+  state.demoRows = [];
+  state.demoApiLoaded = false;
+  state.archiveLoading = true;
+  state.archivePage = 0;
+  state.archiveSelectedIds = null;
+  syncLiveArchivePages();
+  window.dispatchEvent(new Event('hrbmp-archive-state'));
+  setArchiveStatus('Loading archive...', 'warning');
   try {
+    if (!key) {
+      key = await window.HRBMPArchive.fetchPublishableKey(DEMO_SUPABASE_URL);
+      if (version !== state.archiveRefreshVersion) return;
+      window.HRBMP_SUPABASE_PUBLISHABLE_KEY = key;
+    }
     const rows = await fetchDemoArchiveRows(key);
-    state.demoRows = rows.map(normalizeDemoArchiveRow);
+    if (version !== state.archiveRefreshVersion) return;
+    state.demoRows = rows;
     state.demoRowsSource = 'supabase';
     state.demoApiLoaded = true;
-    populateDemoFilters();
-    renderDemoResults();
-    setDemoStatus(`Loaded ${formatNumber(rows.length)} public archive row(s) from Supabase.`, 'success');
+    state.data.generated_at_utc = new Date().toISOString();
+    syncLiveArchivePages();
+    const files = rows.filter((row) => !['processed_abundance_count', 'environmental_data'].includes(row.asset_kind));
+    setArchiveStatus(`${formatNumber(files.filter((row) => row.available).length)} uploaded file(s); ${formatNumber(rows.length)} catalog item(s). Updated ${new Date().toLocaleString()}.`, 'success');
   } catch (error) {
-    console.error(error);
-    state.demoRows = DEMO_FALLBACK_ARCHIVE_ROWS.map(normalizeDemoArchiveRow);
-    state.demoRowsSource = 'fallback';
-    state.demoApiLoaded = false;
-    populateDemoFilters();
-    renderDemoResults();
-    setDemoStatus(`Supabase API request failed: ${error.message}. Showing built-in demo rows.`, 'error');
+    if (version !== state.archiveRefreshVersion) return;
+    setArchiveStatus(`Archive unavailable. ${error.message}`, 'error');
+  } finally {
+    if (version === state.archiveRefreshVersion) {
+      state.archiveLoading = false;
+      window.dispatchEvent(new Event('hrbmp-archive-state'));
+    }
   }
 }
 
 async function fetchDemoArchiveRows(key) {
-  const url = new URL(`${DEMO_SUPABASE_URL}/rest/v1/fjs_archive_catalog`);
-  url.searchParams.set('select', DEMO_ARCHIVE_SELECT);
-  url.searchParams.set('effective_access_level', 'eq.public');
-  url.searchParams.set('order', 'sample_id.asc,common_name.asc,asset_kind.asc,original_file_name.asc');
-  url.searchParams.set('limit', '1000');
+  return window.HRBMPArchive.fetchAvailability(DEMO_SUPABASE_URL, key);
+}
 
-  const response = await fetch(url.toString(), {
-    headers: {
-      apikey: key
-    }
+function setArchiveStatus(message, level) {
+  setDemoStatus(message, level);
+  document.querySelectorAll('[data-archive-status]').forEach((element) => {
+    element.textContent = message;
   });
-  if (!response.ok) {
-    const detail = await response.text();
-    throw new Error(`${response.status} ${detail || response.statusText}`);
+}
+
+function selectedArchiveRows() {
+  return window.HRBMPArchive.requestItems(state.demoLastFilteredRows).filter((row) =>
+    state.archiveSelectedIds === null || state.archiveSelectedIds.has(row.catalog_id)
+  );
+}
+
+function createLiveArchiveTable(rows, selectable = false) {
+  const table = document.createElement('table');
+  table.innerHTML = `<thead><tr>${selectable ? '<th scope="col">Select</th>' : ''}<th scope="col">File / Record</th><th scope="col">Sample</th><th scope="col">Date</th><th scope="col">Species</th><th scope="col">Region</th><th scope="col">Type</th><th scope="col">Availability</th></tr></thead>`;
+  const body = document.createElement('tbody');
+  rows.forEach((row) => {
+    const tr = document.createElement('tr');
+    if (selectable) {
+      const cell = document.createElement('td');
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.disabled = !row.available;
+      input.checked = row.available && (state.archiveSelectedIds === null || state.archiveSelectedIds.has(row.catalog_id));
+      input.setAttribute('aria-label', `Request ${row.original_file_name || row.catalog_id}, sample ${row.sample_id || 'unassigned'}`);
+      input.addEventListener('change', () => {
+        if (state.archiveSelectedIds === null) {
+          state.archiveSelectedIds = new Set(window.HRBMPArchive.requestItems(state.demoLastFilteredRows).map((item) => item.catalog_id));
+        }
+        if (input.checked) state.archiveSelectedIds.add(row.catalog_id);
+        else state.archiveSelectedIds.delete(row.catalog_id);
+        renderDemoResults();
+      });
+      cell.appendChild(input);
+      tr.appendChild(cell);
+    }
+    appendCell(tr, row.original_file_name || window.HRBMPArchive.DATA_TYPES[row.asset_kind]);
+    tr.lastElementChild.className = 'archive-file-name';
+    appendCell(tr, row.sample_id || 'Unassigned');
+    appendCell(tr, row.sample_date || 'Unassigned');
+    appendCell(tr, row.common_name || 'Unassigned');
+    appendCell(tr, row.river_region_name || 'Unassigned');
+    appendCell(tr, window.HRBMPArchive.DATA_TYPES[row.asset_kind] || row.asset_kind);
+    appendCell(tr, !row.available ? 'Awaiting upload' : !row.metadata_linked ? 'Uploaded; metadata pending' : 'Available on request');
+    tr.lastElementChild.className = `archive-item-status${!row.available || !row.metadata_linked ? ' pending' : ''}`;
+    body.appendChild(tr);
+  });
+  if (!rows.length) {
+    const tr = document.createElement('tr');
+    const cell = document.createElement('td');
+    cell.colSpan = selectable ? 8 : 7;
+    cell.textContent = state.demoApiLoaded ? 'No items match these filters.' : 'Archive unavailable.';
+    tr.appendChild(cell);
+    body.appendChild(tr);
   }
-  return response.json();
+  table.appendChild(body);
+  return table;
+}
+
+function renderLiveArchiveTable(rows) {
+  const container = document.getElementById('archive-table');
+  if (!container) return;
+  const pages = Math.max(1, Math.ceil(rows.length / 50));
+  state.archivePage = Math.min(state.archivePage, pages - 1);
+  container.replaceChildren(createLiveArchiveTable(rows.slice(state.archivePage * 50, (state.archivePage + 1) * 50), true));
+  setText('archive-page-status', `Page ${state.archivePage + 1} of ${pages}`);
+  document.getElementById('archive-page-previous').disabled = state.archivePage === 0;
+  document.getElementById('archive-page-next').disabled = state.archivePage >= pages - 1;
+  const all = document.getElementById('archive-select-all');
+  const availableCount = window.HRBMPArchive.requestItems(rows).length;
+  const selectedCount = selectedArchiveRows().length;
+  all.checked = availableCount > 0 && selectedCount === availableCount;
+  all.indeterminate = selectedCount > 0 && selectedCount < availableCount;
+  all.disabled = availableCount === 0;
+}
+
+function renderLiveImageCatalog() {
+  const container = document.getElementById('image-catalog');
+  if (!container) return;
+  const species = valueOf('catalog-species');
+  const imageType = valueOf('catalog-type');
+  const images = state.data.sampling_image_catalog.filter((row) =>
+    (species === 'all' || row.common_name === species) && (imageType === 'all' || row.asset_kind === imageType)
+  );
+  renderSummaryStrip('catalog-summary', [
+    ['Uploaded Images', images.length],
+    ['Samples', new Set(images.map((row) => row.sample_id).filter(Boolean)).size],
+    ['Species', new Set(images.map((row) => row.taxon_code).filter((code) => code !== null && code !== undefined)).size],
+    ['Awaiting Metadata', images.filter((row) => !row.metadata_linked).length]
+  ]);
+  container.classList.add('archive-catalog-list', 'table-scroll');
+  const pages = Math.max(1, Math.ceil(images.length / 50));
+  state.catalogPage = Math.min(state.catalogPage, pages - 1);
+  container.replaceChildren(createLiveArchiveTable(images.slice(state.catalogPage * 50, (state.catalogPage + 1) * 50)));
+  const pagination = document.createElement('div');
+  pagination.className = 'archive-pagination';
+  const previous = document.createElement('button');
+  previous.type = 'button';
+  previous.className = 'secondary-button';
+  previous.textContent = 'Previous';
+  previous.disabled = state.catalogPage === 0;
+  previous.addEventListener('click', () => { state.catalogPage -= 1; renderLiveImageCatalog(); });
+  const page = document.createElement('span');
+  page.textContent = `Page ${state.catalogPage + 1} of ${pages}`;
+  const next = document.createElement('button');
+  next.type = 'button';
+  next.className = 'secondary-button';
+  next.textContent = 'Next';
+  next.disabled = state.catalogPage >= pages - 1;
+  next.addEventListener('click', () => { state.catalogPage += 1; renderLiveImageCatalog(); });
+  pagination.append(previous, page, next);
+  container.appendChild(pagination);
+  document.getElementById('catalog-detail').hidden = true;
+  document.querySelector('.all-species-panel').hidden = true;
+}
+
+function mainRequestItems(scope) {
+  if (scope === 'biological') {
+    const rows = filterRows(state.biologicalRows, {
+      species: valueOf('bio-species'), lifeStage: valueOf('bio-life-stage'), program: valueOf('bio-program'),
+      yearStart: valueOf('bio-year-start'), yearEnd: valueOf('bio-year-end'),
+      monthStart: valueOf('bio-month-start'), monthEnd: valueOf('bio-month-end'),
+      dayStart: valueOf('bio-day-start'), dayEnd: valueOf('bio-day-end')
+    });
+    const keys = new Set(rows.map((row) => `${row.sample_id}|${row.taxon_code}`));
+    return state.demoRows.filter((row) => row.asset_kind === 'processed_abundance_count' && keys.has(`${row.sample_id}|${row.taxon_code}`));
+  }
+  if (state.selectedEnvSource !== 'hrbmp') return [];
+  const variable = valueOf('env-variable');
+  return filterRows(state.environmentalRows, {
+    yearStart: valueOf('env-year-start'), yearEnd: valueOf('env-year-end'),
+    monthStart: valueOf('env-month-start'), monthEnd: valueOf('env-month-end'),
+    dayStart: valueOf('env-day-start'), dayEnd: valueOf('env-day-end')
+  }).filter((row) => row.available_variables.includes(variable));
+}
+
+function submitMainDataRequest(scope) {
+  const prefix = scope === 'biological' ? 'data-request' : 'env-data-request';
+  const summary = scope === 'biological' ? currentBiologicalFilterSummary() : currentEnvironmentalFilterSummary();
+  return submitLiveDataRequest(scope, prefix, mainRequestItems(scope), `${scope}_data`, summary, `${prefix}-policy-acknowledgment`, `${prefix}-status`);
+}
+
+async function submitLiveDataRequest(scope, prefix, rows, requestScope, summary, consentId, statusId) {
+  const status = document.getElementById(statusId);
+  const showStatus = (message, level = '') => {
+    status.textContent = message;
+    status.className = `demo-request-status ${level}`;
+  };
+  if (state.archiveSubmitting.has(scope)) return;
+  if (!state.demoApiLoaded || state.archiveLoading) return showStatus('The live archive must be available before submitting a request.', 'warning');
+  if (!document.getElementById(consentId)?.checked) return showStatus('Please acknowledge the Data Sharing Policy.', 'warning');
+  const read = (field) => document.getElementById(`${prefix}-${field}`)?.value.trim() || '';
+  if (!read('name') || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(read('email'))) return showStatus('Enter your name and a valid email address.', 'warning');
+  const selected = window.HRBMPArchive.requestItems(rows);
+  if (!selected.length) return showStatus('No available items are selected for this request.', 'warning');
+  const filterPrefix = scope === 'archive' ? 'demo' : scope === 'biological' ? 'bio' : 'env';
+  const screeningFilters = {
+    program: scope === 'archive' ? valueOf('demo-program') : scope === 'biological' ? valueOf('bio-program') : 'FJS',
+    species: scope === 'archive' ? valueOf('demo-species') : scope === 'biological' ? valueOf('bio-species') : null,
+    life_stage: scope === 'biological' ? valueOf('bio-life-stage') : null,
+    year_start: valueOrNull(valueOf(`${filterPrefix}-year-start`)),
+    year_end: valueOrNull(valueOf(`${filterPrefix}-year-end`)),
+    month_start: scope === 'archive' ? null : valueOrNull(valueOf(`${filterPrefix}-month-start`)),
+    month_end: scope === 'archive' ? null : valueOrNull(valueOf(`${filterPrefix}-month-end`)),
+    day_start: scope === 'archive' ? null : valueOrNull(valueOf(`${filterPrefix}-day-start`)),
+    day_end: scope === 'archive' ? null : valueOrNull(valueOf(`${filterPrefix}-day-end`)),
+    region: scope === 'archive' ? valueOf('demo-region') : null,
+    sample_id: scope === 'archive' ? valueOf('demo-sample') : null,
+    variable: scope === 'environmental' ? valueOf('env-variable') : null
+  };
+  const requestId = crypto.randomUUID();
+  const payload = {
+    request_id: requestId, request_scope: requestScope, request_status: 'submitted', admin_email: DEMO_ADMIN_EMAIL,
+    requester_name: read('name'), requester_email: read('email'), requester_affiliation: read('affiliation'),
+    intended_use: read('use'), request_notes: read('notes'), request_summary: summary,
+    selected_program: scope === 'archive' ? valueOrNull(valueOf('demo-program')) : null,
+    selected_species: scope === 'archive' ? valueOrNull(valueOf('demo-species')) : scope === 'biological' ? valueOrNull(valueOf('bio-species')) : null,
+    selected_region: scope === 'archive' ? valueOrNull(valueOf('demo-region')) : null,
+    selected_sample_id: scope === 'archive' ? valueOrNull(valueOf('demo-sample')) : null,
+    year_start: screeningFilters.year_start === null ? null : Number(screeningFilters.year_start),
+    year_end: screeningFilters.year_end === null ? null : Number(screeningFilters.year_end),
+    requested_data_types: [...new Set(selected.map((row) => row.asset_kind))],
+    matching_row_count: selected.length, public_row_count: 0,
+    request_payload: {
+      source: 'supabase_archive', catalog_ids: selected.map((row) => row.catalog_id),
+      filters: screeningFilters,
+      policy_acknowledged: true, policy_acknowledged_at: new Date().toISOString(),
+      request_form: {
+        requester_title: read('title'), requester_phone: read('phone'), collaborators_with_data_access: read('collaborators'),
+        project_abstract: read('abstract'), specific_data_requested: read('notes'), data_use_plan: read('use-plan')
+      },
+      manifest_preview: selected.slice(0, 50).map((row) => ({
+        catalog_id: row.catalog_id, sample_id: row.sample_id, sample_date: row.sample_date,
+        common_name: row.common_name, data_type: row.asset_kind, original_file_name: row.original_file_name
+      }))
+    }
+  };
+  state.archiveSubmitting.add(scope);
+  window.dispatchEvent(new Event('hrbmp-archive-state'));
+  showStatus('Submitting request...', 'warning');
+  try {
+    await insertDemoDataRequest(demoSupabaseKey(), payload);
+    showStatus(`Request submitted for admin review. Reference: ${requestId}`, 'success');
+  } catch (error) {
+    showStatus(`Request was not submitted. ${error.message}`, 'error');
+  } finally {
+    state.archiveSubmitting.delete(scope);
+    window.dispatchEvent(new Event('hrbmp-archive-state'));
+  }
+}
+
+function syncLiveArchivePages() {
+  const maps = window.HRBMPArchive.buildMapRows(state.demoRows);
+  state.biologicalRows = maps.biological;
+  state.environmentalRows = maps.environmental;
+  state.data.biological_availability = maps.biological;
+  state.data.environmental_availability = maps.environmental;
+  state.data.sampling_image_catalog = state.demoRows.filter((row) => row.available && (row.mime_type?.startsWith('image/') || ['representative_species_image', 'jar_label_image'].includes(row.asset_kind)));
+  state.data.counts = {
+    stations: new Set(state.demoRows.filter((row) => hasCoordinates(row)).map((row) => `${row.latitude}|${row.longitude}`)).size,
+    sampling_events: new Set(state.demoRows.map((row) => row.sample_id).filter(Boolean)).size,
+    taxa: new Set(state.demoRows.map((row) => row.taxon_code).filter((value) => value !== null && value !== undefined)).size,
+    observations: state.demoRows.filter((row) => row.asset_kind === 'processed_abundance_count').length
+  };
+  populateFilters();
+  populateDemoFilters();
+  fillCounts();
+  renderBiologicalRegionReference();
+  renderBiologicalMap();
+  updateDataRequestSummary();
+  renderEnvironmental();
+  renderCatalog();
+  renderDemoResults();
 }
 
 function normalizeDemoArchiveRow(row) {
@@ -3192,12 +3470,12 @@ function demoRegionLabel(regionName, regionNumber) {
 }
 
 function populateDemoFilters() {
-  const rows = (state.demoRows || DEMO_FALLBACK_ARCHIVE_ROWS).map(normalizeDemoArchiveRow);
+  const rows = state.demoRows;
   const programs = uniqueSorted(rows.map((row) => row.program || 'FJS'));
   const species = uniqueSorted(rows.map((row) => row.common_name));
   const years = uniqueSorted(rows.map((row) => row.sample_year), true);
-  const regions = uniqueSorted(rows.map((row) => row.river_region_name));
-  const samples = uniqueSorted(rows.map((row) => row.sample_id));
+  const regions = uniqueSorted(rows.map((row) => row.river_region_name).filter(Boolean));
+  const samples = uniqueSorted(rows.map((row) => row.sample_id).filter(Boolean));
 
   populateSelect('demo-program', programs, 'All Programs');
   populateSelect('demo-species', species, 'All Species');
@@ -3213,16 +3491,19 @@ function renderDemoResults() {
   state.demoLastFilteredRows = displayRows;
 
   renderSummaryStrip('demo-summary', [
-    ['Rows', displayRows.length],
-    ['Samples', uniqueCount(displayRows, 'sample_id')],
-    ['Species', uniqueCount(displayRows, 'common_name')],
-    ['Source', state.demoRowsSource === 'supabase' ? 'Supabase API' : 'Built-In Demo']
+    ['Catalog Items', displayRows.length],
+    ['Uploaded Files', displayRows.filter((row) => row.available && !['processed_abundance_count', 'environmental_data'].includes(row.asset_kind)).length],
+    ['Samples', new Set(displayRows.map((row) => row.sample_id).filter(Boolean)).size],
+    ['Awaiting Metadata', displayRows.filter((row) => !row.metadata_linked).length]
   ]);
 
   setText('demo-result-status', `${formatNumber(displayRows.length)} request item(s) match the current filters.`);
-  renderDemoResultSummary(displayRows);
+  renderLiveArchiveTable(displayRows);
+  const selectedRows = selectedArchiveRows();
+  setText('demo-result-summary', `${formatNumber(selectedRows.length)} item(s) selected for review. ${formatNumber(displayRows.filter((row) => !row.available).length)} item(s) awaiting upload.`);
   updateDemoManifestDownload(displayRows);
-  updateDemoRequestSummary(displayRows);
+  updateDemoRequestSummary(selectedRows);
+  window.dispatchEvent(new Event('hrbmp-archive-state'));
 }
 
 function filteredDemoArchiveRows() {
@@ -3253,40 +3534,14 @@ function selectedDemoDataTypes() {
   if (documentsInput && !documentsInput.disabled && documentsInput.checked) {
     types.push('jar_label_image', 'field_sheet_pdf', 'lab_sheet_pdf');
   }
+  if (checked('demo-type-environmental')) types.push('environmental_data');
+  if (checked('demo-type-other')) types.push('other');
   return types;
 }
 
 function buildDemoDisplayRows(rows) {
-  const selectedTypes = selectedDemoDataTypes();
-  const includeCounts = selectedTypes.includes('processed_abundance_count');
-  const includeAssetKinds = new Set(selectedTypes.filter((type) => type !== 'processed_abundance_count'));
-  const displayRows = [];
-
-  if (includeCounts) {
-    const grouped = groupBy(rows, (row) => `${row.sample_id}|${row.common_name}|${row.taxon_code || ''}`);
-    grouped.forEach((groupRows) => {
-      const base = groupRows[0];
-      displayRows.push({
-        ...base,
-        display_kind: 'processed_abundance_count',
-        asset_kind: 'processed_abundance_count',
-        original_file_name: 'processed_counts_by_sample_taxon.csv',
-        storage_object_path: '',
-        mime_type: 'text/csv'
-      });
-    });
-  }
-
-  rows
-    .filter((row) => includeAssetKinds.has(row.asset_kind))
-    .forEach((row) => {
-      displayRows.push({
-        ...row,
-        display_kind: row.asset_kind
-      });
-    });
-
-  return displayRows.sort(compareDemoRows);
+  const selectedTypes = new Set(selectedDemoDataTypes());
+  return rows.filter((row) => selectedTypes.has(row.asset_kind)).sort(compareDemoRows);
 }
 
 function compareDemoRows(a, b) {
@@ -3331,6 +3586,7 @@ function renderDemoResultSummary(rows) {
 function updateDemoManifestDownload(rows) {
   const link = document.getElementById('demo-manifest-download');
   if (!link) return;
+  link.hidden = !state.demoApiLoaded || !rows.length;
   const csv = toCsv(rows.map((row) => ({
     sample_id: row.sample_id,
     sample_date: row.sample_date,
@@ -3339,12 +3595,14 @@ function updateDemoManifestDownload(rows) {
     river_region_name: row.river_region_name,
     data_type: row.display_kind,
     original_file_name: row.original_file_name,
-    storage_bucket: row.storage_bucket || '',
-    storage_object_path: row.storage_object_path || '',
-    total_count_corrected: row.total_count_corrected ?? ''
+    available: row.available,
+    metadata_linked: row.metadata_linked,
+    catalog_id: row.catalog_id
   })));
-  link.href = makeDownloadUrl(csv, 'text/csv');
-  link.download = `hrbmp_fjs_demo_manifest_${new Date().toISOString().slice(0, 10)}.csv`;
+  if (state.archiveManifestUrl) URL.revokeObjectURL(state.archiveManifestUrl);
+  state.archiveManifestUrl = makeDownloadUrl(csv, 'text/csv');
+  link.href = state.archiveManifestUrl;
+  link.download = `hrbmp_archive_availability_${new Date().toISOString().slice(0, 10)}.csv`;
 }
 
 function updateDemoRequestSummary(rows = state.demoLastFilteredRows || []) {
@@ -3368,36 +3626,7 @@ function currentDemoRequestSummary(rows = state.demoLastFilteredRows || []) {
 }
 
 async function submitDemoDataRequest() {
-  const payload = buildDemoRequestPayload();
-  if (!payload.requester_name || !payload.requester_email) {
-    setDemoRequestStatus('Please enter at least a name and email before submitting.', 'warning');
-    return;
-  }
-  if (!state.demoLastFilteredRows.length) {
-    setDemoRequestStatus('No matching public records are selected for this request.', 'warning');
-    return;
-  }
-
-  const key = demoSupabaseKey();
-  if (!key) {
-    renderDemoPayloadDownload(payload, 'No Supabase publishable key is saved in this browser. The request payload is ready to download.');
-    return;
-  }
-
-  setDemoRequestStatus('Submitting request to Supabase...', 'warning');
-  try {
-    const inserted = await insertDemoDataRequest(key, payload);
-    const requestId = Array.isArray(inserted) && inserted[0]?.request_id ? inserted[0].request_id : 'submitted';
-    setDemoRequestStatus(
-      requestId === 'submitted'
-        ? 'Request submitted to Supabase. Admins can review it in hrbmp_data_requests.'
-        : `Request submitted to Supabase. Admin review record: ${requestId}`,
-      'success'
-    );
-  } catch (error) {
-    console.error(error);
-    renderDemoPayloadDownload(payload, `Supabase request insert failed: ${error.message}`);
-  }
+  return submitLiveDataRequest('archive', 'demo-request', selectedArchiveRows(), 'all_data', currentDemoRequestSummary(selectedArchiveRows()), 'demo-data-request-policy-acknowledgment', 'demo-request-status');
 }
 
 function buildDemoRequestPayload() {
@@ -3536,14 +3765,7 @@ function currentEnvironmentalFilterSummary(rows = null) {
   const variable = ENV_VARIABLES[requestedVariable] ? requestedVariable : variablesForSource(state.selectedEnvSource || 'hrbmp')[0] || 'mean_temperature_c';
   const variableMeta = ENV_VARIABLES[variable] || ENV_VARIABLES.mean_temperature_c;
   const sourceMeta = ENV_SOURCES[variableMeta.source] || ENV_SOURCES.hrbmp;
-  const filteredRows = rows || filterRows(state.environmentalRows, {
-    yearStart: valueOf('env-year-start'),
-    yearEnd: valueOf('env-year-end'),
-    monthStart: valueOf('env-month-start'),
-    monthEnd: valueOf('env-month-end'),
-    dayStart: valueOf('env-day-start'),
-    dayEnd: valueOf('env-day-end')
-  }).filter(hasCoordinates);
+  const filteredRows = rows || mainRequestItems('environmental');
 
   const lines = [
     `Database: ${sourceMeta.label}`,
@@ -3562,6 +3784,7 @@ function updateEnvironmentalDataRequestSummary(rows = null) {
   const summary = document.getElementById('env-data-request-summary');
   if (!summary || !state.ready) return;
   summary.value = currentEnvironmentalFilterSummary(rows);
+  window.dispatchEvent(new Event('hrbmp-archive-state'));
 }
 
 function updateMetadataApiLinks() {
@@ -3804,10 +4027,17 @@ function selectEnvironmentalSource(sourceKey) {
 }
 
 function variablesForSource(sourceKey) {
-  return (ENV_SOURCES[sourceKey] || ENV_SOURCES.hrbmp).variables.filter((key) => ENV_VARIABLES[key]);
+  const variables = (ENV_SOURCES[sourceKey] || ENV_SOURCES.hrbmp).variables.filter((key) => ENV_VARIABLES[key]);
+  if (window.HRBMPArchive && sourceKey === 'hrbmp' && state.demoApiLoaded) {
+    const available = new Set(state.environmentalRows.flatMap((row) => row.available_variables));
+    return variables.filter((key) => available.has(key));
+  }
+  return variables;
 }
 
 function renderEnvironmentalMap() {
+  const requestedVariable = valueOf('env-variable');
+  const variable = ENV_VARIABLES[requestedVariable] ? requestedVariable : variablesForSource(state.selectedEnvSource || 'hrbmp')[0] || 'mean_temperature_c';
   const rows = filterRows(state.environmentalRows, {
     yearStart: valueOf('env-year-start'),
     yearEnd: valueOf('env-year-end'),
@@ -3815,16 +4045,15 @@ function renderEnvironmentalMap() {
     monthEnd: valueOf('env-month-end'),
     dayStart: valueOf('env-day-start'),
     dayEnd: valueOf('env-day-end')
-  }).filter(hasCoordinates);
-  const requestedVariable = valueOf('env-variable');
-  const variable = ENV_VARIABLES[requestedVariable] ? requestedVariable : variablesForSource(state.selectedEnvSource || 'hrbmp')[0] || 'mean_temperature_c';
+  }).filter((row) => !window.HRBMPArchive || (state.selectedEnvSource === 'hrbmp' && row.available_variables.includes(variable)));
+  const mappedRows = rows.filter(hasCoordinates);
   const variableMeta = ENV_VARIABLES[variable] || ENV_VARIABLES.mean_temperature_c;
   const sourceMeta = ENV_SOURCES[variableMeta.source] || ENV_SOURCES.hrbmp;
   const variableValues = rows.map((row) => row[variable]).filter(Number.isFinite);
 
   renderMapStats('env-map-stats', [
     ['Environmental Records', sumRecordCounts(rows, 'environmental')],
-    ['Mean Selected Covariate', variableValues.length ? formatMetric(average(variableValues), variableMeta.unit) : 'NA'],
+    ['Selected Covariate', window.HRBMPArchive ? variableMeta.label : variableValues.length ? formatMetric(average(variableValues), variableMeta.unit) : 'NA'],
     ['Covariate Source', sourceMeta.label]
   ]);
   updateEnvironmentalDataRequestSummary(rows);
@@ -3845,7 +4074,7 @@ function renderEnvironmentalMap() {
   }
 
   if (checked('env-layer-values')) {
-    addEnvironmentalRecordDotLayer(map, rows, {
+    addEnvironmentalRecordDotLayer(map, mappedRows, {
       variable,
       variableMeta,
       popupType: 'environmental-record'
@@ -4150,8 +4379,8 @@ function canonicalRegionCode(row) {
   const byName = HRBMP_REGIONS.find((region) => region.name.toLowerCase() === regionName);
   if (byName) return byName.code;
 
-  const riverMile = Number(row.river_mile);
-  const byMile = HRBMP_REGIONS.find((region) => riverMile >= region.min_river_mile && riverMile <= region.max_river_mile);
+  const riverMile = asNumberOrNull(row.river_mile);
+  const byMile = Number.isFinite(riverMile) && HRBMP_REGIONS.find((region) => riverMile >= region.min_river_mile && riverMile <= region.max_river_mile);
   return byMile ? byMile.code : '';
 }
 
@@ -4388,6 +4617,7 @@ function renderEnvironmentalTable() {
 }
 
 function renderCatalog() {
+  if (window.HRBMPArchive) return renderLiveImageCatalog();
   const container = document.getElementById('image-catalog');
   if (!container) return;
 
@@ -5334,6 +5564,14 @@ function aggregateByRegion(rows, valueKey) {
 }
 
 function popupHtml(row, type, options = {}) {
+  if (row.availability_only) {
+    return `<h3>${escapeHtml(row.sample_id)}</h3><dl>
+      <dt>Region</dt><dd>${escapeHtml(row.river_region_name || 'Unassigned')}</dd>
+      <dt>Date</dt><dd>${escapeHtml(row.sample_date || 'Unassigned')}</dd>
+      <dt>${type.startsWith('biological') ? 'Species' : 'Variable'}</dt><dd>${escapeHtml(type.startsWith('biological') ? row.common_name : options.variableMeta?.label || '')}</dd>
+      <dt>Access</dt><dd>Available on request</dd>
+    </dl>`;
+  }
   if (type === 'biological-record' || type === 'biological-site') {
     return `
       <h3>${escapeHtml(row.station_id)} - ${escapeHtml(row.station_name)}</h3>
@@ -5363,6 +5601,7 @@ function popupHtml(row, type, options = {}) {
 }
 
 function selectedText(row, type, options = {}) {
+  if (row.availability_only) return `${row.sample_id}: ${type.startsWith('biological') ? row.common_name : options.variableMeta?.label || 'Environmental data'}; available on request.`;
   if (type.startsWith('biological')) {
     const species = row.common_name || row.scientific_name || 'Unspecified';
     return `${row.station_id} - ${row.station_name}: ${species}; ${formatNumber(row.biological_records)} biological record(s).`;
@@ -5385,7 +5624,7 @@ function filterRows(rows, filters) {
       const speciesName = row.common_name || row.scientific_name || 'Unspecified';
       if (speciesName.toLowerCase() !== filters.species.toLowerCase()) return false;
     }
-    if (filters.lifeStage && filters.lifeStage !== 'all' && row.life_stage !== filters.lifeStage) return false;
+    if (filters.lifeStage && filters.lifeStage !== 'all' && row.life_stage !== filters.lifeStage && !row.available_life_stages?.includes(filters.lifeStage)) return false;
     if (filters.program && filters.program !== 'all' && row.monitoring_program !== filters.program) return false;
     if (!withinRange(row.year, filters.yearStart, filters.yearEnd)) return false;
     if (!withinRange(row.month, filters.monthStart, filters.monthEnd)) return false;
@@ -5519,7 +5758,9 @@ function isActiveTab(id) {
 }
 
 function hasCoordinates(row) {
-  return Number.isFinite(Number(row.latitude)) && Number.isFinite(Number(row.longitude));
+  return row.latitude !== null && row.latitude !== undefined && row.latitude !== ''
+    && row.longitude !== null && row.longitude !== undefined && row.longitude !== ''
+    && Number.isFinite(Number(row.latitude)) && Number.isFinite(Number(row.longitude));
 }
 
 function uniqueSorted(values, numeric = false) {

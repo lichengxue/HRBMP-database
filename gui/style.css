@@ -2004,6 +2004,73 @@ textarea {
   overflow-x: auto;
 }
 
+.archive-catalog-list {
+  display: block;
+  min-width: 0;
+  width: 100%;
+}
+
+#catalog-detail[hidden],
+.all-species-panel[hidden] {
+  display: none;
+}
+
+.archive-catalog-list input[type="checkbox"],
+#archive-table input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+.archive-select-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.archive-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-height: 44px;
+  margin-top: 12px;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  padding: 8px;
+}
+
+.icon-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.archive-file-name {
+  overflow-wrap: anywhere;
+  min-width: 180px;
+  max-width: 300px;
+}
+
+.archive-item-status {
+  white-space: nowrap;
+  color: #256747;
+}
+
+.archive-item-status.pending {
+  color: #76540c;
+}
+
+[data-archive-status] {
+  margin: 8px 0;
+}
+
 table {
   width: 100%;
   min-width: 760px;
