@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.3.0" />
+  <link rel="stylesheet" href="style.css?v=1.4.0" />
 </head>
 <body>
   <header class="site-nav">
@@ -295,7 +295,7 @@
         <article class="schema-card">
           <span>04</span>
           <h3>Environmental Observations</h3>
-          <p>HRBMP, USGS, EPA, and NOAA database variables.</p>
+          <p>HRBMP environmental data availability.</p>
         </article>
         <article class="schema-card">
           <span>05</span>
@@ -593,7 +593,6 @@
           </label>
 
           <div class="layer-stats" id="bio-map-stats"></div>
-          <p class="map-help">Biological record totals are summarized by HRBMP region for the selected species, life stage, program, and date filters.</p>
         </aside>
 
         <section class="map-panel" aria-label="Hudson River biological availability map">
@@ -2246,7 +2245,7 @@
         </section>
       </div>
 
-      <section class="data-panel admin-request-panel">
+      <section id="admin-request-panel" class="data-panel admin-request-panel" hidden>
         <div class="metadata-panel-header">
           <div>
             <h2>Admin Request Review</h2>
@@ -2482,7 +2481,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="config.js"></script>
-  <script src="archive.js?v=1.3.0"></script>
-  <script src="app.js?v=1.3.0"></script>
+  <script src="archive.js?v=1.4.0"></script>
+  <script src="app.js?v=1.4.0"></script>
 </body>
 </html>

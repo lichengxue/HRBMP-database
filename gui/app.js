@@ -1,257 +1,3 @@
-const FALLBACK_DATA = {
-  generated_at_utc: '2026-05-03 00:00:00 UTC',
-  note: '',
-  counts: {
-    stations: 3,
-    sampling_events: 4,
-    taxa: 4,
-    observations: 7
-  },
-  stations: [
-    {
-      station_id: 'ST001',
-      station_name: 'Upper Reach - Prototype',
-      river_mile: 145.2,
-      latitude: 42.25,
-      longitude: -73.79,
-      region: 'Upper Hudson'
-    },
-    {
-      station_id: 'ST002',
-      station_name: 'Mid Reach - Prototype',
-      river_mile: 98.4,
-      latitude: 41.7,
-      longitude: -73.95,
-      region: 'Mid Hudson'
-    },
-    {
-      station_id: 'ST003',
-      station_name: 'Lower Reach - Prototype',
-      river_mile: 32.7,
-      latitude: 40.8,
-      longitude: -73.98,
-      region: 'Lower Hudson'
-    }
-  ],
-  sampling_events: [
-    {
-      event_id: 'EV001',
-      station_id: 'ST001',
-      station_name: 'Upper Reach - Prototype',
-      region: 'Upper Hudson',
-      sample_date: '2024-06-10',
-      year: 2024,
-      month: 6,
-      day: 10,
-      gear_type: 'Trawl',
-      program: 'Prototype Survey',
-      sampling_depth_m: 5.5
-    },
-    {
-      event_id: 'EV002',
-      station_id: 'ST002',
-      station_name: 'Mid Reach - Prototype',
-      region: 'Mid Hudson',
-      sample_date: '2024-07-15',
-      year: 2024,
-      month: 7,
-      day: 15,
-      gear_type: 'Seine',
-      program: 'Prototype Survey',
-      sampling_depth_m: 3.1
-    },
-    {
-      event_id: 'EV003',
-      station_id: 'ST003',
-      station_name: 'Lower Reach - Prototype',
-      region: 'Lower Hudson',
-      sample_date: '2025-05-20',
-      year: 2025,
-      month: 5,
-      day: 20,
-      gear_type: 'Trawl',
-      program: 'Prototype Survey',
-      sampling_depth_m: 6
-    },
-    {
-      event_id: 'EV004',
-      station_id: 'ST001',
-      station_name: 'Upper Reach - Prototype',
-      region: 'Upper Hudson',
-      sample_date: '2025-08-12',
-      year: 2025,
-      month: 8,
-      day: 12,
-      gear_type: 'Seine',
-      program: 'Prototype Survey',
-      sampling_depth_m: 4.2
-    }
-  ],
-  annual_total_abundance: [
-    { year: 2024, total_abundance: 135 },
-    { year: 2025, total_abundance: 130 }
-  ],
-  taxa_totals: [
-    {
-      taxon_id: 'TX003',
-      scientific_name: 'Fundulus heteroclitus',
-      common_name: 'Mummichog',
-      taxonomic_group: 'Fish',
-      total_abundance: 118
-    },
-    {
-      taxon_id: 'TX004',
-      scientific_name: 'Crangon septemspinosa',
-      common_name: 'Sand Shrimp',
-      taxonomic_group: 'Invertebrate',
-      total_abundance: 79
-    },
-    {
-      taxon_id: 'TX001',
-      scientific_name: 'Morone saxatilis',
-      common_name: 'Striped Bass',
-      taxonomic_group: 'Fish',
-      total_abundance: 51
-    },
-    {
-      taxon_id: 'TX002',
-      scientific_name: 'Alosa sapidissima',
-      common_name: 'American Shad',
-      taxonomic_group: 'Fish',
-      total_abundance: 17
-    }
-  ],
-  environmental_summary: [
-    {
-      mean_temperature_c: 21.18,
-      mean_salinity_psu: 4.58,
-      mean_dissolved_oxygen_mg_l: 7.78,
-      mean_turbidity_ntu: 13.85,
-      mean_chlorophyll_a: 8
-    }
-  ],
-  biological_availability: [
-    {
-      station_id: 'ST001',
-      station_name: 'Upper Reach - Prototype',
-      river_mile: 145.2,
-      latitude: 42.25,
-      longitude: -73.79,
-      region: 'Upper Hudson',
-      year: 2024,
-      month: 6,
-      day: 10,
-      gear_type: 'Trawl',
-      sampling_events: 1,
-      biological_records: 2,
-      total_abundance: 63
-    },
-    {
-      station_id: 'ST002',
-      station_name: 'Mid Reach - Prototype',
-      river_mile: 98.4,
-      latitude: 41.7,
-      longitude: -73.95,
-      region: 'Mid Hudson',
-      year: 2024,
-      month: 7,
-      day: 15,
-      gear_type: 'Seine',
-      sampling_events: 1,
-      biological_records: 2,
-      total_abundance: 72
-    },
-    {
-      station_id: 'ST003',
-      station_name: 'Lower Reach - Prototype',
-      river_mile: 32.7,
-      latitude: 40.8,
-      longitude: -73.98,
-      region: 'Lower Hudson',
-      year: 2025,
-      month: 5,
-      day: 20,
-      gear_type: 'Trawl',
-      sampling_events: 1,
-      biological_records: 2,
-      total_abundance: 92
-    },
-    {
-      station_id: 'ST001',
-      station_name: 'Upper Reach - Prototype',
-      river_mile: 145.2,
-      latitude: 42.25,
-      longitude: -73.79,
-      region: 'Upper Hudson',
-      year: 2025,
-      month: 8,
-      day: 12,
-      gear_type: 'Seine',
-      sampling_events: 1,
-      biological_records: 1,
-      total_abundance: 38
-    }
-  ],
-  environmental_availability: [
-    {
-      station_id: 'ST001',
-      station_name: 'Upper Reach - Prototype',
-      river_mile: 145.2,
-      latitude: 42.25,
-      longitude: -73.79,
-      region: 'Upper Hudson',
-      year: 2024,
-      month: 6,
-      environmental_records: 1,
-      mean_temperature_c: 19.3,
-      mean_salinity_psu: 2.4,
-      mean_dissolved_oxygen_mg_l: 8.1
-    },
-    {
-      station_id: 'ST002',
-      station_name: 'Mid Reach - Prototype',
-      river_mile: 98.4,
-      latitude: 41.7,
-      longitude: -73.95,
-      region: 'Mid Hudson',
-      year: 2024,
-      month: 7,
-      environmental_records: 1,
-      mean_temperature_c: 23.1,
-      mean_salinity_psu: 4.8,
-      mean_dissolved_oxygen_mg_l: 7.4
-    },
-    {
-      station_id: 'ST003',
-      station_name: 'Lower Reach - Prototype',
-      river_mile: 32.7,
-      latitude: 40.8,
-      longitude: -73.98,
-      region: 'Lower Hudson',
-      year: 2025,
-      month: 5,
-      environmental_records: 1,
-      mean_temperature_c: 17.8,
-      mean_salinity_psu: 7.2,
-      mean_dissolved_oxygen_mg_l: 8.6
-    },
-    {
-      station_id: 'ST001',
-      station_name: 'Upper Reach - Prototype',
-      river_mile: 145.2,
-      latitude: 42.25,
-      longitude: -73.79,
-      region: 'Upper Hudson',
-      year: 2025,
-      month: 8,
-      environmental_records: 1,
-      mean_temperature_c: 24.5,
-      mean_salinity_psu: 3.9,
-      mean_dissolved_oxygen_mg_l: 7
-    }
-  ],
-  sampling_image_catalog: []
-};
 
 const MONTH_NAMES = [
   'January',
@@ -271,14 +17,6 @@ const MONTH_NAMES = [
 const DATA_VERSION = '1.1.2';
 const DATA_REQUEST_VERSION = `${DATA_VERSION}-${Date.now()}`;
 const API_PORT = '8010';
-const MIN_BIOLOGICAL_DEMO_ROWS = 100;
-const MIN_ENVIRONMENTAL_DEMO_ROWS = 100;
-const HOME_SNAPSHOT_COUNTS = {
-  stations: 326,
-  sampling_events: 7842,
-  taxa: 171,
-  observations: 10864
-};
 const DEMO_SUPABASE_URL = window.HRBMP_CONFIG?.supabaseUrl || 'https://vnqulddrlhkftcqpekpl.supabase.co';
 const DEMO_SUPABASE_KEY_STORAGE = 'hrbmp_demo_supabase_publishable_key';
 const DEMO_ADMIN_EMAIL = 'chengxue.li@stonybrook.edu';
@@ -345,117 +83,6 @@ const DEMO_REGION_CODE_LABELS = {
   AL: 'AL - Albany'
 };
 
-const DEMO_FALLBACK_SAMPLES = {
-  '98_20171023_1591': {
-    sample_id: '98_20171023_1591',
-    program: 'FJS',
-    sample_date: '2017-10-23',
-    river_mile: 8,
-    river_region_number: 0,
-    river_region_name: 'BT - Battery',
-    latitude: 40.81,
-    longitude: -73.98
-  },
-  '98_20171023_1592': {
-    sample_id: '98_20171023_1592',
-    program: 'FJS',
-    sample_date: '2017-10-23',
-    river_mile: 9,
-    river_region_number: 0,
-    river_region_name: 'BT - Battery',
-    latitude: 40.82,
-    longitude: -73.97
-  }
-};
-
-const DEMO_FALLBACK_SAMPLE_TAXA = [
-  {
-    sample_id: '98_20171023_1591',
-    taxon_code: 1,
-    common_name: 'ALEWIFE',
-    young_of_year_count_corrected: 1,
-    yearling_count_corrected: 0,
-    older_count_corrected: 0,
-    yearling_and_older_count_corrected: 0,
-    total_count_corrected: 1
-  },
-  {
-    sample_id: '98_20171023_1591',
-    taxon_code: 2,
-    common_name: 'BAY ANCHOVY',
-    young_of_year_count_corrected: 0,
-    yearling_count_corrected: 2,
-    older_count_corrected: 0,
-    yearling_and_older_count_corrected: 2,
-    total_count_corrected: 4
-  },
-  {
-    sample_id: '98_20171023_1591',
-    taxon_code: 45,
-    common_name: 'WEAKFISH',
-    young_of_year_count_corrected: 2,
-    yearling_count_corrected: 0,
-    older_count_corrected: 0,
-    yearling_and_older_count_corrected: 0,
-    total_count_corrected: 2
-  },
-  {
-    sample_id: '98_20171023_1592',
-    taxon_code: 2,
-    common_name: 'BAY ANCHOVY',
-    young_of_year_count_corrected: 2,
-    yearling_count_corrected: 0,
-    older_count_corrected: 0,
-    yearling_and_older_count_corrected: 0,
-    total_count_corrected: 2
-  }
-];
-
-const DEMO_FALLBACK_ASSETS = [
-  { sample_id: '98_20171023_1591', asset_kind: 'jar_label_image', original_file_name: '98_20171023_1591_J01.JPG', mime_type: 'image/jpeg', sheet_code: 'J01' },
-  { sample_id: '98_20171023_1591', asset_kind: 'field_sheet_pdf', original_file_name: '98_20171023_1591_SC1.pdf', mime_type: 'application/pdf', sheet_code: 'SC1' },
-  { sample_id: '98_20171023_1591', asset_kind: 'lab_sheet_pdf', original_file_name: '98_20171023_1591_LW1.pdf', mime_type: 'application/pdf', sheet_code: 'LW1' },
-  { sample_id: '98_20171023_1591', taxon_code: 1, asset_kind: 'representative_species_image', original_file_name: '98_20171023_1591_J01_001_04_01_01.JPG', mime_type: 'image/jpeg', image_view: 'left_side', sheet_code: 'J01' },
-  { sample_id: '98_20171023_1591', taxon_code: 1, asset_kind: 'representative_species_image', original_file_name: '98_20171023_1591_J01_001_04_01_02.JPG', mime_type: 'image/jpeg', image_view: 'right_side', sheet_code: 'J01' },
-  { sample_id: '98_20171023_1591', taxon_code: 45, asset_kind: 'representative_species_image', original_file_name: '98_20171023_1591_J01_045_04_01_01.JPG', mime_type: 'image/jpeg', image_view: 'left_side', sheet_code: 'J01' },
-  { sample_id: '98_20171023_1591', taxon_code: 45, asset_kind: 'representative_species_image', original_file_name: '98_20171023_1591_J01_045_04_01_02.JPG', mime_type: 'image/jpeg', image_view: 'right_side', sheet_code: 'J01' },
-  { sample_id: '98_20171023_1592', asset_kind: 'jar_label_image', original_file_name: '98_20171023_1592_J01.JPG', mime_type: 'image/jpeg', sheet_code: 'J01' },
-  { sample_id: '98_20171023_1592', asset_kind: 'field_sheet_pdf', original_file_name: '98_20171023_1592_SC1.pdf', mime_type: 'application/pdf', sheet_code: 'SC1' },
-  { sample_id: '98_20171023_1592', asset_kind: 'lab_sheet_pdf', original_file_name: '98_20171023_1592_LW1.pdf', mime_type: 'application/pdf', sheet_code: 'LW1' },
-  { sample_id: '98_20171023_1592', taxon_code: 2, asset_kind: 'representative_species_image', original_file_name: '98_20171023_1592_J01_002_04_01_01.JPG', mime_type: 'image/jpeg', image_view: 'left_side', sheet_code: 'J01' },
-  { sample_id: '98_20171023_1592', taxon_code: 2, asset_kind: 'representative_species_image', original_file_name: '98_20171023_1592_J01_002_04_01_02.JPG', mime_type: 'image/jpeg', image_view: 'right_side', sheet_code: 'J01' }
-];
-
-const DEMO_FALLBACK_ARCHIVE_ROWS = buildDemoFallbackArchiveRows();
-
-function buildDemoFallbackArchiveRows() {
-  const rows = [];
-  DEMO_FALLBACK_SAMPLE_TAXA.forEach((taxonRow) => {
-    const sample = DEMO_FALLBACK_SAMPLES[taxonRow.sample_id];
-    if (!sample) return;
-
-    DEMO_FALLBACK_ASSETS
-      .filter((asset) => asset.sample_id === taxonRow.sample_id)
-      .filter((asset) => !asset.taxon_code || Number(asset.taxon_code) === Number(taxonRow.taxon_code))
-      .forEach((asset) => {
-        rows.push({
-          ...sample,
-          ...taxonRow,
-          scientific_name: null,
-          storage_bucket: 'fjs-archive',
-          storage_object_path: `samples/${asset.sample_id}/${asset.asset_kind}/${asset.original_file_name}`,
-          original_file_name: asset.original_file_name,
-          mime_type: asset.mime_type,
-          file_size_bytes: null,
-          image_view: asset.image_view || null,
-          sheet_code: asset.sheet_code || null,
-          asset_kind: asset.asset_kind,
-          effective_access_level: 'public'
-        });
-      });
-  });
-  return rows;
-}
 
 const BIOLOGICAL_MONITORING_PROGRAMS = [
   'Long River Survey',
@@ -522,98 +149,9 @@ const HRBMP_REGIONS = [
 
 const HRBMP_REGIONS_BY_NAME = new Map(HRBMP_REGIONS.map((region) => [region.name.toLowerCase(), region]));
 
-const FALLBACK_METADATA = {
-  datasets: [
-    {
-      dataset_name: 'Biological Records',
-      source_database: 'HRBMP database',
-      default_access_level: 'public_summary',
-      api_endpoint: '/api/biological-records'
-    },
-    {
-      dataset_name: 'Environmental Records',
-      source_database: 'HRBMP database',
-      default_access_level: 'public_summary',
-      api_endpoint: '/api/environmental-records'
-    },
-    {
-      dataset_name: 'Metadata Catalog',
-      source_database: 'HRBMP database',
-      default_access_level: 'public',
-      api_endpoint: '/api/metadata'
-    }
-  ],
-  variables: [
-    { display_name: 'Common Name', source_database: 'HRBMP database', unit: '', value_type: 'text' },
-    { display_name: 'Scientific Name', source_database: 'HRBMP database', unit: '', value_type: 'text' },
-    { display_name: 'Life Stage', source_database: 'HRBMP database', unit: '', value_type: 'category' },
-    { display_name: 'Count', source_database: 'HRBMP database', unit: 'individuals', value_type: 'integer' },
-    { display_name: 'Water Temperature', source_database: 'HRBMP database', unit: 'deg C', value_type: 'numeric' },
-    { display_name: 'Dissolved Oxygen', source_database: 'HRBMP database', unit: 'mg/L', value_type: 'numeric' },
-    { display_name: 'Discharge', source_database: 'USGS database', unit: 'ft3/s', value_type: 'numeric' },
-    { display_name: 'pH', source_database: 'EPA database', unit: 'standard units', value_type: 'numeric' },
-    { display_name: 'Water Level', source_database: 'NOAA database', unit: 'm', value_type: 'numeric' }
-  ],
-  access_levels: [
-    {
-      access_level_id: 'public',
-      display_name: 'Public',
-      login_required: 0,
-      manual_approval_required: 0,
-      description: 'Published metadata, maps, summaries, and public CSV exports that do not require login.'
-    },
-    {
-      access_level_id: 'registered',
-      display_name: 'Registered External User',
-      login_required: 1,
-      manual_approval_required: 0,
-      description: 'Approved public-use datasets and higher-resolution non-sensitive downloads.'
-    },
-    {
-      access_level_id: 'approved_research',
-      display_name: 'Approved Research User',
-      login_required: 1,
-      manual_approval_required: 1,
-      description: 'Restricted datasets released after manual review or data-use agreement.'
-    },
-    {
-      access_level_id: 'internal',
-      display_name: 'Data Manager',
-      login_required: 1,
-      manual_approval_required: 1,
-      description: 'Internal QA/QC, metadata editing, data request review, and release preparation.'
-    },
-    {
-      access_level_id: 'admin',
-      display_name: 'Admin',
-      login_required: 1,
-      manual_approval_required: 1,
-      description: 'User management, full database operations, and system administration.'
-    }
-  ],
-  roles: [
-    { role_id: 'public', display_name: 'Public', role_rank: 0, login_required: 0 },
-    { role_id: 'registered_external', display_name: 'Registered External User', role_rank: 10, login_required: 1 },
-    { role_id: 'approved_research', display_name: 'Approved Research User', role_rank: 20, login_required: 1 },
-    { role_id: 'data_manager', display_name: 'Data Manager', role_rank: 30, login_required: 1 },
-    { role_id: 'admin', display_name: 'Admin', role_rank: 40, login_required: 1 }
-  ],
-  dataset_access_policy: [
-    { dataset_id: 'metadata-catalog', dataset_name: 'Metadata Catalog', access_level_name: 'Public', release_status: 'published', contains_sensitive_data: 0 },
-    { dataset_id: 'biological-records', dataset_name: 'Biological Records', access_level_name: 'Public', release_status: 'published', contains_sensitive_data: 0 },
-    { dataset_id: 'environmental-records', dataset_name: 'Environmental Records', access_level_name: 'Public', release_status: 'published', contains_sensitive_data: 0 },
-    { dataset_id: 'sampling-image-catalog', dataset_name: 'Sampling Image Catalog', access_level_name: 'Registered External User', release_status: 'qa_qc', contains_sensitive_data: 0 }
-  ],
-  dataset_role_permissions: [],
-  programs: BIOLOGICAL_MONITORING_PROGRAMS.map((program) => ({ program_name: program })),
-  regions: HRBMP_REGIONS.map((region) => ({
-    region_code: region.code,
-    region_number: region.number,
-    region_name: region.name,
-    river_mile_start: region.min_river_mile,
-    river_mile_end: region.max_river_mile
-  })),
-  sources: []
+const EMPTY_METADATA = {
+  datasets: [], variables: [], programs: [], regions: [], sources: [],
+  access_levels: [], roles: [], dataset_access_policy: [], dataset_role_permissions: []
 };
 
 const HUDSON_CENTERLINE = [
@@ -633,88 +171,13 @@ const HUDSON_CENTERLINE = [
   { river_mile: 152, latitude: 42.65, longitude: -73.75 }
 ];
 
-const BIOLOGICAL_DEMO_REGION_COUNTS = {
-  BT: 3,
-  YK: 14,
-  TZ: 5,
-  CH: 11,
-  IP: 2,
-  WP: 9,
-  CW: 6,
-  PK: 17,
-  HP: 4,
-  KG: 8,
-  SG: 12,
-  CS: 1,
-  AL: 8
-};
-
-const ENVIRONMENTAL_DEMO_REGION_COUNTS = { ...BIOLOGICAL_DEMO_REGION_COUNTS };
-
-const BIOLOGICAL_DEMO_SPECIES = [
-  ['Atlantic Tomcod', 'Microgadus tomcod'],
-  ['American Shad', 'Alosa sapidissima'],
-  ['Striped Bass', 'Morone saxatilis'],
-  ['White Perch', 'Morone americana'],
-  ['Bay Anchovy', 'Anchoa mitchilli'],
-  ['Alewife', 'Alosa pseudoharengus'],
-  ['Blueback Herring', 'Alosa aestivalis'],
-  ['Rainbow Smelt', 'Osmerus mordax'],
-  ['Yellow Perch', 'Perca flavescens'],
-  ['Spottail Shiner', 'Notropis hudsonius'],
-  ['Bluefish', 'Pomatomus saltatrix'],
-  ['Hogchoker', 'Trinectes maculatus'],
-  ['Atlantic Menhaden', 'Brevoortia tyrannus']
-];
 
 const ENV_SOURCES = {
   hrbmp: {
     label: 'HRBMP Database',
     variables: [
-      'mean_temperature_c',
-      'mean_dissolved_oxygen_mg_l',
-      'mean_conductivity_us_cm',
-      'sampling_depth_m',
-      'mean_salinity_psu',
-      'mean_ph',
-      'mean_turbidity_ntu'
-    ]
-  },
-  usgs: {
-    label: 'USGS Database',
-    variables: [
-      'usgs_discharge_cfs',
-      'usgs_tide_stage_m',
-      'usgs_gage_height_ft',
-      'usgs_salt_front_river_mile',
-      'usgs_specific_conductance_us_cm',
-      'usgs_freshwater_inflow_cfs'
-    ]
-  },
-  epa: {
-    label: 'EPA Database',
-    variables: [
-      'epa_nutrients_index',
-      'epa_ph',
-      'epa_turbidity_ntu',
-      'epa_bacteria_cfu_100ml',
-      'epa_metals_index',
-      'epa_pcb_pfas_index',
-      'epa_contaminants_index'
-    ]
-  },
-  noaa: {
-    label: 'NOAA Database',
-    variables: [
-      'noaa_water_level_m',
-      'noaa_tide_stage_m',
-      'noaa_current_speed_ms',
-      'noaa_wind_speed_ms',
-      'noaa_air_temperature_c',
-      'noaa_water_temperature_c',
-      'noaa_salinity_psu',
-      'noaa_conductivity_us_cm',
-      'noaa_air_pressure_hpa'
+      'mean_temperature_c', 'mean_dissolved_oxygen_mg_l', 'mean_conductivity_us_cm',
+      'sampling_depth_m', 'mean_ph', 'mean_turbidity_ntu'
     ]
   }
 };
@@ -745,145 +208,7 @@ const ENV_VARIABLES = {
     label: 'Sampling Depth',
     unit: 'm',
     colors: ['#bd7a1e', '#2f6f9f', '#173330']
-  },
-  mean_salinity_psu: {
-    source: 'hrbmp',
-    label: 'Salinity',
-    unit: 'PSU',
-    colors: ['#1e8f84', '#2f6f9f', '#6f61a8']
-  },
-  usgs_discharge_cfs: {
-    source: 'usgs',
-    label: 'Discharge',
-    unit: 'cfs',
-    colors: ['#2f6f9f', '#1e8f84', '#173330']
-  },
-  usgs_tide_stage_m: {
-    source: 'usgs',
-    label: 'Tide Stage',
-    unit: 'm',
-    colors: ['#6f61a8', '#2f6f9f', '#1e8f84']
-  },
-  usgs_gage_height_ft: {
-    source: 'usgs',
-    label: 'Gage Height',
-    unit: 'ft',
-    colors: ['#2f6f9f', '#bd7a1e', '#c85b4f']
-  },
-  usgs_salt_front_river_mile: {
-    source: 'usgs',
-    label: 'Salt-Front Position',
-    unit: 'river mile',
-    colors: ['#1e8f84', '#bd7a1e', '#c85b4f']
-  },
-  usgs_specific_conductance_us_cm: {
-    source: 'usgs',
-    label: 'Specific Conductance',
-    unit: 'uS/cm',
-    colors: ['#1e8f84', '#2f6f9f', '#6f61a8']
-  },
-  usgs_freshwater_inflow_cfs: {
-    source: 'usgs',
-    label: 'Freshwater Inflow',
-    unit: 'cfs',
-    colors: ['#2f6f9f', '#1e8f84', '#173330']
-  },
-  epa_nutrients_index: {
-    source: 'epa',
-    label: 'Nutrients',
-    unit: 'index',
-    colors: ['#1e8f84', '#bd7a1e', '#c85b4f']
-  },
-  epa_ph: {
-    source: 'epa',
-    label: 'pH',
-    unit: 'pH',
-    colors: ['#2f6f9f', '#1e8f84', '#bd7a1e']
-  },
-  epa_turbidity_ntu: {
-    source: 'epa',
-    label: 'Turbidity',
-    unit: 'NTU',
-    colors: ['#1e8f84', '#bd7a1e', '#c85b4f']
-  },
-  epa_bacteria_cfu_100ml: {
-    source: 'epa',
-    label: 'Bacteria',
-    unit: 'CFU/100 mL',
-    colors: ['#1e8f84', '#bd7a1e', '#c85b4f']
-  },
-  epa_metals_index: {
-    source: 'epa',
-    label: 'Metals',
-    unit: 'index',
-    colors: ['#1e8f84', '#bd7a1e', '#c85b4f']
-  },
-  epa_pcb_pfas_index: {
-    source: 'epa',
-    label: 'PCBs / PFAS',
-    unit: 'index',
-    colors: ['#1e8f84', '#bd7a1e', '#c85b4f']
-  },
-  epa_contaminants_index: {
-    source: 'epa',
-    label: 'Other Contaminants',
-    unit: 'index',
-    colors: ['#1e8f84', '#bd7a1e', '#c85b4f']
-  },
-  noaa_water_level_m: {
-    source: 'noaa',
-    label: 'Water Level',
-    unit: 'm',
-    colors: ['#2f6f9f', '#1e8f84', '#173330']
-  },
-  noaa_tide_stage_m: {
-    source: 'noaa',
-    label: 'Tides',
-    unit: 'm',
-    colors: ['#6f61a8', '#2f6f9f', '#1e8f84']
-  },
-  noaa_current_speed_ms: {
-    source: 'noaa',
-    label: 'Currents',
-    unit: 'm/s',
-    colors: ['#2f6f9f', '#1e8f84', '#bd7a1e']
-  },
-  noaa_wind_speed_ms: {
-    source: 'noaa',
-    label: 'Winds',
-    unit: 'm/s',
-    colors: ['#1e8f84', '#bd7a1e', '#c85b4f']
-  },
-  noaa_air_temperature_c: {
-    source: 'noaa',
-    label: 'Air Temperature',
-    unit: 'deg C',
-    colors: ['#2f6f9f', '#1e8f84', '#bd7a1e']
-  },
-  noaa_water_temperature_c: {
-    source: 'noaa',
-    label: 'Water Temperature',
-    unit: 'deg C',
-    colors: ['#2f6f9f', '#1e8f84', '#bd7a1e']
-  },
-  noaa_salinity_psu: {
-    source: 'noaa',
-    label: 'Salinity',
-    unit: 'PSU',
-    colors: ['#1e8f84', '#2f6f9f', '#6f61a8']
-  },
-  noaa_conductivity_us_cm: {
-    source: 'noaa',
-    label: 'Conductivity',
-    unit: 'uS/cm',
-    colors: ['#1e8f84', '#2f6f9f', '#6f61a8']
-  },
-  noaa_air_pressure_hpa: {
-    source: 'noaa',
-    label: 'Atmospheric Pressure',
-    unit: 'hPa',
-    colors: ['#6f61a8', '#2f6f9f', '#1e8f84']
-  },
+  }
 };
 
 const KEY_SPECIES_NAMES = [
@@ -1534,7 +859,7 @@ const LAB_SAMPLE_PROCESSING_PHOTO_GROUPS = [
 const state = {
   ready: false,
   data: null,
-  metadata: FALLBACK_METADATA,
+  metadata: EMPTY_METADATA,
   biologicalRows: [],
   environmentalRows: [],
   maps: {
@@ -1570,6 +895,9 @@ const state = {
   databaseSelections: { biological: null, environmental: null },
   adminClient: null,
   adminClientKey: '',
+  adminAuthSubscription: null,
+  adminAuthorized: false,
+  adminLoadVersion: 0,
   adminRequests: [],
   adminRequestView: 'submitted',
   adminDeliveryInFlight: new Set(),
@@ -1581,54 +909,14 @@ document.addEventListener('DOMContentLoaded', () => {
   organizeFieldSamplingGallery();
   organizeLabSampleProcessingGallery();
   initTabs();
-
-  Promise.all([
-    loadJson(`./data/example_summary.json?v=${DATA_REQUEST_VERSION}`, FALLBACK_DATA),
-    loadJson(`./data/biological_availability.geojson?v=${DATA_REQUEST_VERSION}`, null),
-    loadJson(`./data/environmental_availability.geojson?v=${DATA_REQUEST_VERSION}`, null),
-    loadJson(apiUrl('/metadata'), FALLBACK_METADATA)
-  ])
-    .then(([summary, biologicalGeoJson, environmentalGeoJson, metadata]) => {
-      state.data = hydrateData(summary, biologicalGeoJson, environmentalGeoJson);
-      state.metadata = hydrateMetadata(metadata);
-      state.biologicalRows = state.data.biological_availability;
-      state.environmentalRows = state.data.environmental_availability;
-      state.ready = true;
-      renderAll();
-      bindControls();
-      refreshActiveMap();
-      refreshDemoArchive();
-      window.lucide?.createIcons();
-    })
-    .catch((error) => {
-      console.error(error);
-      state.data = hydrateData({ ...FALLBACK_DATA, using_fallback: true }, null, null);
-      state.metadata = hydrateMetadata({ ...FALLBACK_METADATA, using_fallback: true });
-      state.biologicalRows = state.data.biological_availability;
-      state.environmentalRows = state.data.environmental_availability;
-      state.ready = true;
-      renderAll();
-      bindControls();
-      refreshActiveMap();
-      refreshDemoArchive();
-    });
+  state.data = emptyLiveData();
+  state.ready = true;
+  renderAll();
+  bindControls();
+  refreshActiveMap();
+  refreshDemoArchive();
+  window.lucide?.createIcons();
 });
-
-async function loadJson(path, fallback) {
-  try {
-    const response = await fetch(path);
-    if (!response.ok) throw new Error(`Failed to load ${path}`);
-    return response.json();
-  } catch (error) {
-    if (fallback === null) return null;
-    console.warn(`Using fallback data for ${path}:`, error);
-    return {
-      ...fallback,
-      using_fallback: true,
-      note: ''
-    };
-  }
-}
 
 function initTabs() {
   const links = document.querySelectorAll('[data-tab-link]');
@@ -2031,91 +1319,14 @@ function organizePhotoGallery(containerId, photoGroups, defaultGroupKey) {
     });
 }
 
-function hydrateData(data, biologicalGeoJson, environmentalGeoJson) {
-  const usingFallback = Boolean(data.using_fallback);
-  const next = {
-    ...FALLBACK_DATA,
-    ...data,
-    counts: {
-      ...FALLBACK_DATA.counts,
-      ...(data.counts || {})
-    },
-    stations: Array.isArray(data.stations) ? data.stations : [],
-    sampling_events: Array.isArray(data.sampling_events) ? data.sampling_events : [],
-    annual_total_abundance: Array.isArray(data.annual_total_abundance) ? data.annual_total_abundance : [],
-    taxa_totals: Array.isArray(data.taxa_totals) ? data.taxa_totals : [],
-    environmental_summary: Array.isArray(data.environmental_summary) ? data.environmental_summary : [],
-    biological_availability: Array.isArray(data.biological_availability) ? data.biological_availability : [],
-    environmental_availability: Array.isArray(data.environmental_availability) ? data.environmental_availability : [],
-    sampling_image_catalog: Array.isArray(data.sampling_image_catalog) ? data.sampling_image_catalog : []
+function emptyLiveData() {
+  return {
+    counts: { stations: 0, sampling_events: 0, taxa: 0, observations: 0 },
+    stations: [], sampling_events: [], biological_availability: [],
+    environmental_availability: [], sampling_image_catalog: [],
+    annual_total_abundance: [], taxa_totals: [], environmental_summary: [],
+    generated_at_utc: '', using_fallback: false
   };
-
-  if (window.HRBMPArchive) {
-    return {
-      ...next,
-      counts: { stations: 0, sampling_events: 0, taxa: 0, observations: 0 },
-      stations: [], sampling_events: [], biological_availability: [],
-      environmental_availability: [], sampling_image_catalog: [],
-      annual_total_abundance: [], taxa_totals: [], environmental_summary: [],
-      generated_at_utc: '', using_fallback: false
-    };
-  }
-
-  if (biologicalGeoJson) {
-    next.biological_availability = rowsFromGeoJson(biologicalGeoJson);
-  }
-
-  if (environmentalGeoJson) {
-    next.environmental_availability = rowsFromGeoJson(environmentalGeoJson);
-  }
-
-  if (next.stations.length === 0 && usingFallback) {
-    next.stations = FALLBACK_DATA.stations;
-  }
-
-  if (next.biological_availability.length === 0 && next.sampling_events.length > 0) {
-    next.biological_availability = deriveAvailabilityFromEvents(next);
-  }
-
-  if (next.biological_availability.length === 0 && usingFallback) {
-    next.biological_availability = FALLBACK_DATA.biological_availability;
-  }
-
-  if (next.environmental_availability.length === 0 && usingFallback) {
-    next.environmental_availability = FALLBACK_DATA.environmental_availability;
-  }
-
-  if (next.sampling_image_catalog.length === 0) {
-    next.sampling_image_catalog = SPECIES_HIGHLIGHT_CATALOG;
-  }
-
-  next.biological_availability = next.biological_availability.map(normalizeAvailabilityRow);
-  next.biological_availability = ensureMinimumBiologicalRows(next.biological_availability, MIN_BIOLOGICAL_DEMO_ROWS);
-  next.biological_availability = ensureDistributedBiologicalDemoRows(next.biological_availability);
-  next.environmental_availability = next.environmental_availability.map(normalizeEnvironmentalRow);
-  next.environmental_availability = ensureDistributedEnvironmentalDemoRows(next.environmental_availability);
-  next.sampling_events = next.sampling_events.map(normalizeEventRow);
-  next.sampling_image_catalog = next.sampling_image_catalog.map(normalizeCatalogRecord);
-
-  return next;
-}
-
-function hydrateMetadata(metadata) {
-  const next = {
-    ...FALLBACK_METADATA,
-    ...metadata,
-    datasets: Array.isArray(metadata.datasets) ? metadata.datasets : FALLBACK_METADATA.datasets,
-    variables: Array.isArray(metadata.variables) ? metadata.variables : FALLBACK_METADATA.variables,
-    programs: Array.isArray(metadata.programs) ? metadata.programs : FALLBACK_METADATA.programs,
-    regions: Array.isArray(metadata.regions) ? metadata.regions : FALLBACK_METADATA.regions,
-    sources: Array.isArray(metadata.sources) ? metadata.sources : FALLBACK_METADATA.sources,
-    access_levels: Array.isArray(metadata.access_levels) ? metadata.access_levels : FALLBACK_METADATA.access_levels,
-    roles: Array.isArray(metadata.roles) ? metadata.roles : FALLBACK_METADATA.roles,
-    dataset_access_policy: Array.isArray(metadata.dataset_access_policy) ? metadata.dataset_access_policy : FALLBACK_METADATA.dataset_access_policy,
-    dataset_role_permissions: Array.isArray(metadata.dataset_role_permissions) ? metadata.dataset_role_permissions : FALLBACK_METADATA.dataset_role_permissions,
-    using_fallback: Boolean(metadata.using_fallback)
-  };
-  return next;
 }
 
 function renderAll() {
@@ -2372,12 +1583,12 @@ function bindPolicyAcknowledgments() {
 }
 
 function fillCounts() {
-  const counts = window.HRBMPArchive ? state.data.counts : HOME_SNAPSHOT_COUNTS;
+  const counts = state.data.counts;
   setText('count-stations', formatNumber(counts.stations));
   setText('count-events', formatNumber(counts.sampling_events));
   setText('count-taxa', formatNumber(counts.taxa));
   setText('count-observations', formatNumber(counts.observations));
-  setText('snapshot-date', state.data.generated_at_utc || (window.HRBMPArchive ? 'Archive not loaded' : 'No export timestamp found'));
+  setText('snapshot-date', state.data.generated_at_utc || 'Archive not loaded');
 }
 
 function populateFilters() {
@@ -2578,8 +1789,25 @@ function createHrbmpSupabaseClient() {
   if (!window.supabase || typeof window.supabase.createClient !== 'function') return null;
   if (state.adminClient && state.adminClientKey === key) return state.adminClient;
 
+  state.adminAuthSubscription?.unsubscribe();
+  clearAdminReview();
   state.adminClient = window.supabase.createClient(DEMO_SUPABASE_URL, key);
   state.adminClientKey = key;
+  const client = state.adminClient;
+  const listener = client.auth.onAuthStateChange((event, session) => {
+    if (event === 'INITIAL_SESSION') return;
+    clearAdminReview();
+    state.adminSessionEmail = session?.user?.email || '';
+    if (!session) {
+      setLoginStatus('Signed out. Sign in to review requests.', 'warning');
+      return;
+    }
+    // Auth callbacks must finish before calling Supabase session methods again.
+    setTimeout(() => {
+      if (state.adminClient === client) refreshAdminSession();
+    }, 0);
+  });
+  state.adminAuthSubscription = listener.data.subscription;
   return state.adminClient;
 }
 
@@ -2615,27 +1843,7 @@ function bindAdminLoginControls() {
 async function refreshAdminSession() {
   const keyInput = document.getElementById('login-supabase-key');
   if (keyInput && demoSupabaseKey()) keyInput.value = 'saved in this browser';
-
-  const client = createHrbmpSupabaseClient();
-  if (!client) {
-    setLoginStatus('Save the Supabase publishable key first, then sign in.', 'warning');
-    renderAdminRequestRows([]);
-    return;
-  }
-
-  try {
-    const { data, error } = await client.auth.getSession();
-    if (error) throw error;
-    const email = data.session?.user?.email || '';
-    state.adminSessionEmail = email;
-    if (email) {
-      setLoginStatus(`Signed in as ${email}.`, 'success');
-      loadAdminRequests();
-    }
-  } catch (error) {
-    console.error(error);
-    setLoginStatus(`Could not check login session: ${error.message}`, 'error');
-  }
+  await loadAdminRequests();
 }
 
 async function signInAdminUser() {
@@ -2661,10 +1869,13 @@ async function signInAdminUser() {
   }
 
   setLoginStatus('Signing in...', 'warning');
+  clearAdminReview();
   try {
     const { data, error } = await client.auth.signInWithPassword({ email, password });
     if (error) throw error;
     state.adminSessionEmail = data.user?.email || email;
+    const passwordInput = document.getElementById('login-password');
+    if (passwordInput) passwordInput.value = '';
     setLoginStatus(`Signed in as ${state.adminSessionEmail}. Loading request queue...`, 'success');
     await loadAdminRequests();
   } catch (error) {
@@ -2675,36 +1886,56 @@ async function signInAdminUser() {
 
 async function signOutAdminUser() {
   const client = createHrbmpSupabaseClient();
+  clearAdminReview();
+  state.adminSessionEmail = '';
+  setLoginStatus('Signed out. Sign in to review requests.', 'warning');
   if (!client) return;
 
   try {
-    await client.auth.signOut();
+    const { error } = await client.auth.signOut();
+    if (error) throw error;
   } catch (error) {
     console.error(error);
+    setLoginStatus(`Could not finish signing out: ${error.message}. Please try again.`, 'error');
   }
+}
 
-  state.adminSessionEmail = '';
+function clearAdminReview() {
+  state.adminLoadVersion += 1;
+  state.adminAuthorized = false;
+  const panel = document.getElementById('admin-request-panel');
+  if (panel) panel.hidden = true;
   state.adminRequests = [];
   state.adminReviewedRequestIds.clear();
   resetAdminRequestReport();
   renderAdminRequestRows([]);
-  setLoginStatus('Signed out. Sign in to review requests.', 'warning');
+  return state.adminLoadVersion;
 }
 
 async function loadAdminRequests() {
   const client = createHrbmpSupabaseClient();
+  const version = clearAdminReview();
   if (!client) {
-    setLoginStatus('Save the Supabase publishable key first.', 'warning');
+    setLoginStatus('Login service is unavailable. Try refreshing the page.', 'warning');
     return;
   }
 
-  setLoginStatus('Loading request queue...', 'warning');
+  setLoginStatus('Checking request-review access...', 'warning');
   try {
     const { data: sessionData, error: sessionError } = await client.auth.getSession();
+    if (version !== state.adminLoadVersion) return;
     if (sessionError) throw sessionError;
+    state.adminSessionEmail = sessionData.session?.user?.email || '';
     if (!sessionData.session) {
-      renderAdminRequestRows([]);
       setLoginStatus('Sign in with your Supabase admin account to load requests.', 'warning');
+      return;
+    }
+
+    const { data: authorized, error: authorizationError } = await client.rpc('is_hrbmp_request_admin');
+    if (version !== state.adminLoadVersion) return;
+    if (authorizationError) throw authorizationError;
+    if (authorized !== true) {
+      setLoginStatus('This account does not have request-review access.', 'warning');
       return;
     }
 
@@ -2713,14 +1944,19 @@ async function loadAdminRequests() {
       .select(ADMIN_REQUEST_SELECT)
       .order('created_at', { ascending: false })
       .limit(100);
+    if (version !== state.adminLoadVersion) return;
     if (error) throw error;
 
+    state.adminAuthorized = true;
     state.adminRequests = data || [];
     renderAdminRequestRows(state.adminRequests);
+    const panel = document.getElementById('admin-request-panel');
+    if (panel) panel.hidden = false;
     setLoginStatus(`Loaded ${formatNumber(state.adminRequests.length)} request(s).`, 'success');
   } catch (error) {
+    if (version !== state.adminLoadVersion) return;
     console.error(error);
-    renderAdminRequestRows([]);
+    clearAdminReview();
     setLoginStatus(`Could not load requests: ${error.message}`, 'error');
   }
 }
@@ -3215,6 +2451,7 @@ async function refreshDemoArchive() {
       if (version !== state.archiveRefreshVersion) return;
       window.HRBMP_SUPABASE_PUBLISHABLE_KEY = key;
     }
+    refreshAdminSession();
     const rows = await fetchDemoArchiveRows(key);
     if (version !== state.archiveRefreshVersion) return;
     state.demoRows = rows;
@@ -3955,12 +3192,10 @@ function setLinkHref(id, href) {
 }
 
 function renderMetadata() {
-  const metadata = state.metadata || FALLBACK_METADATA;
+  const metadata = state.metadata || EMPTY_METADATA;
   const status = document.getElementById('metadata-status');
   if (status) {
-    status.textContent = metadata.using_fallback
-      ? 'Showing built-in metadata because the local SQLite API is not running.'
-      : 'Metadata are loaded from the local SQLite API.';
+    status.textContent = 'Database availability is loaded from the live Supabase archive.';
   }
 
   renderSummaryStrip('metadata-overview', [
@@ -4013,7 +3248,7 @@ function renderMetadataVariables(rows) {
 }
 
 function renderAccessControl() {
-  const metadata = state.metadata || FALLBACK_METADATA;
+  const metadata = state.metadata || EMPTY_METADATA;
   renderAccessTierCards(metadata.access_levels || []);
   renderDatasetAccessTable(metadata.dataset_access_policy || []);
   populateAccessRequestControls(metadata);
@@ -4165,12 +3400,9 @@ function selectEnvironmentalSource(sourceKey) {
 }
 
 function variablesForSource(sourceKey) {
-  const variables = (ENV_SOURCES[sourceKey] || ENV_SOURCES.hrbmp).variables.filter((key) => ENV_VARIABLES[key]);
-  if (window.HRBMPArchive && sourceKey === 'hrbmp' && state.demoApiLoaded) {
-    const available = new Set(state.environmentalRows.flatMap((row) => row.available_variables));
-    return variables.filter((key) => available.has(key));
-  }
-  return variables;
+  if (sourceKey !== 'hrbmp' || !state.demoApiLoaded) return [];
+  const available = new Set(state.environmentalRows.flatMap((row) => row.available_variables));
+  return ENV_SOURCES.hrbmp.variables.filter((key) => available.has(key));
 }
 
 function renderEnvironmentalMap() {
@@ -5387,168 +4619,6 @@ function resolveHudsonRegion(row) {
   return HRBMP_REGIONS_BY_NAME.get(rawName) || null;
 }
 
-function ensureMinimumBiologicalRows(rows, minimum) {
-  if (!Array.isArray(rows) || rows.length === 0 || rows.length >= minimum) return rows;
-
-  const next = rows.slice();
-  let index = 0;
-  while (next.length < minimum) {
-    const source = rows[index % rows.length];
-    const cycle = Math.floor(index / rows.length) + 1;
-    const year = Number(source.year) + (cycle % 4);
-    const month = ((Number(source.month) + cycle - 1) % 12) + 1;
-    const day = ((Number(source.day) + cycle - 1) % 28) + 1;
-    const samplingEvents = Math.max(1, Number(source.sampling_events || 1));
-    const totalAbundance = Math.max(1, Number(source.total_abundance || 1) + (cycle % 9));
-    next.push(normalizeAvailabilityRow({
-      ...source,
-      station_id: `${source.station_id}-D${cycle}`,
-      station_name: `${source.station_name} Demonstration ${cycle}`,
-      latitude: Number(source.latitude) + ((cycle % 7) - 3) * 0.003,
-      longitude: Number(source.longitude) + ((cycle % 5) - 2) * 0.003,
-      year,
-      month,
-      day,
-      sample_date: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
-      sampling_events: samplingEvents,
-      biological_records: Math.max(1, Number(source.biological_records || 1)),
-      total_abundance: totalAbundance,
-      mean_relative_abundance: totalAbundance / samplingEvents
-    }));
-    index += 1;
-  }
-
-  return next;
-}
-
-function ensureDistributedBiologicalDemoRows(rows) {
-  if (!Array.isArray(rows) || rows.length === 0) return rows;
-  const counts = summarizeRowsByRegionCode(rows, 'biological');
-  const total = Array.from(counts.values()).reduce((acc, value) => acc + value, 0);
-  const maxRegionCount = Math.max(...Array.from(counts.values()), 0);
-  const isSmallDemo = rows.length <= MIN_BIOLOGICAL_DEMO_ROWS;
-  const isCollapsed = counts.size < 8 || (total > 0 && maxRegionCount / total > 0.6);
-  return isSmallDemo && isCollapsed ? buildDistributedBiologicalDemoRows() : rows;
-}
-
-function buildDistributedBiologicalDemoRows() {
-  const stages = ['Egg', 'Yolk-Sac Larvae', 'Post-Yolk-Sac Larvae', 'Young Of The Year', 'Yearling', 'Adult'];
-  const programs = ['Long River Survey', 'Fall Juvenile Survey', 'Beach Seine Survey'];
-  const gearByProgram = {
-    'Long River Survey': 'Ichthyoplankton Net',
-    'Fall Juvenile Survey': 'Beam Trawl',
-    'Beach Seine Survey': 'Beach Seine'
-  };
-  const rows = [];
-
-  HRBMP_REGIONS.forEach((region, regionIndex) => {
-    const count = BIOLOGICAL_DEMO_REGION_COUNTS[region.code] || 0;
-    for (let index = 0; index < count; index += 1) {
-      const fraction = (index + 1) / (count + 1);
-      const riverMile = roundTo(region.min_river_mile + fraction * (region.max_river_mile - region.min_river_mile), 1);
-      const coordinates = demoCoordinateForRiverMile(riverMile, index);
-      const species = BIOLOGICAL_DEMO_SPECIES[(index + regionIndex * 3) % BIOLOGICAL_DEMO_SPECIES.length];
-      const lifeStage = stages[(index + regionIndex) % stages.length];
-      const program = programs[(index + regionIndex) % programs.length];
-      const year = 2010 + ((index + regionIndex * 2) % 15);
-      const month = 1 + ((index + regionIndex * 3) % 12);
-      const day = 1 + ((index * 5 + regionIndex) % 28);
-
-      rows.push(normalizeAvailabilityRow({
-        station_id: `${region.code}${String(index + 1).padStart(2, '0')}`,
-        station_name: `Region ${region.number} ${region.name} Record ${index + 1}`,
-        river_mile: riverMile,
-        latitude: coordinates.latitude,
-        longitude: coordinates.longitude,
-        region: `Region ${region.number} - ${region.name}`,
-        region_name: region.name,
-        region_code: region.code,
-        region_number: region.number,
-        river_mile_range: region.river_mile_range,
-        year,
-        month,
-        day,
-        gear_type: gearByProgram[program],
-        program,
-        monitoring_program: program,
-        taxon_id: `TX-${speciesCode(species[0])}`,
-        scientific_name: species[1],
-        common_name: species[0],
-        taxonomic_group: 'Fish',
-        life_stage: lifeStage,
-        sampling_events: 1,
-        biological_records: 1,
-        total_abundance: 0
-      }));
-    }
-  });
-
-  return rows;
-}
-
-function ensureDistributedEnvironmentalDemoRows(rows) {
-  if (!Array.isArray(rows) || rows.length === 0) return buildDistributedEnvironmentalDemoRows();
-  const counts = summarizeRowsByRegionCode(rows, 'environmental');
-  const total = Array.from(counts.values()).reduce((acc, value) => acc + value, 0);
-  const maxRegionCount = Math.max(...Array.from(counts.values()), 0);
-  const isSmallDemo = rows.length < MIN_ENVIRONMENTAL_DEMO_ROWS;
-  const isCollapsed = counts.size < 8 || (total > 0 && maxRegionCount / total > 0.6);
-  return isSmallDemo || isCollapsed ? buildDistributedEnvironmentalDemoRows() : rows;
-}
-
-function buildDistributedEnvironmentalDemoRows() {
-  const rows = [];
-
-  HRBMP_REGIONS.forEach((region, regionIndex) => {
-    const count = ENVIRONMENTAL_DEMO_REGION_COUNTS[region.code] || 0;
-    for (let index = 0; index < count; index += 1) {
-      const fraction = (index + 1) / (count + 1);
-      const riverMile = roundTo(region.min_river_mile + fraction * (region.max_river_mile - region.min_river_mile), 1);
-      const coordinates = demoCoordinateForRiverMile(riverMile, index);
-      const year = 2010 + ((index + regionIndex * 2) % 15);
-      const month = 1 + ((index + regionIndex * 3) % 12);
-      const day = 1 + ((index * 5 + regionIndex) % 28);
-      const salinity = Math.max(0.1, 12 - riverMile * 0.075 + ((index % 3) - 1) * 0.2);
-      const temperature = 7 + month * 1.45 + Math.max(0, 152 - riverMile) * 0.01 + ((index % 4) - 1.5) * 0.35;
-      const dissolvedOxygen = Math.max(5.2, 10.8 - month * 0.23 + ((index % 5) - 2) * 0.08);
-
-      rows.push(normalizeEnvironmentalRow({
-        station_id: `${region.code}${String(index + 1).padStart(2, '0')}`,
-        station_name: `${region.name} Environmental Record ${index + 1}`,
-        river_mile: riverMile,
-        latitude: coordinates.latitude,
-        longitude: coordinates.longitude,
-        region: `Region ${region.number} - ${region.name}`,
-        region_name: region.name,
-        region_code: region.code,
-        region_number: region.number,
-        river_mile_range: region.river_mile_range,
-        year,
-        month,
-        day,
-        sample_date: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
-        environmental_records: 1,
-        mean_temperature_c: roundTo(temperature, 2),
-        mean_salinity_psu: roundTo(salinity, 2),
-        mean_dissolved_oxygen_mg_l: roundTo(dissolvedOxygen, 2),
-        mean_turbidity_ntu: roundTo(5 + (riverMile / 152) * 10 + (index % 6) * 0.9, 2),
-        mean_chlorophyll_a: roundTo(2.5 + month * 0.28 + (index % 4) * 0.35, 2)
-      }));
-    }
-  });
-
-  return rows;
-}
-
-function demoCoordinateForRiverMile(riverMile, index) {
-  const base = interpolateHudsonCenterline(riverMile);
-  const side = index % 2 === 0 ? -1 : 1;
-  const spread = 0.014 + (index % 3) * 0.004;
-  return {
-    latitude: roundTo(base.latitude + ((index % 5) - 2) * 0.0012, 5),
-    longitude: roundTo(base.longitude + side * spread, 5)
-  };
-}
 
 function meanRelativeAbundanceForRows(rows) {
   const values = rows.map((row) => asNumberOrNull(row.mean_relative_abundance)).filter(Number.isFinite);
@@ -5556,72 +4626,6 @@ function meanRelativeAbundanceForRows(rows) {
   return roundTo(average(values), 2);
 }
 
-function normalizeEnvironmentalRow(row) {
-  const region = resolveHudsonRegion(row);
-  const base = {
-    ...row,
-    year: Number(row.year),
-    month: Number(row.month),
-    day: Number(row.day || dayOfMonth(row.sample_date)),
-    river_mile: Number(row.river_mile),
-    latitude: Number(row.latitude),
-    longitude: Number(row.longitude),
-    environmental_records: Number(row.environmental_records || 1),
-    mean_temperature_c: asNumberOrNull(row.mean_temperature_c),
-    mean_salinity_psu: asNumberOrNull(row.mean_salinity_psu),
-    mean_dissolved_oxygen_mg_l: asNumberOrNull(row.mean_dissolved_oxygen_mg_l),
-    region: region ? `Region ${region.number} - ${region.name}` : row.region || 'Unassigned',
-    region_name: region ? region.name : row.region || 'Unassigned',
-    region_code: row.region_code || (region ? region.code : ''),
-    region_number: region ? region.number : asNumberOrNull(row.region_number),
-    river_mile_range: row.river_mile_range || (region ? region.river_mile_range : '')
-  };
-
-  return {
-    ...base,
-    ...deriveEnvironmentalCovariates(base)
-  };
-}
-
-function deriveEnvironmentalCovariates(row) {
-  const riverMile = Number(row.river_mile) || 0;
-  const month = Number(row.month) || 6;
-  const salinity = asNumberOrNull(row.mean_salinity_psu) ?? Math.max(0, 12 - riverMile * 0.08);
-  const temperature = asNumberOrNull(row.mean_temperature_c) ?? 14 + month * 0.8;
-  const dissolvedOxygen = asNumberOrNull(row.mean_dissolved_oxygen_mg_l) ?? Math.max(5, 10.5 - month * 0.25);
-  const depth = asNumberOrNull(row.sampling_depth_m) ?? Math.max(1.2, 12 - riverMile * 0.045);
-  const conductivity = asNumberOrNull(row.mean_conductivity_us_cm) ?? Math.round(250 + salinity * 1450 + riverMile * 1.8);
-
-  return {
-    mean_temperature_c: temperature,
-    mean_salinity_psu: salinity,
-    mean_dissolved_oxygen_mg_l: dissolvedOxygen,
-    mean_conductivity_us_cm: conductivity,
-    sampling_depth_m: depth,
-    usgs_discharge_cfs: asNumberOrNull(row.usgs_discharge_cfs) ?? Math.round(4200 + riverMile * 65 + month * 180),
-    usgs_tide_stage_m: asNumberOrNull(row.usgs_tide_stage_m) ?? roundTo(0.35 + Math.sin(month + riverMile / 30) * 0.45, 2),
-    usgs_gage_height_ft: asNumberOrNull(row.usgs_gage_height_ft) ?? roundTo(2.5 + riverMile * 0.018 + month * 0.05, 2),
-    usgs_salt_front_river_mile: asNumberOrNull(row.usgs_salt_front_river_mile) ?? roundTo(Math.max(0, 65 - month * 2.2 + salinity * 1.8), 1),
-    usgs_specific_conductance_us_cm: asNumberOrNull(row.usgs_specific_conductance_us_cm) ?? Math.round(conductivity * 1.04),
-    usgs_freshwater_inflow_cfs: asNumberOrNull(row.usgs_freshwater_inflow_cfs) ?? Math.round(5200 + riverMile * 48 + (13 - month) * 210),
-    epa_nutrients_index: asNumberOrNull(row.epa_nutrients_index) ?? roundTo(0.28 + month * 0.025 + riverMile * 0.0015, 2),
-    epa_ph: asNumberOrNull(row.epa_ph) ?? roundTo(7.1 + Math.cos(month / 2) * 0.25, 2),
-    epa_turbidity_ntu: asNumberOrNull(row.epa_turbidity_ntu) ?? roundTo(7 + month * 0.7 + Math.max(0, 80 - riverMile) * 0.04, 2),
-    epa_bacteria_cfu_100ml: asNumberOrNull(row.epa_bacteria_cfu_100ml) ?? Math.round(35 + month * 8 + Math.max(0, 50 - riverMile) * 1.4),
-    epa_metals_index: asNumberOrNull(row.epa_metals_index) ?? roundTo(0.18 + Math.max(0, 100 - riverMile) * 0.003, 2),
-    epa_pcb_pfas_index: asNumberOrNull(row.epa_pcb_pfas_index) ?? roundTo(0.12 + Math.max(0, 70 - riverMile) * 0.004, 2),
-    epa_contaminants_index: asNumberOrNull(row.epa_contaminants_index) ?? roundTo(0.16 + Math.max(0, 90 - riverMile) * 0.0035, 2),
-    noaa_water_level_m: asNumberOrNull(row.noaa_water_level_m) ?? roundTo(0.4 + Math.sin(month + riverMile / 20) * 0.35, 2),
-    noaa_tide_stage_m: asNumberOrNull(row.noaa_tide_stage_m) ?? roundTo(0.45 + Math.cos(month + riverMile / 25) * 0.4, 2),
-    noaa_current_speed_ms: asNumberOrNull(row.noaa_current_speed_ms) ?? roundTo(0.2 + salinity * 0.025 + month * 0.01, 2),
-    noaa_wind_speed_ms: asNumberOrNull(row.noaa_wind_speed_ms) ?? roundTo(2.5 + month * 0.18, 2),
-    noaa_air_temperature_c: asNumberOrNull(row.noaa_air_temperature_c) ?? roundTo(temperature + 1.4, 2),
-    noaa_water_temperature_c: asNumberOrNull(row.noaa_water_temperature_c) ?? temperature,
-    noaa_salinity_psu: asNumberOrNull(row.noaa_salinity_psu) ?? salinity,
-    noaa_conductivity_us_cm: asNumberOrNull(row.noaa_conductivity_us_cm) ?? conductivity,
-    noaa_air_pressure_hpa: asNumberOrNull(row.noaa_air_pressure_hpa) ?? roundTo(1013 - month * 0.6 + riverMile * 0.01, 1)
-  };
-}
 
 function normalizeEventRow(row) {
   return {
