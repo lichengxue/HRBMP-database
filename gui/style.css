@@ -2042,24 +2042,28 @@ textarea {
 }
 
 #biological-database .page-header,
-#environmental-database .page-header {
+#environmental-database .page-header,
+#sampling-image-catalog .page-header {
   display: block;
 }
 
 #biological-database .page-header h1,
-#environmental-database .page-header h1 {
+#environmental-database .page-header h1,
+#sampling-image-catalog .page-header h1 {
   font-size: 28px;
 }
 
 #biological-database .control-row,
-#environmental-database .control-row {
+#environmental-database .control-row,
+#sampling-image-catalog .control-row {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   margin-top: 18px;
 }
 
 #biological-database .control-row select,
-#environmental-database .control-row select {
+#environmental-database .control-row select,
+#sampling-image-catalog .control-row select {
   width: 100%;
   min-width: 0;
 }
@@ -2127,7 +2131,8 @@ textarea {
 
 @media (max-width: 600px) {
   #biological-database .control-row,
-  #environmental-database .control-row {
+  #environmental-database .control-row,
+  #sampling-image-catalog .control-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -3445,8 +3450,15 @@ tbody tr:hover {
   }
 
   #biological-database .map-panel,
-  #environmental-database .map-panel {
+  #environmental-database .map-panel,
+  #sampling-image-catalog .map-panel {
     order: -1;
+  }
+
+  #catalog-map .legend-control {
+    max-width: 140px;
+    padding: 6px;
+    font-size: 0.75rem;
   }
 
   .river-map svg {

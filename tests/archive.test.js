@@ -186,7 +186,7 @@ function guiHelpers(client) {
     renderAdminRequestRows = () => {};
     resetAdminRequestReport = () => {};
     setLoginStatus = (message) => { globalThis.loginStatus = message; };
-    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, variablesForSource, emptyLiveData };
+    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, variablesForSource, emptyLiveData, sumRecordCounts };
   `, context);
   return { ...context, panel };
 }
@@ -279,11 +279,52 @@ test('GUI starts empty and offers only actually recorded HRBMP variables, withou
   assert.doesNotMatch(fs.readFileSync('gui/app.js', 'utf8'), /example_summary\.json|deriveEnvironmentalCovariates|FALLBACK_DATA|FALLBACK_METADATA/);
 });
 
-test('both database maps stay visible above availability tables with ArcGIS imagery selected', () => {
+test('image catalog filters only real image assets, including missing and unlinked uploads', () => {
+  const rows = [
+    archive.normalizeItem(item(1, { sample_id: 'S1', river_region_name: 'Battery', mime_type: 'image/jpeg' })),
+    archive.normalizeItem(item(2, { sample_id: 'S2', asset_kind: 'jar_label_image', available: false })),
+    archive.normalizeItem(item(3, { sample_id: null, sample_date: null, metadata_linked: false, asset_kind: 'other', original_file_name: 'TEST_unlinked.PNG' })),
+    archive.normalizeItem(item(4, { asset_kind: 'field_sheet_pdf', mime_type: 'application/pdf' })),
+    archive.normalizeItem(item(5, { asset_kind: 'processed_abundance_count' })),
+    archive.normalizeItem(item(6, { asset_kind: 'environmental_data' }))
+  ];
+  assert.equal(archive.filterImageItems(rows).length, 3);
+  assert.deepEqual(archive.filterImageItems(rows, { species: 'TEST SPECIES', region: 'Battery', sample: 'S1', program: 'FJS', yearStart: '2024', dataType: 'representative_species_image' }), [rows[0]]);
+  assert.deepEqual(archive.filterImageItems(rows, { availability: 'awaiting_upload' }), [rows[1]]);
+  assert.deepEqual(archive.filterImageItems(rows, { availability: 'metadata_pending' }), [rows[2]]);
+  assert.equal(archive.filterImageItems(rows, { yearStart: '2024' }).includes(rows[2]), false);
+  assert.equal(archive.requestItems(archive.filterImageItems(rows)).length, 2);
+});
+
+test('image map groups actual files per sample and does not fabricate coordinates or count missing files as available', () => {
+  const located = { sample_id: 'S1', latitude: 40.8, longitude: -73.9 };
+  const rows = [
+    archive.normalizeItem(item(1, located)),
+    archive.normalizeItem(item(2, { ...located, asset_kind: 'jar_label_image' })),
+    archive.normalizeItem(item(3, { ...located, available: false })),
+    archive.normalizeItem(item(4, { ...located, sample_id: 'S2', available: false })),
+    archive.normalizeItem(item(5, { sample_id: 'S3', latitude: null, longitude: null })),
+    archive.normalizeItem(item(6, { ...located, sample_id: 'S4', metadata_linked: false })),
+    archive.normalizeItem(item(7, { ...located, sample_id: 'S5', latitude: 91 })),
+    archive.normalizeItem(item(8, { ...located, asset_kind: 'processed_abundance_count' }))
+  ];
+  const samples = archive.buildImageMapRows(rows);
+  assert.equal(samples.length, 2);
+  assert.equal(samples[0].image_count, 2);
+  assert.equal(samples[0].missing_image_count, 1);
+  assert.equal(samples[0].image_items.length, 3);
+  assert.equal(samples[1].image_count, 0);
+  assert.equal(samples[1].missing_image_count, 1);
+  assert.equal(samples[0].latitude, located.latitude);
+  const context = guiHelpers(adminClient());
+  assert.equal(context.helpers.sumRecordCounts(samples, 'catalog'), 2);
+});
+
+test('all three catalog/database maps stay visible above availability tables with ArcGIS imagery selected', () => {
   const html = fs.readFileSync('gui/index.html', 'utf8');
-  for (const [scope, prefix] of [['biological', 'bio'], ['environmental', 'env']]) {
-    const start = html.indexOf(`id="${scope}-database"`);
-    const end = html.indexOf(`id="${scope}-data-request"`, start);
+  for (const [scope, prefix] of [['biological', 'bio'], ['environmental', 'env'], ['catalog', 'catalog']]) {
+    const start = html.indexOf(`id="${scope === 'catalog' ? 'sampling-image-catalog' : scope + '-database'}"`);
+    const end = html.indexOf(`id="${scope === 'catalog' ? 'educational-materials' : scope + '-data-request'}"`, start);
     const page = html.slice(start, end);
     assert.equal(page.includes('<details'), false);
     assert.ok(page.indexOf(`id="${prefix}-map"`) < page.indexOf('class="database-availability"'));
@@ -291,6 +332,7 @@ test('both database maps stay visible above availability tables with ArcGIS imag
     assert.equal(page.split(`id="${prefix}-map"`).length - 1, 1);
   }
   assert.match(fs.readFileSync('gui/app.js', 'utf8'), /server\.arcgisonline\.com\/ArcGIS\/rest\/services\/World_Imagery\/MapServer\/tile/);
+  assert.match(fs.readFileSync('gui/app.js', 'utf8'), /window\.addEventListener\('resize', refreshActiveMap\)/);
 });
 
 test('environmental delivery appears in the manifest and email', () => {

@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.4.1" />
+  <link rel="stylesheet" href="style.css?v=1.5.0" />
 </head>
 <body>
   <header class="site-nav">
@@ -898,22 +898,54 @@
             Image type
             <select id="catalog-type"></select>
           </label>
+          <label>Monitoring Program<select id="catalog-program"></select></label>
+          <label>Region<select id="catalog-region"></select></label>
+          <label>Sample<select id="catalog-sample"></select></label>
+          <label>Availability<select id="catalog-availability"><option value="all">All Statuses</option><option value="available">Available on request</option><option value="awaiting_upload">Awaiting upload</option><option value="metadata_pending">Metadata pending</option></select></label>
+          <label>Year From<select id="catalog-year-start"></select></label>
+          <label>Year To<select id="catalog-year-end"></select></label>
+          <button type="button" class="secondary-button icon-button" data-clear-database="catalog" title="Clear filters" aria-label="Clear image catalog filters"><i data-lucide="rotate-ccw" aria-hidden="true"></i></button>
+          <button type="button" class="secondary-button icon-button" data-refresh-archive title="Refresh availability" aria-label="Refresh image availability"><i data-lucide="refresh-cw" aria-hidden="true"></i></button>
         </div>
       </div>
 
-      <div class="summary-strip" id="catalog-summary"></div>
-      <div class="catalog-section-heading">
-        <h2>Uploaded Images</h2>
-        <a class="source-link" href="#biological-database" data-tab-link="biological-database">Request Images</a>
+      <div class="map-workspace">
+        <aside class="layer-panel" aria-label="Image availability map layers">
+          <h2>Layers</h2>
+          <label class="map-type-control">Map Type
+            <select id="catalog-basemap">
+              <option value="street">Street Map</option>
+              <option value="light">Light Reference</option>
+              <option value="topographic">Topographic</option>
+              <option value="satellite" selected>ArcGIS Satellite Imagery</option>
+            </select>
+          </label>
+          <h3 class="layer-subheading">GIS Layers</h3>
+          <label class="layer-option"><input type="checkbox" id="catalog-layer-images" checked /><span>Image Availability</span></label>
+          <label class="layer-option"><input type="checkbox" id="catalog-layer-regional-totals" /><span>Regional Image Totals</span></label>
+          <label class="layer-option"><input type="checkbox" id="catalog-layer-region-reference" checked /><span>HRBMP Region Boundaries</span></label>
+          <label class="layer-option"><input type="checkbox" id="catalog-layer-river-centerline" checked /><span>Hudson River Centerline</span></label>
+          <div class="layer-stats" id="catalog-map-stats"></div>
+        </aside>
+        <section class="map-panel" aria-label="Hudson River image availability map">
+          <div id="catalog-map" class="gis-map"></div>
+          <div class="selected-feature" id="catalog-selected">No map feature selected.</div>
+        </section>
       </div>
-      <div class="catalog-grid" id="image-catalog"></div>
-      <section class="catalog-detail data-panel" id="catalog-detail" aria-live="polite"></section>
-      <section class="all-species-panel data-panel">
-        <div class="catalog-section-heading compact">
-          <h2>All Species</h2>
-          <span id="all-species-count"></span>
+
+      <section class="database-availability" aria-label="Sampling image availability">
+        <div class="summary-strip" id="catalog-availability-summary"></div>
+        <div class="database-results-header">
+          <div><h2>Available Images</h2><p id="catalog-selection-status" aria-live="polite"></p></div>
+          <button type="button" class="primary-button" data-request-selection="catalog" disabled><i data-lucide="send" aria-hidden="true"></i>Request Selected Images</button>
         </div>
-        <div class="all-species-list" id="all-species-list"></div>
+        <label class="archive-select-all"><input id="catalog-select-all" type="checkbox" checked /> Select all matching available images</label>
+        <div id="catalog-availability-table" class="table-scroll database-table"></div>
+        <div class="archive-pagination">
+          <button id="catalog-page-previous" type="button" class="secondary-button icon-button" title="Previous page" aria-label="Previous page"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
+          <span id="catalog-page-status" aria-live="polite"></span>
+          <button id="catalog-page-next" type="button" class="secondary-button icon-button" title="Next page" aria-label="Next page"><i data-lucide="chevron-right" aria-hidden="true"></i></button>
+        </div>
       </section>
     </section>
 
@@ -2479,7 +2511,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="config.js"></script>
-  <script src="archive.js?v=1.4.1"></script>
-  <script src="app.js?v=1.4.1"></script>
+  <script src="archive.js?v=1.5.0"></script>
+  <script src="app.js?v=1.5.0"></script>
 </body>
 </html>
