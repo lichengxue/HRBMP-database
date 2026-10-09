@@ -105,6 +105,16 @@ include policy consent and a complete list of catalog IDs, rather than a
 truncated preview or user-supplied Storage paths. The redundant archive/demo
 page is removed; old `#data-archive` and `#demo` links redirect to Biological Database.
 
+**Sampling Image Catalog** has a visible ArcGIS map and the same availability
+selection workflow. Species, image type, program, region, sample, year, and upload
+status filters apply to both the map and table. Sample and clustered markers show
+available image-file counts; regional totals also count files, not biological
+observations. Missing uploads are shown separately and cannot be requested.
+Images without linked coordinates remain in the table and in the **Unmapped
+Images** count; no location is invented. Map popups can filter the table to a
+sample. **Request Selected Images** carries the exact selected image IDs into the
+existing biological request form. Image previews and downloads are not made public.
+
 Deploy the updated delivery function:
 
 ```powershell

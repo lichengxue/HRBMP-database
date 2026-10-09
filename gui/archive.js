@@ -120,6 +120,34 @@
     return items.filter((item) => item.available);
   }
 
+  function isImageItem(item) {
+    return /^image\//i.test(item.mime_type || '')
+      || ['representative_species_image', 'jar_label_image'].includes(item.asset_kind)
+      || /\.(avif|bmp|gif|heic|heif|jpe?g|png|svg|tiff?|webp)$/i.test(item.original_file_name || '');
+  }
+
+  function filterImageItems(items, filters = {}) {
+    return filterDatabaseItems(items.filter(isImageItem), 'biological', filters);
+  }
+
+  function buildImageMapRows(items) {
+    const samples = new Map();
+    for (const item of items.filter(isImageItem)) {
+      if (!item.metadata_linked || !item.sample_id
+        || !Number.isFinite(item.latitude) || !Number.isFinite(item.longitude)
+        || Math.abs(item.latitude) > 90 || Math.abs(item.longitude) > 180) continue;
+      let sample = samples.get(item.sample_id);
+      if (!sample) {
+        sample = { ...item, image_count: 0, missing_image_count: 0, image_items: [] };
+        samples.set(item.sample_id, sample);
+      }
+      sample.image_count += item.available ? 1 : 0;
+      sample.missing_image_count += item.available ? 0 : 1;
+      sample.image_items.push(item);
+    }
+    return [...samples.values()];
+  }
+
   function filterDatabaseItems(items, scope, filters = {}) {
     const matches = (value, selected) => !selected || selected === 'all' || String(value || '').toLowerCase() === String(selected).toLowerCase();
     const inRange = (value, start, end) => {
@@ -143,5 +171,5 @@
     });
   }
 
-  root.HRBMPArchive = { DATA_TYPES, PROGRAM_NAMES, isPublishableKey, fetchPublishableKey, fetchAvailability, normalizeItem, buildMapRows, requestItems, filterDatabaseItems };
+  root.HRBMPArchive = { DATA_TYPES, PROGRAM_NAMES, isPublishableKey, fetchPublishableKey, fetchAvailability, normalizeItem, buildMapRows, buildImageMapRows, isImageItem, filterImageItems, requestItems, filterDatabaseItems };
 })(typeof window === 'undefined' ? globalThis : window);

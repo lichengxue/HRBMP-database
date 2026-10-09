@@ -864,19 +864,23 @@ const state = {
   environmentalRows: [],
   maps: {
     biological: null,
-    environmental: null
+    environmental: null,
+    catalog: null
   },
   layers: {
     biological: [],
-    environmental: []
+    environmental: [],
+    catalog: []
   },
   baseLayers: {
     biological: null,
-    environmental: null
+    environmental: null,
+    catalog: null
   },
   legends: {
     biological: null,
-    environmental: null
+    environmental: null,
+    catalog: null
   },
   selectedEnvSource: 'hrbmp',
   selectedCatalogSpecies: null,
@@ -891,8 +895,8 @@ const state = {
   catalogPage: 0,
   archiveSelectedIds: null,
   archiveSubmitting: new Set(),
-  databasePages: { biological: 0, environmental: 0 },
-  databaseSelections: { biological: null, environmental: null },
+  databasePages: { biological: 0, environmental: 0, catalog: 0 },
+  databaseSelections: { biological: null, environmental: null, catalog: null },
   adminClient: null,
   adminClientKey: '',
   adminAuthSubscription: null,
@@ -1200,6 +1204,7 @@ function initTabs() {
   window.addEventListener('hrbmp-tab-change', () => {
     refreshActiveMap();
   });
+  window.addEventListener('resize', refreshActiveMap);
 
   showTab(window.location.hash.replace('#', '') || 'home', false);
 }
@@ -1408,7 +1413,10 @@ function bindControls() {
 
   [
     'catalog-species',
-    'catalog-type'
+    'catalog-type', 'catalog-program', 'catalog-region', 'catalog-sample',
+    'catalog-availability', 'catalog-year-start', 'catalog-year-end',
+    'catalog-basemap', 'catalog-layer-images', 'catalog-layer-regional-totals',
+    'catalog-layer-region-reference', 'catalog-layer-river-centerline'
   ].forEach((id) => {
     const element = document.getElementById(id);
     if (!element) return;
@@ -1420,7 +1428,8 @@ function bindControls() {
       if (id === 'catalog-type') {
         state.selectedCatalogLifeStage = null;
       }
-      state.catalogPage = 0;
+      if (id === 'catalog-basemap') applyBasemap('catalog', valueOf(id));
+      if (!id.startsWith('catalog-layer-') && id !== 'catalog-basemap') resetDatabaseSelection('catalog');
       renderCatalog();
     });
   });
@@ -1516,8 +1525,8 @@ function bindControls() {
   document.getElementById('data-request-submit')?.addEventListener('click', () => submitMainDataRequest('biological'));
   document.getElementById('env-data-request-submit')?.addEventListener('click', () => submitMainDataRequest('environmental'));
 
-  ['biological', 'environmental'].forEach((scope) => {
-    const prefix = scope === 'biological' ? 'bio' : 'env';
+  ['biological', 'environmental', 'catalog'].forEach((scope) => {
+    const prefix = databasePrefix(scope);
     document.getElementById(`${prefix}-select-all`)?.addEventListener('change', (event) => {
       state.databaseSelections[scope] = event.target.checked ? null : new Set();
       renderDatabaseAvailability(scope);
@@ -1532,16 +1541,19 @@ function bindControls() {
   document.querySelectorAll('[data-refresh-archive]').forEach((button) => button.addEventListener('click', refreshDemoArchive));
   document.querySelectorAll('[data-clear-database]').forEach((button) => button.addEventListener('click', () => {
     const scope = button.dataset.clearDatabase;
-    const prefix = scope === 'biological' ? 'bio' : 'env';
-    document.querySelectorAll(`#${prefix === 'bio' ? 'biological' : 'environmental'}-database .control-row select`).forEach((select) => { select.value = 'all'; });
+    const pageId = scope === 'catalog' ? 'sampling-image-catalog' : `${scope}-database`;
+    document.querySelectorAll(`#${pageId} .control-row select`).forEach((select) => { select.value = 'all'; });
     resetDatabaseSelection(scope);
     renderDatabaseAvailability(scope);
     if (scope === 'biological') renderBiologicalMap();
-    else renderEnvironmentalMap();
+    else if (scope === 'environmental') renderEnvironmentalMap();
+    else renderImageCatalogMap();
   }));
   document.querySelectorAll('[data-request-selection]').forEach((button) => button.addEventListener('click', () => {
     if (!button.disabled) {
-      window.location.hash = `${button.dataset.requestSelection}-data-request`;
+      const scope = button.dataset.requestSelection;
+      if (scope === 'catalog') transferCatalogImageSelection();
+      window.location.hash = `${scope === 'catalog' ? 'biological' : scope}-data-request`;
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
   }));
@@ -1635,6 +1647,12 @@ function populateFilters() {
   populateSelect('bio-data-type', uniqueSorted(state.demoRows.filter((row) => row.asset_kind !== 'environmental_data').map((row) => row.asset_kind)).map((value) => ({ value, label: window.HRBMPArchive.DATA_TYPES[value] || value })), 'All Data Types');
   populateSelect('catalog-species', catalogSpecies, 'All Species');
   populateSelect('catalog-type', window.HRBMPArchive ? catalogTypes.map((value) => ({ value, label: window.HRBMPArchive.DATA_TYPES[value] || value })) : catalogTypes, 'All Image Types');
+  populateSelect('catalog-program', uniqueSorted(catalogRows.map((row) => row.monitoring_program)), 'All Programs');
+  populateSelect('catalog-region', uniqueSorted(catalogRows.map((row) => row.river_region_name).filter(Boolean)), 'All Regions');
+  populateSelect('catalog-sample', uniqueSorted(catalogRows.map((row) => row.sample_id).filter(Boolean)), 'All Samples');
+  const catalogYears = uniqueSorted(catalogRows.map((row) => row.year).filter(Boolean), true);
+  populateSelect('catalog-year-start', catalogYears, 'Any Start');
+  populateSelect('catalog-year-end', catalogYears, 'Any End');
 
 }
 
@@ -2441,6 +2459,7 @@ async function refreshDemoArchive() {
   state.archiveSelectedIds = null;
   resetDatabaseSelection('biological');
   resetDatabaseSelection('environmental');
+  resetDatabaseSelection('catalog');
   syncLiveArchivePages();
   window.dispatchEvent(new Event('hrbmp-archive-state'));
   setArchiveStatus('Loading archive...', 'warning');
@@ -2468,6 +2487,7 @@ async function refreshDemoArchive() {
       state.archiveLoading = false;
       renderDatabaseAvailability('biological');
       renderDatabaseAvailability('environmental');
+      renderDatabaseAvailability('catalog');
       window.dispatchEvent(new Event('hrbmp-archive-state'));
     }
   }
@@ -2493,7 +2513,7 @@ function setArchiveStatus(message, level) {
       const files = state.demoRows.filter((row) => row.available && row.catalog_id.startsWith('upload:')).length;
       element.textContent = `${formatNumber(counts)} count records; ${formatNumber(files)} uploaded files. Updated ${updated}.`;
     } else {
-      element.textContent = `${formatNumber(state.data.sampling_image_catalog.length)} uploaded images. Updated ${updated}.`;
+      element.textContent = `${formatNumber(state.data.sampling_image_catalog.filter((row) => row.available).length)} uploaded images. Updated ${updated}.`;
     }
   });
 }
@@ -2569,55 +2589,43 @@ function renderLiveArchiveTable(rows) {
 }
 
 function renderLiveImageCatalog() {
-  const container = document.getElementById('image-catalog');
-  if (!container) return;
-  const species = valueOf('catalog-species');
-  const imageType = valueOf('catalog-type');
-  const images = state.data.sampling_image_catalog.filter((row) =>
-    (species === 'all' || row.common_name === species) && (imageType === 'all' || row.asset_kind === imageType)
-  );
-  renderSummaryStrip('catalog-summary', [
-    ['Uploaded Images', images.length],
-    ['Samples', new Set(images.map((row) => row.sample_id).filter(Boolean)).size],
-    ['Species', new Set(images.map((row) => row.taxon_code).filter((code) => code !== null && code !== undefined)).size],
-    ['Awaiting Metadata', images.filter((row) => !row.metadata_linked).length]
-  ]);
-  container.classList.add('archive-catalog-list', 'table-scroll');
-  const pages = Math.max(1, Math.ceil(images.length / 50));
-  state.catalogPage = Math.min(state.catalogPage, pages - 1);
-  container.replaceChildren(createLiveArchiveTable(images.slice(state.catalogPage * 50, (state.catalogPage + 1) * 50)));
-  const pagination = document.createElement('div');
-  pagination.className = 'archive-pagination';
-  const previous = document.createElement('button');
-  previous.type = 'button';
-  previous.className = 'secondary-button';
-  previous.textContent = 'Previous';
-  previous.disabled = state.catalogPage === 0;
-  previous.addEventListener('click', () => { state.catalogPage -= 1; renderLiveImageCatalog(); });
-  const page = document.createElement('span');
-  page.textContent = `Page ${state.catalogPage + 1} of ${pages}`;
-  const next = document.createElement('button');
-  next.type = 'button';
-  next.className = 'secondary-button';
-  next.textContent = 'Next';
-  next.disabled = state.catalogPage >= pages - 1;
-  next.addEventListener('click', () => { state.catalogPage += 1; renderLiveImageCatalog(); });
-  pagination.append(previous, page, next);
-  container.appendChild(pagination);
-  document.getElementById('catalog-detail').hidden = true;
-  document.querySelector('.all-species-panel').hidden = true;
+  renderDatabaseAvailability('catalog');
+  renderImageCatalogMap();
+}
+
+function databasePrefix(scope) {
+  return scope === 'catalog' ? 'catalog' : scope === 'biological' ? 'bio' : 'env';
+}
+
+function transferCatalogImageSelection() {
+  const selected = mainRequestItems('catalog');
+  document.querySelectorAll('#biological-database .control-row select').forEach((select) => { select.value = 'all'; });
+  for (const [catalogField, bioField] of [['species', 'species'], ['type', 'data-type'],
+    ['program', 'program'], ['region', 'region'], ['sample', 'sample'],
+    ['year-start', 'year-start'], ['year-end', 'year-end'], ['availability', 'availability']]) {
+    const select = document.getElementById(`bio-${bioField}`);
+    const value = valueOf(`catalog-${catalogField}`);
+    if (Array.from(select.options).some((option) => option.value === value)) select.value = value;
+  }
+  state.databaseSelections.biological = new Set(selected.map((row) => row.catalog_id));
+  state.databasePages.biological = 0;
+  renderDatabaseAvailability('biological');
 }
 
 function databaseMatchingItems(scope) {
-  const prefix = scope === 'biological' ? 'bio' : 'env';
-  return window.HRBMPArchive.filterDatabaseItems(state.demoRows, scope, {
-    species: valueOf('bio-species'), lifeStage: valueOf('bio-life-stage'), dataType: valueOf('bio-data-type'),
-    availability: valueOf('bio-availability'), variable: valueOf('env-variable'),
+  const prefix = databasePrefix(scope);
+  const filters = {
+    species: valueOf(`${prefix}-species`), lifeStage: valueOf(`${prefix}-life-stage`),
+    dataType: valueOf(scope === 'catalog' ? 'catalog-type' : 'bio-data-type'),
+    availability: valueOf(`${prefix}-availability`), variable: valueOf('env-variable'),
     program: valueOf(`${prefix}-program`), region: valueOf(`${prefix}-region`), sample: valueOf(`${prefix}-sample`),
     yearStart: valueOf(`${prefix}-year-start`), yearEnd: valueOf(`${prefix}-year-end`),
     monthStart: valueOf(`${prefix}-month-start`), monthEnd: valueOf(`${prefix}-month-end`),
     dayStart: valueOf(`${prefix}-day-start`), dayEnd: valueOf(`${prefix}-day-end`)
-  }).sort((a, b) => String(b.sample_date || '').localeCompare(String(a.sample_date || '')) || compareDemoRows(a, b));
+  };
+  const rows = scope === 'catalog' ? window.HRBMPArchive.filterImageItems(state.demoRows, filters)
+    : window.HRBMPArchive.filterDatabaseItems(state.demoRows, scope, filters);
+  return rows.sort((a, b) => String(b.sample_date || '').localeCompare(String(a.sample_date || '')) || compareDemoRows(a, b));
 }
 
 function mainRequestItems(scope) {
@@ -2682,7 +2690,7 @@ function createDatabaseAvailabilityTable(rows, scope) {
 }
 
 function renderDatabaseAvailability(scope) {
-  const prefix = scope === 'biological' ? 'bio' : 'env';
+  const prefix = databasePrefix(scope);
   const container = document.getElementById(`${prefix}-availability-table`);
   if (!container) return;
   const rows = databaseMatchingItems(scope);
@@ -2696,6 +2704,10 @@ function renderDatabaseAvailability(scope) {
     ['Matching Items', rows.length], ['Samples', new Set(rows.map((row) => row.sample_id).filter(Boolean)).size],
     ['Count Records', rows.filter((row) => row.asset_kind === 'processed_abundance_count').length],
     ['Uploaded Files', rows.filter((row) => row.available && row.catalog_id.startsWith('upload:')).length]
+  ] : scope === 'catalog' ? [
+    ['Available Images', available.length], ['Samples', new Set(rows.map((row) => row.sample_id).filter(Boolean)).size],
+    ['Species', new Set(rows.map((row) => row.taxon_code).filter((code) => code !== null && code !== undefined)).size],
+    ['Unmapped Images', rows.length - window.HRBMPArchive.buildImageMapRows(rows).reduce((count, sample) => count + sample.image_items.length, 0)]
   ] : [
     ['Matching Samples', rows.length], ['Available Variables', new Set(rows.flatMap((row) => row.available_variables)).size],
     ['Selected Samples', selected.length], ['Source', 'HRBMP']
@@ -2713,7 +2725,7 @@ function renderDatabaseAvailability(scope) {
   const requestButton = document.querySelector(`[data-request-selection="${scope}"]`);
   requestButton.disabled = !state.demoApiLoaded || state.archiveLoading || selected.length === 0;
   if (scope === 'biological') updateDataRequestSummary();
-  else updateEnvironmentalDataRequestSummary();
+  else if (scope === 'environmental') updateEnvironmentalDataRequestSummary();
 }
 
 function submitMainDataRequest(scope) {
@@ -2799,7 +2811,7 @@ function syncLiveArchivePages() {
   state.environmentalRows = maps.environmental;
   state.data.biological_availability = maps.biological;
   state.data.environmental_availability = maps.environmental;
-  state.data.sampling_image_catalog = state.demoRows.filter((row) => row.available && (row.mime_type?.startsWith('image/') || ['representative_species_image', 'jar_label_image'].includes(row.asset_kind)));
+  state.data.sampling_image_catalog = state.demoRows.filter(window.HRBMPArchive.isImageItem);
   state.data.counts = {
     stations: new Set(state.demoRows.filter((row) => hasCoordinates(row)).map((row) => `${row.latitude}|${row.longitude}`)).size,
     sampling_events: new Set(state.demoRows.map((row) => row.sample_id).filter(Boolean)).size,
@@ -3457,6 +3469,74 @@ function renderEnvironmentalMap() {
   fitRows(map, rows);
 }
 
+function renderImageCatalogMap() {
+  const images = databaseMatchingItems('catalog');
+  const samples = window.HRBMPArchive.buildImageMapRows(images);
+  const mappedImages = samples.reduce((total, sample) => total + sample.image_items.length, 0);
+  renderMapStats('catalog-map-stats', [
+    ['Available Images', images.filter((image) => image.available).length],
+    ['Mapped Samples', samples.length],
+    ['Awaiting Upload', images.filter((image) => !image.available).length],
+    ['Unmapped Images', images.length - mappedImages]
+  ]);
+  if (!isActiveTab('sampling-image-catalog')) return;
+  const map = ensureLeafletMap('catalog-map', 'catalog');
+  if (!map) return;
+  clearMapLayers('catalog');
+  if (checked('catalog-layer-region-reference')) addRegionReferenceLayer(map, 'catalog', samples);
+  if (checked('catalog-layer-river-centerline')) addHudsonCenterlineLayer(map, 'catalog');
+  if (checked('catalog-layer-images')) addImageAvailabilityLayer(map, samples);
+  if (checked('catalog-layer-regional-totals')) addRegionTotalCircleLayer(map, 'catalog', samples);
+  setText('catalog-selected', images.length
+    ? `${formatNumber(samples.length)} mapped sample locations; ${formatNumber(images.length - mappedImages)} image(s) without linked coordinates.`
+    : state.archiveLoading ? 'Loading image availability...' : state.demoApiLoaded ? 'No images match the selected filters.' : 'Image availability could not be loaded.');
+  updateLegend('catalog', legendHtml('Image Availability', [
+    checked('catalog-layer-images') && { color: '#1e8f84', label: 'Image Counts' },
+    checked('catalog-layer-images') && samples.some((sample) => sample.missing_image_count) && { color: '#bd7a1e', label: 'Awaiting Upload' },
+    checked('catalog-layer-regional-totals') && { color: '#1b8d86', label: 'Regional Image Totals' },
+    checked('catalog-layer-region-reference') && { color: '#755d2a', label: 'Region Boundaries' },
+    checked('catalog-layer-river-centerline') && { color: '#176b78', label: 'River Centerline' }
+  ].filter(Boolean)));
+  fitRows(map, samples);
+}
+
+function addImageAvailabilityLayer(map, samples) {
+  const layer = L.markerClusterGroup ? L.markerClusterGroup({
+    showCoverageOnHover: false, spiderfyOnMaxZoom: true, maxClusterRadius: 60,
+    iconCreateFunction(cluster) {
+      const count = cluster.getAllChildMarkers().reduce((total, marker) => total + marker.options.availableImageCount, 0);
+      return markerIcon({ className: 'availability-marker biological', color: count ? '#1e8f84' : '#bd7a1e', size: 44, label: formatNumber(count) });
+    }
+  }) : L.layerGroup();
+  samples.forEach((sample) => {
+    const marker = L.marker([sample.latitude, sample.longitude], {
+      availableImageCount: sample.image_count,
+      icon: markerIcon({ className: 'availability-marker biological', color: sample.image_count ? '#1e8f84' : '#bd7a1e', size: 32, label: formatNumber(sample.image_count) })
+    });
+    marker.bindTooltip(`${escapeHtml(sample.sample_id)}: ${sample.image_count} available image(s), ${sample.missing_image_count} awaiting upload.`);
+    marker.bindPopup(`<h3>${escapeHtml(sample.sample_id)}</h3><dl>
+      <dt>Date</dt><dd>${escapeHtml(sample.sample_date || 'Unassigned')}</dd>
+      <dt>Program</dt><dd>${escapeHtml(sample.monitoring_program)}</dd>
+      <dt>Region</dt><dd>${escapeHtml(sample.river_region_name || 'Unassigned')}</dd>
+      <dt>Available Images</dt><dd>${formatNumber(sample.image_count)}</dd>
+      <dt>Awaiting Upload</dt><dd>${formatNumber(sample.missing_image_count)}</dd></dl>
+      <button type="button" class="secondary-button" data-image-sample>View Images</button>`);
+    marker.on('click', () => setText('catalog-selected', `${sample.sample_id}: ${sample.image_count} available image(s); ${sample.missing_image_count} awaiting upload.`));
+    marker.on('popupopen', (event) => {
+      event.popup.getElement()?.querySelector('[data-image-sample]')?.addEventListener('click', () => {
+        const select = document.getElementById('catalog-sample');
+        select.value = sample.sample_id;
+        resetDatabaseSelection('catalog');
+        renderLiveImageCatalog();
+        document.getElementById('catalog-availability-table').scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }, { once: true });
+    });
+    layer.addLayer(marker);
+  });
+  layer.addTo(map);
+  state.layers.catalog.push(layer);
+}
+
 function ensureLeafletMap(containerId, key) {
   const container = document.getElementById(containerId);
   if (!container) return null;
@@ -3489,7 +3569,7 @@ function ensureLeafletMap(containerId, key) {
 }
 
 function selectedBasemapKey(mapKey) {
-  const id = mapKey === 'biological' ? 'bio-basemap' : 'env-basemap';
+  const id = `${databasePrefix(mapKey)}-basemap`;
   const selected = valueOf(id);
   return MAP_BASEMAPS[selected] ? selected : DEFAULT_BASEMAP;
 }
@@ -3679,14 +3759,14 @@ function addRegionTotalCircleLayer(map, mapKey, rows) {
         iconAnchor: [size / 2, size / 2]
       })
     });
-    marker.bindTooltip(`${item.region.code}: ${formatNumber(item.count)} selected record${item.count === 1 ? '' : 's'}`, {
+    marker.bindTooltip(`${item.region.code}: ${formatNumber(item.count)} ${mapKey === 'catalog' ? 'available image' : 'selected record'}${item.count === 1 ? '' : 's'}`, {
       direction: 'top',
       sticky: true
     });
     marker.bindPopup(`
       <h3>${escapeHtml(item.region.code)} - ${escapeHtml(item.region.name)}</h3>
       <dl>
-        <dt>${mapKey === 'biological' ? 'Biological Records' : 'Environmental Records'}</dt><dd>${formatNumber(item.count)}</dd>
+        <dt>${mapKey === 'catalog' ? 'Available Images' : mapKey === 'biological' ? 'Biological Records' : 'Environmental Records'}</dt><dd>${formatNumber(item.count)}</dd>
         <dt>River Mile Range</dt><dd>${escapeHtml(item.region.river_mile_range)}</dd>
       </dl>
     `);
@@ -3711,6 +3791,7 @@ function sumRecordCounts(rows, mapKey) {
 }
 
 function recordCountForMapRow(row, mapKey) {
+  if (mapKey === 'catalog') return Number.isFinite(row.image_count) ? row.image_count : 0;
   const key = mapKey === 'biological' ? 'biological_records' : 'environmental_records';
   const value = Number(row[key]);
   return Number.isFinite(value) && value > 0 ? value : 1;
@@ -3888,6 +3969,7 @@ function refreshActiveMap() {
   requestAnimationFrame(() => {
     if (isActiveTab('biological-database')) renderBiologicalMap();
     if (isActiveTab('environmental-database')) renderEnvironmentalMap();
+    if (isActiveTab('sampling-image-catalog')) renderImageCatalogMap();
   });
 }
 
