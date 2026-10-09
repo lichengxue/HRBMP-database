@@ -279,6 +279,20 @@ test('GUI starts empty and offers only actually recorded HRBMP variables, withou
   assert.doesNotMatch(fs.readFileSync('gui/app.js', 'utf8'), /example_summary\.json|deriveEnvironmentalCovariates|FALLBACK_DATA|FALLBACK_METADATA/);
 });
 
+test('both database maps stay visible above availability tables with ArcGIS imagery selected', () => {
+  const html = fs.readFileSync('gui/index.html', 'utf8');
+  for (const [scope, prefix] of [['biological', 'bio'], ['environmental', 'env']]) {
+    const start = html.indexOf(`id="${scope}-database"`);
+    const end = html.indexOf(`id="${scope}-data-request"`, start);
+    const page = html.slice(start, end);
+    assert.equal(page.includes('<details'), false);
+    assert.ok(page.indexOf(`id="${prefix}-map"`) < page.indexOf('class="database-availability"'));
+    assert.match(page, /value="satellite" selected>ArcGIS Satellite Imagery/);
+    assert.equal(page.split(`id="${prefix}-map"`).length - 1, 1);
+  }
+  assert.match(fs.readFileSync('gui/app.js', 'utf8'), /server\.arcgisonline\.com\/ArcGIS\/rest\/services\/World_Imagery\/MapServer\/tile/);
+});
+
 test('environmental delivery appears in the manifest and email', () => {
   const context = deliveryHelpers();
   const csv = context.helpers.manifestToCsv([], [], '', '', [{ sample_id: 'TEST_SAMPLE', asset_kind: 'environmental_data' }], 'request-packages/test/environment.csv', 'https://example.test/download');

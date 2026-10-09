@@ -88,7 +88,11 @@ The **Biological Database** filters count records, images, supporting documents,
 and other uploads by species, recorded life-stage coverage, program, location,
 date, type, and availability. **Environmental Database** filters actual samples
 by recorded variable, program, location, and date. Its table lists available
-variables, not mean values or fabricated measurements. Location maps are optional.
+variables, not mean values or fabricated measurements. Both database pages keep
+their interactive maps visible above the availability tables, with GIS layer
+controls and Esri ArcGIS satellite imagery selected by default. Street, light,
+and topographic basemaps remain available. Map layers use the same real catalog
+filters as the tables; no map interaction grants access to private measurements.
 There are no USGS, EPA, or NOAA database options: those sources are not connected.
 Startup does not fetch example summary/GeoJSON data or generate substitute values.
 

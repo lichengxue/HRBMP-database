@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.4.0" />
+  <link rel="stylesheet" href="style.css?v=1.4.1" />
 </head>
 <body>
   <header class="site-nav">
@@ -547,21 +547,6 @@
         </div>
       </div>
 
-      <section class="database-availability" aria-label="Biological data availability">
-        <div class="summary-strip" id="bio-availability-summary"></div>
-        <div class="database-results-header">
-          <div><h2>Available Records and Files</h2><p id="bio-selection-status" aria-live="polite"></p></div>
-          <button type="button" class="primary-button" data-request-selection="biological" disabled><i data-lucide="send" aria-hidden="true"></i>Request Selected Data</button>
-        </div>
-        <label class="archive-select-all"><input id="bio-select-all" type="checkbox" checked /> Select all matching available items</label>
-        <div id="bio-availability-table" class="table-scroll database-table"></div>
-        <div class="archive-pagination">
-          <button id="bio-page-previous" type="button" class="secondary-button icon-button" title="Previous page" aria-label="Previous page"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
-          <span id="bio-page-status" aria-live="polite"></span>
-          <button id="bio-page-next" type="button" class="secondary-button icon-button" title="Next page" aria-label="Next page"><i data-lucide="chevron-right" aria-hidden="true"></i></button>
-        </div>
-      </section>
-      <details class="database-map"><summary>Sampling Locations</summary>
       <div class="map-workspace">
         <aside class="layer-panel" aria-label="Biological map layers">
           <h2>Layers</h2>
@@ -571,7 +556,7 @@
               <option value="street">Street Map</option>
               <option value="light">Light Reference</option>
               <option value="topographic">Topographic</option>
-              <option value="satellite">Satellite Imagery</option>
+              <option value="satellite" selected>ArcGIS Satellite Imagery</option>
             </select>
           </label>
           <h3 class="layer-subheading">GIS Layers</h3>
@@ -601,6 +586,21 @@
         </section>
       </div>
 
+      <section class="database-availability" aria-label="Biological data availability">
+        <div class="summary-strip" id="bio-availability-summary"></div>
+        <div class="database-results-header">
+          <div><h2>Available Records and Files</h2><p id="bio-selection-status" aria-live="polite"></p></div>
+          <button type="button" class="primary-button" data-request-selection="biological" disabled><i data-lucide="send" aria-hidden="true"></i>Request Selected Data</button>
+        </div>
+        <label class="archive-select-all"><input id="bio-select-all" type="checkbox" checked /> Select all matching available items</label>
+        <div id="bio-availability-table" class="table-scroll database-table"></div>
+        <div class="archive-pagination">
+          <button id="bio-page-previous" type="button" class="secondary-button icon-button" title="Previous page" aria-label="Previous page"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
+          <span id="bio-page-status" aria-live="polite"></span>
+          <button id="bio-page-next" type="button" class="secondary-button icon-button" title="Next page" aria-label="Next page"><i data-lucide="chevron-right" aria-hidden="true"></i></button>
+        </div>
+      </section>
+
       <section class="data-panel">
         <div>
           <h2>HRBMP River Regions</h2>
@@ -608,7 +608,6 @@
         </div>
         <div class="region-reference-grid" id="bio-region-reference"></div>
       </section>
-      </details>
     </section>
 
     <section class="tab-page" id="biological-data-request" data-tab-page="biological-data-request">
@@ -742,21 +741,6 @@
         </div>
       </div>
 
-      <section class="database-availability" aria-label="Environmental data availability">
-        <div class="summary-strip" id="env-availability-summary"></div>
-        <div class="database-results-header">
-          <div><h2>Available Environmental Data</h2><p id="env-selection-status" aria-live="polite"></p></div>
-          <button type="button" class="primary-button" data-request-selection="environmental" disabled><i data-lucide="send" aria-hidden="true"></i>Request Selected Data</button>
-        </div>
-        <label class="archive-select-all"><input id="env-select-all" type="checkbox" checked /> Select all matching available samples</label>
-        <div id="env-availability-table" class="table-scroll database-table"></div>
-        <div class="archive-pagination">
-          <button id="env-page-previous" type="button" class="secondary-button icon-button" title="Previous page" aria-label="Previous page"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
-          <span id="env-page-status" aria-live="polite"></span>
-          <button id="env-page-next" type="button" class="secondary-button icon-button" title="Next page" aria-label="Next page"><i data-lucide="chevron-right" aria-hidden="true"></i></button>
-        </div>
-      </section>
-      <details class="database-map"><summary>Sampling Locations</summary>
       <div class="map-workspace">
         <aside class="layer-panel" aria-label="Environmental map layers">
           <h2>Layers</h2>
@@ -766,7 +750,7 @@
               <option value="street">Street Map</option>
               <option value="light">Light Reference</option>
               <option value="topographic">Topographic</option>
-              <option value="satellite">Satellite Imagery</option>
+              <option value="satellite" selected>ArcGIS Satellite Imagery</option>
             </select>
           </label>
           <h3 class="layer-subheading">GIS Layers</h3>
@@ -796,7 +780,21 @@
           <div class="selected-feature" id="env-selected">No map feature selected.</div>
         </section>
       </div>
-      </details>
+
+      <section class="database-availability" aria-label="Environmental data availability">
+        <div class="summary-strip" id="env-availability-summary"></div>
+        <div class="database-results-header">
+          <div><h2>Available Environmental Data</h2><p id="env-selection-status" aria-live="polite"></p></div>
+          <button type="button" class="primary-button" data-request-selection="environmental" disabled><i data-lucide="send" aria-hidden="true"></i>Request Selected Data</button>
+        </div>
+        <label class="archive-select-all"><input id="env-select-all" type="checkbox" checked /> Select all matching available samples</label>
+        <div id="env-availability-table" class="table-scroll database-table"></div>
+        <div class="archive-pagination">
+          <button id="env-page-previous" type="button" class="secondary-button icon-button" title="Previous page" aria-label="Previous page"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
+          <span id="env-page-status" aria-live="polite"></span>
+          <button id="env-page-next" type="button" class="secondary-button icon-button" title="Next page" aria-label="Next page"><i data-lucide="chevron-right" aria-hidden="true"></i></button>
+        </div>
+      </section>
     </section>
 
     <section class="tab-page" id="environmental-data-request" data-tab-page="environmental-data-request">
@@ -2481,7 +2479,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="config.js"></script>
-  <script src="archive.js?v=1.4.0"></script>
-  <script src="app.js?v=1.4.0"></script>
+  <script src="archive.js?v=1.4.1"></script>
+  <script src="app.js?v=1.4.1"></script>
 </body>
 </html>
