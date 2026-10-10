@@ -25,7 +25,7 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 
 - Displays repository-level counts, export metadata, institutional partner
   logos, and collaborator logos on the home page.
-- Provides a blank News tab reserved for HRBMP program news and research updates.
+- Displays Beta Version 1.1.3 and three concise beta-update bullets in News.
 - Organizes Program Description navigation into a Program Overview plus the
   six HRBMP survey subtabs listed on the official HRBMP surveys page.
 - Organizes Biological Database and Environmental Database navigation into

@@ -181,8 +181,8 @@ Photo Gallery. Each dropdown item opens its own page route, including HRBMP
 history, current research, K-12 curriculum, classroom materials, outreach
 activities, Hudson River photos, field sampling photos, sample warehouse
 photos, and lab sample processing photos. Current Research includes nested
-Ongoing Projects and Publications pages, and the News tab is reserved for
-HRBMP program news and research updates. The K-12 Curriculum page groups
+Ongoing Projects and Publications pages, and the News tab lists concise beta
+version updates. The K-12 Curriculum page groups
 lesson ideas by K-2, grades 3-5, grades 6-8, grades 9-12, and teacher
 resources, and the navigation includes nested grade-band choices under K-12
 Curriculum.
