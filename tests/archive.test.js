@@ -327,7 +327,7 @@ test('beta version and asset references agree, with just three concise update bu
   assert.match(app, /const DATA_VERSION = '1\.1\.3';/);
   for (const file of ['style.css', 'archive.js', 'app.js']) assert.ok(html.includes(`${file}?v=1.1.3`));
   const start = html.indexOf('id="news"');
-  const end = html.indexOf('id="biological-database"', start);
+  const end = html.indexOf('</section>', start);
   const news = html.slice(start, end);
   const bullets = [...news.matchAll(/<li>(.*?)<\/li>/g)].map((match) => match[1].replace(/<[^>]*>/g, ''));
   assert.equal(bullets.length, 3);
@@ -336,6 +336,45 @@ test('beta version and asset references agree, with just three concise update bu
     assert.ok(bullets[index].split(/\s+/).length <= 16);
   }
   assert.doesNotMatch(news, /<p[ >]/);
+});
+
+test('News separates concise version updates from the two official HRBMP articles', () => {
+  const html = fs.readFileSync('gui/index.html', 'utf8');
+  const submenu = html.match(/<div class="nav-submenu" aria-label="News subsections">([\s\S]*?)<\/div>/)[1];
+  assert.match(submenu, /href="#news" data-tab-link="news">Version Updates</);
+  assert.match(submenu, /href="#hrbmp-news" data-tab-link="hrbmp-news">HRBMP News</);
+  assert.equal([...submenu.matchAll(/<a /g)].length, 2);
+  const start = html.indexOf('id="hrbmp-news"');
+  const news = html.slice(start, html.indexOf('</section>', start));
+  assert.match(news, /data-tab-page="hrbmp-news"/);
+  assert.equal([...news.matchAll(/<article>/g)].length, 2);
+  assert.match(news, /datetime="2026-05-15"/);
+  assert.match(news, /datetime="2019-12-06"/);
+  assert.ok(news.indexOf('2026-05-15') < news.indexOf('2019-12-06'));
+  for (const url of [
+    'https://news.stonybrook.edu/newsroom/extraordinary-natural-science-collection-gifted-to-somas/',
+    'https://news.stonybrook.edu/university/study-shows-toxic-metals-in-hudson-river-striped-bass-decreased-over-decades-2/'
+  ]) assert.ok(news.includes(`href="${url}" target="_blank" rel="noopener"`));
+  assert.doesNotMatch(news, /Beta 1\.1\./);
+});
+
+test('availability pages each retain one semantic heading in the shared green uppercase style', () => {
+  const html = fs.readFileSync('gui/index.html', 'utf8');
+  for (const [id, title] of [
+    ['biological-database', 'Biological Database'],
+    ['environmental-database', 'Environmental Database'],
+    ['sampling-image-catalog', 'Sampling Image Catalog']
+  ]) {
+    const start = html.indexOf(`id="${id}"`);
+    const page = html.slice(start, html.indexOf('</section>', start));
+    assert.ok(page.includes(`<h1 class="eyebrow">${title}</h1>`));
+    assert.equal([...page.matchAll(/<h1[ >]/g)].length, 1);
+    assert.ok(!page.includes(`<p class="eyebrow">${title}</p>`));
+  }
+  const css = fs.readFileSync('gui/style.css', 'utf8');
+  assert.match(css, /\.eyebrow\s*\{[^}]*color: var\(--teal\);[^}]*text-transform: uppercase;/);
+  assert.match(css, /#sampling-image-catalog \.page-header h1\.eyebrow\s*\{[^}]*color: var\(--teal\);[^}]*font-size: 0\.82rem;/);
+  assert.ok(html.includes('style.css?v=1.1.3-news'));
 });
 
 test('data-type groups contain only real records and distinguish available items from missing uploads', () => {

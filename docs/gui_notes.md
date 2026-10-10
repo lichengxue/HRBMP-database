@@ -25,7 +25,10 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 
 - Displays repository-level counts, export metadata, institutional partner
   logos, and collaborator logos on the home page.
-- Displays Beta Version 1.1.3 and three concise beta-update bullets in News.
+- Displays Beta Version 1.1.3. News has separate Version Updates (three concise
+  beta-update bullets) and HRBMP News pages, with links to official articles.
+- Uses one green uppercase title on each biological, environmental, and
+  sampling-image availability page.
 - Organizes Program Description navigation into a Program Overview plus the
   six HRBMP survey subtabs listed on the official HRBMP surveys page.
 - Organizes Biological Database and Environmental Database navigation into
