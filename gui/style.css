@@ -327,6 +327,16 @@ select {
   text-transform: uppercase;
 }
 
+.version-updates {
+  max-width: 860px;
+  padding-left: 22px;
+  line-height: 1.6;
+}
+
+.version-updates li + li {
+  margin-top: 12px;
+}
+
 .lead {
   max-width: 780px;
   margin: 14px 0 0;

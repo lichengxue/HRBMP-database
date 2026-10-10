@@ -320,6 +320,24 @@ test('image map groups actual files per sample and does not fabricate coordinate
   assert.equal(context.helpers.sumRecordCounts(samples, 'catalog'), 2);
 });
 
+test('beta version and asset references agree, with just three concise update bullets', () => {
+  const html = fs.readFileSync('gui/index.html', 'utf8');
+  const app = fs.readFileSync('gui/app.js', 'utf8');
+  assert.match(html, /class="portal-version">Beta Version 1\.1\.3</);
+  assert.match(app, /const DATA_VERSION = '1\.1\.3';/);
+  for (const file of ['style.css', 'archive.js', 'app.js']) assert.ok(html.includes(`${file}?v=1.1.3`));
+  const start = html.indexOf('id="news"');
+  const end = html.indexOf('id="biological-database"', start);
+  const news = html.slice(start, end);
+  const bullets = [...news.matchAll(/<li>(.*?)<\/li>/g)].map((match) => match[1].replace(/<[^>]*>/g, ''));
+  assert.equal(bullets.length, 3);
+  for (const [index, version] of ['1.1.1', '1.1.2', '1.1.3'].entries()) {
+    assert.ok(bullets[index].startsWith(`Beta ${version}:`));
+    assert.ok(bullets[index].split(/\s+/).length <= 16);
+  }
+  assert.doesNotMatch(news, /<p[ >]/);
+});
+
 test('data-type groups contain only real records and distinguish available items from missing uploads', () => {
   const rows = [
     archive.normalizeItem(item(1, { asset_kind: 'lab_sheet_pdf' })),
