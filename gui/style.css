@@ -213,6 +213,12 @@ select {
   gap: 5px;
 }
 
+.news-navigation .nav-submenu {
+  left: auto;
+  right: 0;
+  min-width: 180px;
+}
+
 .tab-nav .nav-submenu a {
   width: 100%;
   min-height: 34px;
@@ -335,6 +341,37 @@ select {
 
 .version-updates li + li {
   margin-top: 12px;
+}
+
+.news-list {
+  max-width: 900px;
+}
+
+.news-list article {
+  padding: 22px 0;
+  border-top: 1px solid var(--line);
+}
+
+.news-list h2 {
+  margin: 8px 0;
+  font-size: 1.2rem;
+  line-height: 1.4;
+}
+
+.news-list h2 a {
+  color: var(--teal);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.news-list p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.news-list .news-meta {
+  color: var(--muted);
+  font-size: 0.86rem;
 }
 
 .lead {
@@ -2057,10 +2094,14 @@ textarea {
   display: block;
 }
 
-#biological-database .page-header h1,
-#environmental-database .page-header h1,
-#sampling-image-catalog .page-header h1 {
-  font-size: 28px;
+#biological-database .page-header h1.eyebrow,
+#environmental-database .page-header h1.eyebrow,
+#sampling-image-catalog .page-header h1.eyebrow {
+  margin: 0 0 8px;
+  color: var(--teal);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  letter-spacing: 0;
 }
 
 #biological-database .control-row,

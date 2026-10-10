@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.1.3" />
+  <link rel="stylesheet" href="style.css?v=1.1.3-news" />
 </head>
 <body>
   <header class="site-nav">
@@ -150,7 +150,13 @@
         <a href="#issue-report" data-tab-link="issue-report">Issue Report</a>
         <a href="#user-login" data-tab-link="user-login">User Login</a>
         <a href="#team-contact" data-tab-link="team-contact">Team / Contact</a>
-        <a href="#news" data-tab-link="news">News</a>
+        <div class="nav-dropdown news-navigation">
+          <a href="#news" data-tab-link="news">News</a>
+          <div class="nav-submenu" aria-label="News subsections">
+            <a href="#news" data-tab-link="news">Version Updates</a>
+            <a href="#hrbmp-news" data-tab-link="hrbmp-news">HRBMP News</a>
+          </div>
+        </div>
       </nav>
     </div>
   </header>
@@ -492,7 +498,7 @@
     </section>
 
     <section class="tab-page" id="news" data-tab-page="news">
-      <div class="page-header"><h1>Beta Updates</h1></div>
+      <div class="page-header"><h1>Version Updates</h1></div>
       <ul class="version-updates">
         <li><strong>Beta 1.1.1:</strong> Initial database browsing and maps.</li>
         <li><strong>Beta 1.1.2:</strong> Photo galleries, education, survey pages, and search.</li>
@@ -500,11 +506,26 @@
       </ul>
     </section>
 
+    <section class="tab-page" id="hrbmp-news" data-tab-page="hrbmp-news">
+      <div class="page-header"><h1>HRBMP News</h1></div>
+      <div class="news-list">
+        <article>
+          <p class="news-meta"><time datetime="2026-05-15">May 15, 2026</time> | Stony Brook News</p>
+          <h2><a href="https://news.stonybrook.edu/university/study-shows-toxic-metals-in-hudson-river-striped-bass-decreased-over-decades-2/" target="_blank" rel="noopener">Study Shows Toxic Metals in Hudson River Striped Bass Decreased Over Decades</a></h2>
+          <p>Archived HRBMP fish scales reveal long-term declines in most toxic metals, with exceptions including arsenic.</p>
+        </article>
+        <article>
+          <p class="news-meta"><time datetime="2019-12-06">December 6, 2019</time> | Stony Brook News</p>
+          <h2><a href="https://news.stonybrook.edu/newsroom/extraordinary-natural-science-collection-gifted-to-somas/" target="_blank" rel="noopener">Extraordinary Natural Science Collection Gifted to SoMAS</a></h2>
+          <p>Entergy gifted the Hudson River Collection of archived fish specimens and long-term monitoring data to SoMAS.</p>
+        </article>
+      </div>
+    </section>
+
     <section class="tab-page" id="biological-database" data-tab-page="biological-database">
       <div class="page-header with-controls">
         <div>
-          <p class="eyebrow">Biological Database</p>
-          <h1>Biological Database</h1>
+          <h1 class="eyebrow">Biological Database</h1>
           <p data-archive-status aria-live="polite">Loading archive...</p>
         </div>
         <div class="control-row">
@@ -707,8 +728,7 @@
     <section class="tab-page" id="environmental-database" data-tab-page="environmental-database">
       <div class="page-header with-controls">
         <div>
-          <p class="eyebrow">Environmental Database</p>
-          <h1>Environmental Database</h1>
+          <h1 class="eyebrow">Environmental Database</h1>
           <p data-archive-status aria-live="polite">Loading archive...</p>
         </div>
         <div class="control-row">
@@ -893,7 +913,7 @@
     <section class="tab-page" id="sampling-image-catalog" data-tab-page="sampling-image-catalog">
       <div class="page-header with-controls">
         <div>
-          <h1>Sampling Image Catalog</h1>
+          <h1 class="eyebrow">Sampling Image Catalog</h1>
           <p data-archive-status aria-live="polite">Loading archive...</p>
         </div>
         <div class="control-row">
