@@ -11,6 +11,15 @@
     other: 'Other file'
   };
   const PROGRAM_NAMES = { FJS: 'Fall Juvenile Survey', LRS: 'Long River Survey', BSS: 'Beach Seine Survey' };
+  const DATA_TYPE_GROUPS = {
+    processed_abundance_count: 'Abundance / Counts',
+    representative_species_image: 'Fish Images',
+    jar_label_image: 'Jar Label Images',
+    field_sheet_pdf: 'Field Sheets',
+    lab_sheet_pdf: 'Lab Sheets',
+    environmental_data: 'Environmental Data',
+    other: 'Other Files'
+  };
 
   function isPublishableKey(key) {
     if (typeof key !== 'string' || !key.trim()) return false;
@@ -120,6 +129,24 @@
     return items.filter((item) => item.available);
   }
 
+  function groupItemsByDataType(items) {
+    const groups = new Map();
+    const order = Object.keys(DATA_TYPE_GROUPS);
+    for (const item of items) {
+      const kind = item.asset_kind || 'other';
+      if (!groups.has(kind)) groups.set(kind, {
+        kind, label: DATA_TYPE_GROUPS[kind] || DATA_TYPES[kind] || kind,
+        items: [], availableCount: 0, awaitingUploadCount: 0
+      });
+      const group = groups.get(kind);
+      group.items.push(item);
+      if (item.available) group.availableCount += 1;
+      else group.awaitingUploadCount += 1;
+    }
+    const rank = (kind) => order.includes(kind) ? order.indexOf(kind) : order.length;
+    return [...groups.values()].sort((a, b) => rank(a.kind) - rank(b.kind) || a.label.localeCompare(b.label));
+  }
+
   function isImageItem(item) {
     return /^image\//i.test(item.mime_type || '')
       || ['representative_species_image', 'jar_label_image'].includes(item.asset_kind)
@@ -171,5 +198,5 @@
     });
   }
 
-  root.HRBMPArchive = { DATA_TYPES, PROGRAM_NAMES, isPublishableKey, fetchPublishableKey, fetchAvailability, normalizeItem, buildMapRows, buildImageMapRows, isImageItem, filterImageItems, requestItems, filterDatabaseItems };
+  root.HRBMPArchive = { DATA_TYPES, DATA_TYPE_GROUPS, PROGRAM_NAMES, isPublishableKey, fetchPublishableKey, fetchAvailability, normalizeItem, buildMapRows, buildImageMapRows, isImageItem, filterImageItems, groupItemsByDataType, requestItems, filterDatabaseItems };
 })(typeof window === 'undefined' ? globalThis : window);
