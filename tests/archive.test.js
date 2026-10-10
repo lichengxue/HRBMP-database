@@ -186,7 +186,7 @@ function guiHelpers(client) {
     renderAdminRequestRows = () => {};
     resetAdminRequestReport = () => {};
     setLoginStatus = (message) => { globalThis.loginStatus = message; };
-    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, variablesForSource, emptyLiveData, sumRecordCounts };
+    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, variablesForSource, emptyLiveData, sumRecordCounts, MAP_BASEMAPS, DEFAULT_BASEMAP };
   `, context);
   return { ...context, panel };
 }
@@ -320,7 +320,40 @@ test('image map groups actual files per sample and does not fabricate coordinate
   assert.equal(context.helpers.sumRecordCounts(samples, 'catalog'), 2);
 });
 
-test('all three catalog/database maps stay visible above availability tables with ArcGIS imagery selected', () => {
+test('data-type groups contain only real records and distinguish available items from missing uploads', () => {
+  const rows = [
+    archive.normalizeItem(item(1, { asset_kind: 'lab_sheet_pdf' })),
+    archive.normalizeItem(item(2, { asset_kind: 'representative_species_image', available: false })),
+    archive.normalizeItem(item(3, { asset_kind: 'processed_abundance_count' })),
+    archive.normalizeItem(item(4, { asset_kind: 'representative_species_image' })),
+    archive.normalizeItem(item(5, { asset_kind: 'other', metadata_linked: false }))
+  ];
+  const before = rows.map((row) => row.catalog_id);
+  const groups = archive.groupItemsByDataType(rows);
+  assert.deepEqual(groups.map((group) => group.kind), ['processed_abundance_count', 'representative_species_image', 'lab_sheet_pdf', 'other']);
+  assert.equal(groups[0].label, 'Abundance / Counts');
+  assert.equal(groups[1].availableCount, 1);
+  assert.equal(groups[1].awaitingUploadCount, 1);
+  assert.equal(groups[1].items.length, 2);
+  assert.equal(groups[3].availableCount, 1);
+  assert.equal(groups.reduce((total, group) => total + group.items.length, 0), rows.length);
+  assert.deepEqual(new Set(groups.flatMap((group) => group.items.map((row) => row.catalog_id))), new Set(before));
+  assert.deepEqual(rows.map((row) => row.catalog_id), before);
+  assert.deepEqual(archive.groupItemsByDataType([]), []);
+});
+
+test('Light Reference uses the key-free street source and styles only raster tiles', () => {
+  const { MAP_BASEMAPS, DEFAULT_BASEMAP } = guiHelpers(adminClient()).helpers;
+  assert.equal(DEFAULT_BASEMAP, 'street');
+  assert.equal(MAP_BASEMAPS.street.url, 'https://tile.openstreetmap.org/{z}/{x}/{y}.png');
+  assert.equal(MAP_BASEMAPS.light.url, MAP_BASEMAPS.street.url);
+  assert.equal(MAP_BASEMAPS.light.options.className, 'light-reference-tiles');
+  assert.match(MAP_BASEMAPS.light.options.attribution, /openstreetmap.org\/copyright/);
+  assert.doesNotMatch(fs.readFileSync('gui/app.js', 'utf8'), /basemaps\.cartocdn\.com/);
+  assert.match(fs.readFileSync('gui/style.css', 'utf8'), /\.light-reference-tiles \.leaflet-tile\s*\{\s*filter: grayscale\(1\)/);
+});
+
+test('all three catalog/database maps stay visible above availability tables with Street Map selected and ArcGIS retained', () => {
   const html = fs.readFileSync('gui/index.html', 'utf8');
   for (const [scope, prefix] of [['biological', 'bio'], ['environmental', 'env'], ['catalog', 'catalog']]) {
     const start = html.indexOf(`id="${scope === 'catalog' ? 'sampling-image-catalog' : scope + '-database'}"`);
@@ -328,7 +361,8 @@ test('all three catalog/database maps stay visible above availability tables wit
     const page = html.slice(start, end);
     assert.equal(page.includes('<details'), false);
     assert.ok(page.indexOf(`id="${prefix}-map"`) < page.indexOf('class="database-availability"'));
-    assert.match(page, /value="satellite" selected>ArcGIS Satellite Imagery/);
+    assert.match(page, /value="street" selected>Street Map/);
+    assert.match(page, /value="satellite">ArcGIS Satellite Imagery/);
     assert.equal(page.split(`id="${prefix}-map"`).length - 1, 1);
   }
   assert.match(fs.readFileSync('gui/app.js', 'utf8'), /server\.arcgisonline\.com\/ArcGIS\/rest\/services\/World_Imagery\/MapServer\/tile/);

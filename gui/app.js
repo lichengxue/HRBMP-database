@@ -95,22 +95,23 @@ const HUDSON_BOUNDS = [
   [42.95, -73.35]
 ];
 
-const DEFAULT_BASEMAP = 'satellite';
+const DEFAULT_BASEMAP = 'street';
 const MAP_BASEMAPS = {
   street: {
     label: 'Street Map',
-    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     options: {
       maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
     }
   },
   light: {
     label: 'Light Reference',
-    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     options: {
-      maxZoom: 20,
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+      maxZoom: 19,
+      className: 'light-reference-tiles',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
     }
   },
   topographic: {
@@ -1527,6 +1528,18 @@ function bindControls() {
 
   ['biological', 'environmental', 'catalog'].forEach((scope) => {
     const prefix = databasePrefix(scope);
+    document.getElementById(`${prefix}-data-categories`)?.addEventListener('keydown', (event) => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      const tabs = Array.from(event.currentTarget.querySelectorAll('[role="tab"]'));
+      const index = tabs.indexOf(event.target);
+      if (index < 0) return;
+      event.preventDefault();
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1
+        : (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      const id = tabs[next].id;
+      tabs[next].click();
+      document.getElementById(id)?.focus();
+    });
     document.getElementById(`${prefix}-select-all`)?.addEventListener('change', (event) => {
       state.databaseSelections[scope] = event.target.checked ? null : new Set();
       renderDatabaseAvailability(scope);
@@ -2612,11 +2625,11 @@ function transferCatalogImageSelection() {
   renderDatabaseAvailability('biological');
 }
 
-function databaseMatchingItems(scope) {
+function databaseMatchingItems(scope, { allTypes = false } = {}) {
   const prefix = databasePrefix(scope);
   const filters = {
     species: valueOf(`${prefix}-species`), lifeStage: valueOf(`${prefix}-life-stage`),
-    dataType: valueOf(scope === 'catalog' ? 'catalog-type' : 'bio-data-type'),
+    dataType: allTypes ? 'all' : valueOf(scope === 'catalog' ? 'catalog-type' : 'bio-data-type'),
     availability: valueOf(`${prefix}-availability`), variable: valueOf('env-variable'),
     program: valueOf(`${prefix}-program`), region: valueOf(`${prefix}-region`), sample: valueOf(`${prefix}-sample`),
     yearStart: valueOf(`${prefix}-year-start`), yearEnd: valueOf(`${prefix}-year-end`),
@@ -2638,11 +2651,58 @@ function resetDatabaseSelection(scope) {
   state.databaseSelections[scope] = null;
 }
 
-function createDatabaseAvailabilityTable(rows, scope) {
+function renderDatabaseCategories(scope) {
+  const prefix = databasePrefix(scope);
+  const container = document.getElementById(`${prefix}-data-categories`);
+  if (!container) return;
+  const filter = document.getElementById(scope === 'catalog' ? 'catalog-type' : 'bio-data-type');
+  const matching = databaseMatchingItems(scope, { allTypes: true });
+  const matchingGroups = new Map(window.HRBMPArchive.groupItemsByDataType(matching).map((group) => [group.kind, group]));
+  const source = scope === 'catalog' ? state.demoRows.filter(window.HRBMPArchive.isImageItem)
+    : state.demoRows.filter((row) => row.asset_kind !== 'environmental_data');
+  const groups = [{ kind: 'all', label: 'All Types', availableCount: matching.filter((row) => row.available).length,
+    awaitingUploadCount: matching.filter((row) => !row.available).length },
+  ...window.HRBMPArchive.groupItemsByDataType(source).map((group) => matchingGroups.get(group.kind)
+    || { ...group, items: [], availableCount: 0, awaitingUploadCount: 0 })];
+  container.replaceChildren(...groups.map((group) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.id = `${prefix}-category-${group.kind}`;
+    button.dataset.dataType = group.kind;
+    button.setAttribute('role', 'tab');
+    button.setAttribute('aria-controls', `${prefix}-availability-table`);
+    const active = filter.value === group.kind;
+    button.setAttribute('aria-selected', String(active));
+    button.tabIndex = active ? 0 : -1;
+    button.title = `${group.label}: ${formatNumber(group.availableCount)} available; ${formatNumber(group.awaitingUploadCount)} awaiting upload`;
+    const label = document.createElement('span');
+    label.textContent = group.label;
+    const count = document.createElement('span');
+    count.className = 'database-category-count';
+    count.textContent = formatNumber(group.availableCount);
+    button.append(label, count);
+    if (group.awaitingUploadCount) {
+      const pending = document.createElement('span');
+      pending.className = 'database-category-pending';
+      pending.textContent = `${formatNumber(group.awaitingUploadCount)} awaiting upload`;
+      button.append(pending);
+    }
+    button.addEventListener('click', () => {
+      filter.value = group.kind;
+      filter.dispatchEvent(new Event('change'));
+    });
+    return button;
+  }));
+  document.getElementById(`${prefix}-availability-table`).setAttribute('aria-labelledby', `${prefix}-category-${filter.value}`);
+  setText(`${prefix}-availability-heading`, filter.value === 'all' ? scope === 'catalog' ? 'Image Availability' : 'Data Availability'
+    : window.HRBMPArchive.DATA_TYPE_GROUPS[filter.value] || window.HRBMPArchive.DATA_TYPES[filter.value] || filter.value);
+}
+
+function createDatabaseAvailabilityTable(rows, scope, allGroups = []) {
   const environmental = scope === 'environmental';
   const columns = environmental
     ? ['Select', 'Sample', 'Date', 'Program', 'Region', 'Available Variables', 'Availability']
-    : ['Select', 'Sample', 'Date', 'Species', 'Region', 'Data Type', 'File / Record', 'Availability'];
+    : ['Select', 'Sample', 'Date', 'Species', 'Region', 'File / Record', 'Availability'];
   const table = document.createElement('table');
   const head = table.createTHead().insertRow();
   columns.forEach((column) => {
@@ -2651,8 +2711,26 @@ function createDatabaseAvailabilityTable(rows, scope) {
     th.textContent = column;
     head.appendChild(th);
   });
-  const body = table.createTBody();
+  const groups = new Map(allGroups.map((group) => [group.kind, group]));
+  let body = environmental ? table.createTBody() : null;
+  let previousKind = null;
   rows.forEach((row) => {
+    const kind = row.asset_kind || 'other';
+    if (!environmental && kind !== previousKind) {
+      previousKind = kind;
+      body = table.createTBody();
+      body.dataset.dataType = kind;
+      const heading = document.createElement('th');
+      heading.colSpan = columns.length;
+      heading.scope = 'rowgroup';
+      const group = groups.get(kind);
+      heading.textContent = group
+        ? `${group.label}: ${formatNumber(group.availableCount)} available${group.awaitingUploadCount ? `; ${formatNumber(group.awaitingUploadCount)} awaiting upload` : ''}`
+        : window.HRBMPArchive.DATA_TYPE_GROUPS[kind] || kind;
+      const headingRow = body.insertRow();
+      headingRow.className = 'database-type-heading';
+      headingRow.appendChild(heading);
+    }
     const tr = body.insertRow();
     const input = document.createElement('input');
     input.type = 'checkbox';
@@ -2668,20 +2746,23 @@ function createDatabaseAvailabilityTable(rows, scope) {
     });
     tr.insertCell().appendChild(input);
     [row.sample_id || 'Metadata pending', row.sample_date || 'Unassigned'].forEach((value) => appendCell(tr, value));
-    appendCell(tr, environmental ? row.monitoring_program : row.common_name);
+    const sampleFile = ['jar_label_image', 'field_sheet_pdf', 'lab_sheet_pdf'].includes(row.asset_kind)
+      && (row.taxon_code === null || row.taxon_code === undefined);
+    appendCell(tr, environmental ? row.monitoring_program : sampleFile && row.metadata_linked ? 'Sample-level file' : row.common_name);
     appendCell(tr, row.river_region_name || 'Unassigned');
     if (environmental) {
       appendCell(tr, row.available_variables.map((key) => ENV_VARIABLES[key]?.label || key).join(', '));
       tr.lastElementChild.className = 'database-variable-list';
     } else {
-      appendCell(tr, window.HRBMPArchive.DATA_TYPES[row.asset_kind] || row.asset_kind);
-      appendCell(tr, row.original_file_name || 'Count data');
+      appendCell(tr, row.asset_kind === 'processed_abundance_count' ? 'Sample-species count record' : row.original_file_name || 'Unnamed file');
       tr.lastElementChild.className = 'archive-file-name';
+      if (row.original_file_name) tr.lastElementChild.title = row.original_file_name;
     }
     appendCell(tr, !row.available ? 'Awaiting upload' : !row.metadata_linked ? 'Uploaded; metadata pending' : 'Available on request');
     tr.lastElementChild.className = `archive-item-status${!row.available || !row.metadata_linked ? ' pending' : ''}`;
   });
   if (!rows.length) {
+    if (!body) body = table.createTBody();
     const cell = body.insertRow().insertCell();
     cell.colSpan = columns.length;
     cell.textContent = state.archiveLoading ? 'Loading availability...' : state.demoApiLoaded ? 'No data match these filters.' : 'Availability could not be loaded.';
@@ -2693,13 +2774,16 @@ function renderDatabaseAvailability(scope) {
   const prefix = databasePrefix(scope);
   const container = document.getElementById(`${prefix}-availability-table`);
   if (!container) return;
-  const rows = databaseMatchingItems(scope);
+  renderDatabaseCategories(scope);
+  const matching = databaseMatchingItems(scope);
+  const groups = scope === 'environmental' ? [] : window.HRBMPArchive.groupItemsByDataType(matching);
+  const rows = scope === 'environmental' ? matching : groups.flatMap((group) => group.items);
   const selected = mainRequestItems(scope);
   const available = window.HRBMPArchive.requestItems(rows);
   const pages = Math.max(1, Math.ceil(rows.length / 25));
   state.databasePages[scope] = Math.max(0, Math.min(state.databasePages[scope], pages - 1));
   const page = state.databasePages[scope];
-  container.replaceChildren(createDatabaseAvailabilityTable(rows.slice(page * 25, (page + 1) * 25), scope));
+  container.replaceChildren(createDatabaseAvailabilityTable(rows.slice(page * 25, (page + 1) * 25), scope, groups));
   const summary = scope === 'biological' ? [
     ['Matching Items', rows.length], ['Samples', new Set(rows.map((row) => row.sample_id).filter(Boolean)).size],
     ['Count Records', rows.filter((row) => row.asset_kind === 'processed_abundance_count').length],
@@ -2713,7 +2797,7 @@ function renderDatabaseAvailability(scope) {
     ['Selected Samples', selected.length], ['Source', 'HRBMP']
   ];
   renderSummaryStrip(`${prefix}-availability-summary`, summary);
-  setText(`${prefix}-selection-status`, `${formatNumber(selected.length)} available item(s) selected; ${formatNumber(rows.filter((row) => !row.available).length)} awaiting upload.`);
+  setText(`${prefix}-selection-status`, `${formatNumber(available.length)} available; ${formatNumber(selected.length)} selected for request; ${formatNumber(rows.filter((row) => !row.available).length)} awaiting upload.`);
   setText(`${prefix}-request-selection-status`, `${formatNumber(selected.length)} available item(s) selected for this request.`);
   setText(`${prefix}-page-status`, rows.length ? `${formatNumber(page * 25 + 1)}-${formatNumber(Math.min((page + 1) * 25, rows.length))} of ${formatNumber(rows.length)}; Page ${page + 1} of ${pages}` : '0 matches');
   document.getElementById(`${prefix}-page-previous`).disabled = page === 0;

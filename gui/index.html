@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.5.0" />
+  <link rel="stylesheet" href="style.css?v=1.6.0" />
 </head>
 <body>
   <header class="site-nav">
@@ -553,10 +553,10 @@
           <label class="map-type-control">
             Map Type
             <select id="bio-basemap">
-              <option value="street">Street Map</option>
+              <option value="street" selected>Street Map</option>
               <option value="light">Light Reference</option>
               <option value="topographic">Topographic</option>
-              <option value="satellite" selected>ArcGIS Satellite Imagery</option>
+              <option value="satellite">ArcGIS Satellite Imagery</option>
             </select>
           </label>
           <h3 class="layer-subheading">GIS Layers</h3>
@@ -589,11 +589,12 @@
       <section class="database-availability" aria-label="Biological data availability">
         <div class="summary-strip" id="bio-availability-summary"></div>
         <div class="database-results-header">
-          <div><h2>Available Records and Files</h2><p id="bio-selection-status" aria-live="polite"></p></div>
+          <div><h2 id="bio-availability-heading">Data Availability</h2><p id="bio-selection-status" aria-live="polite"></p></div>
           <button type="button" class="primary-button" data-request-selection="biological" disabled><i data-lucide="send" aria-hidden="true"></i>Request Selected Data</button>
         </div>
+        <div id="bio-data-categories" class="database-category-tabs" role="tablist" aria-label="Biological data types"></div>
         <label class="archive-select-all"><input id="bio-select-all" type="checkbox" checked /> Select all matching available items</label>
-        <div id="bio-availability-table" class="table-scroll database-table"></div>
+        <div id="bio-availability-table" class="table-scroll database-table" role="tabpanel" tabindex="0"></div>
         <div class="archive-pagination">
           <button id="bio-page-previous" type="button" class="secondary-button icon-button" title="Previous page" aria-label="Previous page"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
           <span id="bio-page-status" aria-live="polite"></span>
@@ -747,10 +748,10 @@
           <label class="map-type-control">
             Map Type
             <select id="env-basemap">
-              <option value="street">Street Map</option>
+              <option value="street" selected>Street Map</option>
               <option value="light">Light Reference</option>
               <option value="topographic">Topographic</option>
-              <option value="satellite" selected>ArcGIS Satellite Imagery</option>
+              <option value="satellite">ArcGIS Satellite Imagery</option>
             </select>
           </label>
           <h3 class="layer-subheading">GIS Layers</h3>
@@ -914,10 +915,10 @@
           <h2>Layers</h2>
           <label class="map-type-control">Map Type
             <select id="catalog-basemap">
-              <option value="street">Street Map</option>
+              <option value="street" selected>Street Map</option>
               <option value="light">Light Reference</option>
               <option value="topographic">Topographic</option>
-              <option value="satellite" selected>ArcGIS Satellite Imagery</option>
+              <option value="satellite">ArcGIS Satellite Imagery</option>
             </select>
           </label>
           <h3 class="layer-subheading">GIS Layers</h3>
@@ -936,11 +937,12 @@
       <section class="database-availability" aria-label="Sampling image availability">
         <div class="summary-strip" id="catalog-availability-summary"></div>
         <div class="database-results-header">
-          <div><h2>Available Images</h2><p id="catalog-selection-status" aria-live="polite"></p></div>
+          <div><h2 id="catalog-availability-heading">Image Availability</h2><p id="catalog-selection-status" aria-live="polite"></p></div>
           <button type="button" class="primary-button" data-request-selection="catalog" disabled><i data-lucide="send" aria-hidden="true"></i>Request Selected Images</button>
         </div>
+        <div id="catalog-data-categories" class="database-category-tabs" role="tablist" aria-label="Sampling image types"></div>
         <label class="archive-select-all"><input id="catalog-select-all" type="checkbox" checked /> Select all matching available images</label>
-        <div id="catalog-availability-table" class="table-scroll database-table"></div>
+        <div id="catalog-availability-table" class="table-scroll database-table" role="tabpanel" tabindex="0"></div>
         <div class="archive-pagination">
           <button id="catalog-page-previous" type="button" class="secondary-button icon-button" title="Previous page" aria-label="Previous page"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
           <span id="catalog-page-status" aria-live="polite"></span>
@@ -2511,7 +2513,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="config.js"></script>
-  <script src="archive.js?v=1.5.0"></script>
-  <script src="app.js?v=1.5.0"></script>
+  <script src="archive.js?v=1.6.0"></script>
+  <script src="app.js?v=1.6.0"></script>
 </body>
 </html>

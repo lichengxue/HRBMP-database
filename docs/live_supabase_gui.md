@@ -90,8 +90,15 @@ date, type, and availability. **Environmental Database** filters actual samples
 by recorded variable, program, location, and date. Its table lists available
 variables, not mean values or fabricated measurements. Both database pages keep
 their interactive maps visible above the availability tables, with GIS layer
-controls and Esri ArcGIS satellite imagery selected by default. Street, light,
-and topographic basemaps remain available. Map layers use the same real catalog
+controls and **Street Map** selected by default. Esri ArcGIS satellite imagery,
+light reference, and topographic basemaps remain available. Street Map uses the
+standard OpenStreetMap HTTPS tiles with visible linked attribution. Light Reference
+uses those same tiles with a grayscale/light treatment applied only to the tile
+layer, not to availability markers. It no longer uses the CARTO endpoint requiring
+an API key. Browser caching and normal viewport-only loading are preserved;
+the public tile service is best-effort, not guaranteed hosting. Follow the
+[OpenStreetMap tile policy](https://operations.osmfoundation.org/policies/tiles/).
+Map layers use the same real catalog
 filters as the tables; no map interaction grants access to private measurements.
 There are no USGS, EPA, or NOAA database options: those sources are not connected.
 Startup does not fetch example summary/GeoJSON data or generate substitute values.
@@ -114,6 +121,16 @@ Images without linked coordinates remain in the table and in the **Unmapped
 Images** count; no location is invented. Map popups can filter the table to a
 sample. **Request Selected Images** carries the exact selected image IDs into the
 existing biological request form. Image previews and downloads are not made public.
+
+The biological and image availability lists have data-type tabs with real available
+and awaiting-upload counts. Tabs stay synchronized with the existing type filter.
+The **All Types** view groups records/files by type before pagination instead of
+interleaving counts, images, and documents. Count entries are labeled as
+sample-species records rather than suggesting that every row is a separate copy
+of the source CSV. Documents without a species assignment are labeled sample-level
+files when linked to a sample. The status line reports available and selected totals
+separately: zero selected does not mean zero data available. Exact catalog IDs and
+private approval requirements are unchanged.
 
 Deploy the updated delivery function:
 
