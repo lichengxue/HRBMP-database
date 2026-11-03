@@ -1,5 +1,10 @@
 # FJS Automatic Supabase Archive Workflow
 
+For a workflow that also merges downloaded ZIPs in temporary storage, selects
+the matching metadata rows, and reviews/publishes from PowerShell, see
+[FJS terminal workflow](fjs_terminal_workflow.md). That guide also covers direct
+Google Drive downloads with rclone.
+
 This workflow prepares a Fall Juvenile Survey archive package from:
 
 - a processed abundance/count metadata CSV, and

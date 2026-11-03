@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 import os
 import sys
 import urllib.error
@@ -125,15 +126,18 @@ def read_csv_rows(path: Path) -> list[dict[str, str]]:
 
 
 def parse_int(value: str) -> int | None:
-    if value == "":
+    if value.strip().lower() in {"", "na", "nan", "none", "null"}:
         return None
     return int(float(value))
 
 
 def parse_number(value: str) -> int | float | None:
-    if value == "":
+    # R exports missing observations as NA; they are NULL, never zero.
+    if value.strip().lower() in {"", "na", "nan", "none", "null"}:
         return None
     number = float(value)
+    if not math.isfinite(number):
+        raise ValueError("Numeric observations must be finite or a missing-value marker.")
     return int(number) if number.is_integer() else number
 
 

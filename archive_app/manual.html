@@ -1,0 +1,78 @@
+<article>
+  <h2>FJS Supabase Uploader: start-to-finish guide</h2>
+  <p>This local app prepares and uploads one photo batch with its matching survey records. Preparation and review happen on your computer. Supabase changes begin only after you enter your private API key and confirm Upload &amp; verify.</p>
+  <h3>1. What to have ready</h3>
+  <ul>
+    <li><strong>A local copy of HRBMP-database</strong> containing <code>archive_app</code>, <code>scripts</code>, <code>docs</code>, and <code>supabase</code>. A GitHub page alone cannot run the GUI.</li>
+    <li><strong>All ZIP parts from one download group</strong>, such as <code>Batch5_Named_Photos-…-001.zip</code>, <code>…-002.zip</code>, and <code>…-003.zip</code>, together in Downloads or another local folder. Wait until downloading finishes. Alternatively, provide an existing folder containing sample folders.</li>
+    <li><strong>A local survey CSV</strong>: either the full confidential dataset or a subset covering this batch. It needs <code>SAMPLE.NUMBER</code> and collection year or date. Task and date are also checked when available. Keep all species rows for the selected samples.</li>
+    <li><strong>The data dictionary workbook (.xlsx)</strong>. Obtain the actual workbook separately; the repository's Markdown dictionary is not a replacement for this workbook.</li>
+    <li><strong>The Supabase project URL and a private secret/service-role API key</strong>. Enter the key yourself only at Upload. The key is not needed to merge files or prepare and review the package.</li>
+    <li><strong>R, Python, and working disk space.</strong> Allow space for the ZIPs, temporary extraction, merged files, and prepared upload copies. Choose a local work folder outside Git, for example <code>C:/Users/your-name/Desktop/FJS_Archive_Work</code>.</li>
+  </ul>
+  <h3>2. Get the code and install dependencies once</h3>
+  <p>Download the repository using GitHub's Code → Download ZIP and extract it locally, or clone it with Git. The folder may be named HRBMP-database or HRBMP-database-main. Keep confidential datasets, downloaded photos, ZIPs, API keys, and generated packages outside that folder.</p>
+  <pre>git clone https://github.com/lichengxue/HRBMP-database.git
+cd HRBMP-database
+Rscript --version
+python --version
+Rscript --vanilla scripts/install_fjs_archive_app.R
+python -m pip install pandas openpyxl</pre>
+  <p>For a downloaded repository ZIP, open PowerShell and change to its extracted folder instead of running git clone. If Rscript is not on PATH, use the full path to your installed Rscript.exe, for example <code>&amp; "C:\Program Files\R\R-4.5.2\bin\Rscript.exe"</code>, in place of Rscript. Use your own installed R version.</p>
+  <p>If Python is not found by the app, set <code>$env:FJS_PYTHON = "C:/path/to/python.exe"</code> before starting it. Install pandas and openpyxl with that same Python executable.</p>
+  <p>If your original survey is an RDS file, export it to a confidential CSV outside Git before selecting it:</p>
+  <pre>Rscript --vanilla scripts/convert_fjs_rds_to_csv.R "C:/private/survey.rds" "C:/private/survey.csv"</pre>
+  <p>The converter keeps the original RDS, preserves missing values, and pads short sample numbers to four digits. Longer historical identifiers are retained. Excel may hide leading zeros unless you import the column as Text; matching treats 4 and 0004 as the same identifier.</p>
+  <h3>3. Start the GUI</h3>
+  <pre>Rscript --vanilla scripts/start_fjs_archive_app.R</pre>
+  <p>The launcher opens your browser. If needed, open <a href="http://127.0.0.1:8840/" target="_blank" rel="noopener">http://127.0.0.1:8840/</a>. Keep the PowerShell window open: “Listening on…” means the app is running. Stop it with Ctrl+C. Run locally on this computer.</p>
+  <h3>4. Step 1 — Sample files</h3>
+  <ol>
+    <li>Choose Downloaded ZIPs or Sample folders.</li>
+    <li>For ZIPs, Browse to the <strong>folder containing them</strong>, choose the download group and correct number of parts, then click Merge files &amp; continue. Do not mix different batches.</li>
+    <li>For already extracted files, choose the parent folder containing sample folders such as <code>98_20180701_0004</code>, then continue.</li>
+    <li>Under Save location, choose your local work folder outside Git. The app combines split parts, verifies saved files, and preserves the original ZIPs. Temporary extraction is cleaned up after processing.</li>
+  </ol>
+  <h3>5. Step 2 — Survey data</h3>
+  <ol>
+    <li>Select your full local survey CSV or a matching subset. The full source remains in its original location; only matching rows are saved for this batch.</li>
+    <li>Select the data dictionary .xlsx and enter a descriptive batch name.</li>
+    <li>Click Prepare &amp; check upload. The app extracts matching rows, prepares permanent upload copies and database CSVs, and performs a dry run. Nothing is uploaded here.</li>
+  </ol>
+  <p>Browse includes Downloads and Desktop shortcuts. CSV selection shows CSV files, dictionary selection shows XLSX files, and folder selection chooses folders. Lists refresh automatically. Click Name, Size, Modified, or Created to sort, and click again to reverse. Modified and Created initially show newest first.</p>
+  <h3>6. Step 3 — Review</h3>
+  <ul>
+    <li>Check sample and file totals, the sample IDs, and the quality report. A sample–taxon combination is one taxon in one sample; it is not a distinct species count.</li>
+    <li>Review missing PDFs and representative-photo coverage. A photos-only ZIP may have no PDFs. Multiple photo views can belong to one representative group.</li>
+    <li><strong>Photos without a matching survey taxon record remain local and are excluded from upload.</strong> Their filenames appear separately in Review. This is informational and does not block continuing. No taxon record is invented to force a match.</li>
+    <li>Use Back or a completed circle in the left sidebar to correct earlier inputs. Changed inputs require preparation and checks again. Later steps remain locked until prerequisites pass.</li>
+    <li>When satisfied, tick the review box and Continue to upload. The API key is still not required.</li>
+  </ul>
+  <h3>7. Step 4 — Upload and verify</h3>
+  <ol>
+    <li>Check the Supabase project URL. Enter your private secret/service-role key in the masked field. Never put it into source code, Git, a CSV, or chat.</li>
+    <li>Click Upload &amp; verify and check the confirmation's destination and counts before confirming.</li>
+    <li>The app updates database tables first, then uploads the selected files to private storage. The bar counts only confirmed successful file uploads, for example <strong>30/613 files uploaded</strong>. Excluded photos are omitted from the total. Failures are shown separately.</li>
+    <li>After all files upload, wait for verification. A full file bar alone does not mean the workflow is complete. The app reads back sample and asset records and checks stored file existence and size.</li>
+    <li>The completion screen appears only after verification succeeds and a local completion report is saved. Its Download upload report button gives you a readable text copy. The saved report path is also displayed.</li>
+    <li>Each package has a <code>reports</code> folder outside Git, containing timestamped TXT and JSON reports. They include verification time, the reporting app version, destination, batch and file counts, excluded photos, evidence paths, and the JSON file inventory/checksums. Previous reports are retained. No API key is saved. You can also inspect the fjs-archive Storage bucket and fjs_samples/fjs_assets tables in Supabase.</li>
+  </ol>
+  <p>Keep the app and terminal open until completion. You do not need to push confidential data or prepared files to GitHub to use the uploader.</p>
+  <h3>8. Errors, retries, and resuming</h3>
+  <ul>
+    <li><strong>0 samples matched:</strong> confirm that the CSV covers this photo batch. A subset for Batch4 may not cover Batch5. Check year, sample number, task, and date; do not fabricate matches.</li>
+    <li><strong>A new file is absent:</strong> verify that the download finished, choose Downloads or its actual folder, and check the expected file extension.</li>
+    <li><strong>Dry run failed:</strong> open Run details. Resolve missing files, invalid values, or other reported problems and recheck before upload. A dry run does not test your private API key or prove remote write permissions.</li>
+    <li><strong>Upload stopped or failed:</strong> some rows or objects may already be saved. Keep the logs and package; check the error before retrying. Replace files already stored at the same paths is an explicit retry option and can overwrite those objects.</li>
+    <li><strong>Verification failed:</strong> keep the local originals and package until the destination is checked. The app does not report completion in this case.</li>
+    <li><strong>Restart:</strong> the app saves local progress without your API key. An existing prepared package resumes at Review and is checked again. Enter the key again when ready. Back from Upload clears the key and pending confirmation.</li>
+    <li>Run logs, selected subsets, exclusions, completion reports, and packages stay under your local work folder. Keep the reports and their package together for future reference. Reports describe the remote state as of verification, not its availability indefinitely. Photos excluded from one prepared package remain in the original merged folders; their local paths and reasons are recorded in <code>excluded_local_photos.csv</code>.</li>
+  </ul>
+  <h3>9. App versions and updates</h3>
+  <p>The header and footer show the GUI version. Version history is in the adjacent tab. The code is maintained in Git; downloaded data and keys are not part of its version history. A local version number does not mean the changes have been committed, tagged, or published to GitHub.</p>
+  <p>To update: finish or stop any running task, stop Shiny with Ctrl+C, and obtain the updated code. For a Git checkout, inspect <code>git status</code> first, then use <code>git pull --ff-only</code> when appropriate. Preserve local code changes. For a repository ZIP, extract the new code separately. Keep your existing work folder and confidential source files. Install new dependencies if the release requires them, restart the app, and confirm its displayed version.</p>
+  <p>For maintainers, the single current version is stored in <code>archive_app/VERSION</code>. Use patch for a fix, minor for a compatible feature, and major for a breaking workflow change:</p>
+  <pre>Rscript --vanilla scripts/bump_fjs_app_version.R patch "Describe the fix"
+Rscript --vanilla scripts/bump_fjs_app_version.R minor "Describe the feature"</pre>
+  <p>The command updates the version and local release notes together. Review and test the change, then commit those code files through your normal Git workflow. It does not push or publish automatically.</p>
+</article>

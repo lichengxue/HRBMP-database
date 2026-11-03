@@ -20,7 +20,8 @@
 #   Sys.setenv(SUPABASE_SERVICE_ROLE_KEY = "paste-real-secret-key-here")
 #   Rscript scripts/publish_fjs_supabase_archive_workflow.R --supabase-url https://vnqulddrlhkftcqpekpl.supabase.co --apply --upsert-storage
 
-default_output_root <- "data/processed/FJS_storage_upload_ready"
+default_output_root <- file.path(Sys.getenv("USERPROFILE", path.expand("~")),
+  "Desktop", "FJS_Archive_Work", "packages", "FJS_storage_upload_ready")
 default_supabase_url <- "https://vnqulddrlhkftcqpekpl.supabase.co"
 default_bucket <- "fjs-archive"
 default_key_env <- "SUPABASE_SERVICE_ROLE_KEY"
@@ -102,7 +103,7 @@ find_python <- function(requested_python) {
 run_checked <- function(command, args, label) {
   cat("\n", label, "\n", sep = "")
   cat(paste(c(command, args), collapse = " "), "\n")
-  status <- system2(command, args = args)
+  status <- system2(command, args = shQuote(args))
   if (!identical(status, 0L)) {
     stop(label, " failed with exit status ", status)
   }

@@ -13,7 +13,8 @@
 
 default_raw_root <- "C:/Users/liche/Desktop/supa_data"
 default_metadata_csv <- "C:/Users/liche/Downloads/FJS_2018_10sample.csv"
-default_output_root <- "data/processed/FJS_storage_upload_ready"
+default_output_root <- file.path(Sys.getenv("USERPROFILE", path.expand("~")),
+  "Desktop", "FJS_Archive_Work", "packages", "FJS_storage_upload_ready")
 default_data_dictionary <- "data/raw/FJS_2017_sample/FJS_data_dictionary.xlsx"
 default_batch_name <- "FJS_archive_batch"
 default_access_level <- "private"
@@ -91,7 +92,7 @@ find_python <- function(requested_python) {
 run_checked <- function(command, args, label) {
   cat("\n", label, "\n", sep = "")
   cat(paste(c(command, args), collapse = " "), "\n")
-  status <- system2(command, args = args)
+  status <- system2(command, args = shQuote(args))
   if (!identical(status, 0L)) {
     stop(label, " failed with exit status ", status)
   }

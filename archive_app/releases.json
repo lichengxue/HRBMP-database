@@ -1,0 +1,19 @@
+[
+  {
+    "version": "1.1.0",
+    "date": "2026-11-03",
+    "notes": [
+      "Save timestamped upload completion reports with verification evidence, exclusions, and a download button."
+    ]
+  },
+  {
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "notes": [
+      "First numbered version of the local four-step uploader.",
+      "Confirmed file-upload counter and progress bar, followed by remote verification.",
+      "End-to-end manual and version history available inside the app.",
+      "Clickable step circles, refreshed and sortable Browse dialogs, and local retention of unmatched photos."
+    ]
+  }
+]

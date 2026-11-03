@@ -21,6 +21,19 @@ See `docs/live_supabase_gui.md` for the migration, Pages configuration, local pr
 
 ## How to run the prototype
 
+### Archive samples with the local Shiny app
+
+Open the [FJS Supabase Uploader guide](archive_app/README.md) for a guided flow:
+sample files, survey data, review, and upload. Subsetting and dry runs happen
+automatically, and completed merges resume at the next step.
+Generated data stays outside the repository under
+Desktop/FJS_Archive_Work, or another local work folder you choose.
+Start it from R with:
+
+~~~r
+source("scripts/start_fjs_archive_app.R")
+~~~
+
 ### Publish the GUI with GitHub Pages
 GitHub Pages only offers `/` and `/docs` as folder choices when publishing
 directly from a branch. This repo keeps the static web app in `gui/`, so use

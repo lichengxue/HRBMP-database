@@ -8,6 +8,31 @@ data/raw/*
 data/processed/*
 !data/processed/README.md
 
+# Confidential full FJS source exports belong outside this repository.
+pooled_FJS*.csv
+pooled_FJS*.rds
+
+# Local archive downloads and outputs must never enter a source-code commit.
+*.zip
+*.rds
+*.RDS
+FJS_Archive_Work/
+FJS_Batch4*/
+FJS_Batch5*/
+FJS_archive_batch*/
+Batch4*/
+Batch5*/
+Batch_4*/
+Batch_5*/
+*batch4*.csv
+*batch5*.csv
+*Batch4*.csv
+*Batch5*.csv
+fjs_subset_supabase*.csv
+FJS_data_dictionary*.xlsx
+excluded_local_photos.csv
+upload_progress.rds*
+
 # R temporary/session files
 .Rhistory
 .RData
@@ -32,3 +57,8 @@ tmp/archive-browser-checks/
 .DS_Store
 Thumbs.db
 __pycache__/
+
+# Optional local rclone executable; account configuration stays outside Git.
+tools/rclone/
+tools/shiny-library/
+tools/r-library/

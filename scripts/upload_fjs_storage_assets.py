@@ -25,6 +25,12 @@ DEFAULT_BUCKET = "fjs-archive"
 DEFAULT_KEY_ENV = "SUPABASE_SERVICE_ROLE_KEY"
 
 
+def report_progress(uploaded: int, failed: int, total: int) -> None:
+    print("FJS_UPLOAD_PROGRESS " + json.dumps({
+        "uploaded": uploaded, "failed": failed, "total": total,
+    }), flush=True)
+
+
 def key_is_placeholder(value: str) -> bool:
     normalized = value.strip().lower()
     return (
@@ -135,6 +141,8 @@ def main(argv: list[str]) -> int:
 
     success = 0
     failed = 0
+    if args.apply:
+        report_progress(success, failed, len(rows))
     for index, row in enumerate(rows, start=1):
         local_source = row["local_source_path"]
         local_path = repo_root / local_source
@@ -144,6 +152,8 @@ def main(argv: list[str]) -> int:
         if not local_path.exists():
             failed += 1
             print(f"[{index}/{len(rows)}] MISSING {local_source}")
+            if args.apply:
+                report_progress(success, failed, len(rows))
             continue
 
         size_mb = local_path.stat().st_size / (1024 * 1024)
@@ -172,6 +182,8 @@ def main(argv: list[str]) -> int:
             except json.JSONDecodeError:
                 pass
             print(f"  failed: HTTP {status} {detail}")
+
+        report_progress(success, failed, len(rows))
 
         if args.sleep:
             time.sleep(args.sleep)

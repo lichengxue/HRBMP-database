@@ -207,7 +207,7 @@ def parse_int(value: Any) -> int | None:
 
 def parse_number(value: Any) -> str:
     text = clean(value)
-    if not text:
+    if not text or text.upper() == "NA":
         return ""
     try:
         number = float(text)
