@@ -2583,21 +2583,8 @@ async function fetchDemoArchiveRows(key) {
 function setArchiveStatus(message, level) {
   setDemoStatus(message, level);
   document.querySelectorAll('[data-archive-status]').forEach((element) => {
-    if (level !== 'success') {
-      element.textContent = message;
-      return;
-    }
-    const page = element.closest('[data-tab-page]')?.dataset.tabPage;
-    const updated = formatTimestamp(state.data.generated_at_utc);
-    if (page === 'environmental-database') {
-      element.textContent = `${formatNumber(state.environmentalRows.length)} samples with recorded environmental data. Last checked ${updated}.`;
-    } else if (page === 'biological-database') {
-      const counts = state.demoRows.filter((row) => row.asset_kind === 'processed_abundance_count').length;
-      const files = state.demoRows.filter((row) => row.available && row.catalog_id.startsWith('upload:')).length;
-      element.textContent = `${formatNumber(counts)} count records; ${formatNumber(files)} uploaded files. Last checked ${updated}.`;
-    } else {
-      element.textContent = `${formatNumber(state.data.sampling_image_catalog.filter((row) => row.available).length)} uploaded images. Last checked ${updated}.`;
-    }
+    element.hidden = level === 'success';
+    element.textContent = level === 'success' ? '' : message;
   });
 }
 
