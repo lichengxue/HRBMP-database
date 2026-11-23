@@ -25,7 +25,7 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 
 - Displays repository-level counts, export metadata, institutional partner
   logos, and collaborator logos on the home page.
-- Displays Beta Version 1.2.0. Version Updates presents a dated release with
+- Displays Beta Version 1.2.1. Version Updates presents a dated release with
   three major-change highlights and expandable earlier updates. HRBMP News
   remains a separate page with official source links.
 - Uses one green uppercase title on each biological, environmental, and
@@ -147,8 +147,17 @@ available item across all pages, or select a single preview page. Previews suppo
 25, 50, or 100 rows and a direct page jump. Selection and request counts always
 refer to all matching items, not just the currently displayed page.
 
-The end-user interface excludes field-sheet and lab-sheet items before caching,
-mapping, grouping, and request selection. These sheets remain in the private
-archive and uploader; the portal change does not delete stored files or change
-Storage permissions. Unclassified files remain visible with their actual format
-and an explanation. Storage folder placeholders are omitted from data lists.
+The end-user interface shows count records, representative fish photos, and
+environmental data. Jar labels, field/lab sheets, and unclassified uploads are
+excluded before caching, mapping, grouping, and request selection. The archive
+and uploader retain these files. This display policy does not delete files or
+change Storage permissions. Storage folder placeholders are omitted as well.
+
+Availability tables have no repeated section/group subheaders or explanatory
+selection paragraphs. Compact Select all, Select page, and Clear buttons control
+selection; the request button retains the selected-item count.
+
+A valid fish-photo filename is classified as other when its sample and taxon
+code have no matching processed sample-taxon row. This indicates an unmatched
+metadata link, not zero abundance or confirmed species identification. Review
+the source records and images before assigning metadata.
