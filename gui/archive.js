@@ -21,9 +21,9 @@
     other: 'Unclassified Files'
   };
 
-  const INTERNAL_SHEET_KINDS = new Set(['field_sheet_pdf', 'lab_sheet_pdf']);
+  const PUBLIC_ASSET_KINDS = new Set(['processed_abundance_count', 'representative_species_image', 'environmental_data']);
   function isPublicCatalogItem(item) {
-    return !INTERNAL_SHEET_KINDS.has(item.asset_kind) && !isFolderPlaceholder(item);
+    return PUBLIC_ASSET_KINDS.has(item.asset_kind) && !isFolderPlaceholder(item);
   }
   function isFolderPlaceholder(item) {
     return String(item.original_file_name || '').split('/').at(-1) === '.emptyFolderPlaceholder';
@@ -180,6 +180,7 @@
   }
 
   function isImageItem(item) {
+    if (!isPublicCatalogItem(item)) return false;
     return /^image\//i.test(item.mime_type || '')
       || ['representative_species_image', 'jar_label_image'].includes(item.asset_kind)
       || /\.(avif|bmp|gif|heic|heif|jpe?g|png|svg|tiff?|webp)$/i.test(item.original_file_name || '');

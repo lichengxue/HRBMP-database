@@ -14,7 +14,7 @@ const MONTH_NAMES = [
   'December'
 ];
 
-const DATA_VERSION = '1.2.0';
+const DATA_VERSION = '1.2.1';
 const DATA_REQUEST_VERSION = `${DATA_VERSION}-${Date.now()}`;
 const API_PORT = '8010';
 const DEMO_SUPABASE_URL = window.HRBMP_CONFIG?.supabaseUrl || 'https://vnqulddrlhkftcqpekpl.supabase.co';
@@ -1571,8 +1571,8 @@ function bindControls() {
       state.databaseSelections[scope] = new Set();
       renderDatabaseAvailability(scope);
     });
-    document.getElementById(`${prefix}-select-all`)?.addEventListener('change', (event) => {
-      state.databaseSelections[scope] = event.target.checked ? null : new Set();
+    document.getElementById(`${prefix}-select-all`)?.addEventListener('click', () => {
+      state.databaseSelections[scope] = null;
       renderDatabaseAvailability(scope);
     });
     ['previous', 'next'].forEach((direction) => {
@@ -2764,11 +2764,9 @@ function renderDatabaseCategories(scope) {
     return button;
   }));
   document.getElementById(`${prefix}-availability-table`).setAttribute('aria-labelledby', `${prefix}-category-${filter.value}`);
-  setText(`${prefix}-availability-heading`, filter.value === 'all' ? scope === 'catalog' ? 'Image Availability' : 'Data Availability'
-    : window.HRBMPArchive.DATA_TYPE_GROUPS[filter.value] || window.HRBMPArchive.DATA_TYPES[filter.value] || filter.value);
 }
 
-function createDatabaseAvailabilityTable(rows, scope, allGroups = []) {
+function createDatabaseAvailabilityTable(rows, scope) {
   const environmental = scope === 'environmental';
   const columns = environmental
     ? ['Select', 'Sample', 'Date', 'Program', 'Region', 'Available Variables', 'Availability']
@@ -2781,26 +2779,8 @@ function createDatabaseAvailabilityTable(rows, scope, allGroups = []) {
     th.textContent = column;
     head.appendChild(th);
   });
-  const groups = new Map(allGroups.map((group) => [group.kind, group]));
-  let body = environmental ? table.createTBody() : null;
-  let previousKind = null;
+  const body = table.createTBody();
   rows.forEach((row) => {
-    const kind = row.asset_kind || 'other';
-    if (!environmental && kind !== previousKind) {
-      previousKind = kind;
-      body = table.createTBody();
-      body.dataset.dataType = kind;
-      const heading = document.createElement('th');
-      heading.colSpan = columns.length;
-      heading.scope = 'rowgroup';
-      const group = groups.get(kind);
-      heading.textContent = group
-        ? `${group.label}: ${formatNumber(group.availableCount)} available${group.awaitingUploadCount ? `; ${formatNumber(group.awaitingUploadCount)} awaiting upload` : ''}`
-        : window.HRBMPArchive.DATA_TYPE_GROUPS[kind] || kind;
-      const headingRow = body.insertRow();
-      headingRow.className = 'database-type-heading';
-      headingRow.appendChild(heading);
-    }
     const tr = body.insertRow();
     const input = document.createElement('input');
     input.type = 'checkbox';
@@ -2827,18 +2807,12 @@ function createDatabaseAvailabilityTable(rows, scope, allGroups = []) {
       appendCell(tr, row.asset_kind === 'processed_abundance_count' ? 'Sample-species count record' : row.original_file_name || 'Unnamed file');
       tr.lastElementChild.className = 'archive-file-name';
       if (row.original_file_name) tr.lastElementChild.title = row.original_file_name;
-      if (row.asset_kind === 'other') {
-        const description = document.createElement('small');
-        description.className = 'archive-file-description';
-        description.textContent = `${window.HRBMPArchive.fileDescription(row)} · File category awaiting review`;
-        tr.lastElementChild.appendChild(description);
-      }
+
     }
     appendCell(tr, !row.available ? 'Awaiting upload' : !row.metadata_linked ? 'Uploaded; metadata pending' : 'Available on request');
     tr.lastElementChild.className = `archive-item-status${!row.available || !row.metadata_linked ? ' pending' : ''}`;
   });
   if (!rows.length) {
-    if (!body) body = table.createTBody();
     const cell = body.insertRow().insertCell();
     cell.colSpan = columns.length;
     cell.textContent = state.archiveLoading ? 'Loading availability...' : state.demoApiLoaded ? 'No data match these filters.' : 'Availability could not be loaded.';
@@ -2851,13 +2825,13 @@ function renderDatabaseAvailability(scope) {
   const container = document.getElementById(`${prefix}-availability-table`);
   if (!container) return;
   renderDatabaseCategories(scope);
-  const { groups, rows } = databaseResultRows(scope);
+  const { rows } = databaseResultRows(scope);
   const selected = mainRequestItems(scope);
   const available = window.HRBMPArchive.requestItems(rows);
   const paging = window.HRBMPArchive.resultPage(rows.length, state.databasePages[scope], valueOf(`${prefix}-page-size`));
   const { page, pages } = paging;
   state.databasePages[scope] = page;
-  container.replaceChildren(createDatabaseAvailabilityTable(rows.slice(paging.start, paging.end), scope, groups));
+  container.replaceChildren(createDatabaseAvailabilityTable(rows.slice(paging.start, paging.end), scope));
   const summary = scope === 'biological' ? [
     ['Matching Items', rows.length], ['Samples', new Set(rows.map((row) => row.sample_id).filter(Boolean)).size],
     ['Count Records', rows.filter((row) => row.asset_kind === 'processed_abundance_count').length],
@@ -2871,23 +2845,16 @@ function renderDatabaseAvailability(scope) {
     ['Selected Samples', selected.length], ['Source', 'HRBMP']
   ];
   renderSummaryStrip(`${prefix}-availability-summary`, summary);
-  setText(`${prefix}-selection-status`, `${formatNumber(selected.length)} of ${formatNumber(available.length)} available matches selected across all ${formatNumber(pages)} page(s). You can request all matches without visiting every page.`);
   setText(`${prefix}-request-selection-status`, `${formatNumber(selected.length)} available item(s) selected for this request.`);
   setText(`${prefix}-page-status`, rows.length ? `${formatNumber(paging.start + 1)}–${formatNumber(paging.end)} of ${formatNumber(rows.length)} · Page ${formatNumber(page + 1)} of ${formatNumber(pages)}` : '0 matches');
   const jump = document.getElementById(`${prefix}-page-jump`);
   if (jump) { jump.max = String(pages); jump.value = String(page + 1); jump.disabled = !rows.length; }
-  const classification = document.getElementById(`${prefix}-classification-note`);
-  if (classification) {
-    const unknown = rows.filter((row) => row.asset_kind === 'other').length;
-    classification.hidden = !unknown;
-    classification.textContent = `${formatNumber(unknown)} unclassified file(s): these uploads have not been assigned a scientific file category. Some may also need sample or species metadata. Their formats appear beside the filenames. File access still requires an approved request.`;
-  }
   document.getElementById(`${prefix}-page-previous`).disabled = page === 0;
   document.getElementById(`${prefix}-page-next`).disabled = page >= pages - 1;
   const selectAll = document.getElementById(`${prefix}-select-all`);
-  selectAll.checked = available.length > 0 && selected.length === available.length;
-  selectAll.indeterminate = selected.length > 0 && selected.length < available.length;
-  selectAll.disabled = available.length === 0;
+  const allSelected = available.length > 0 && selected.length === available.length;
+  selectAll.setAttribute('aria-pressed', String(allSelected));
+  selectAll.disabled = state.archiveLoading || !available.length || allSelected;
   const requestButton = document.querySelector(`[data-request-selection="${scope}"]`);
   requestButton.disabled = !state.demoApiLoaded || state.archiveLoading || selected.length === 0;
   const requestLabel = requestButton.querySelector('[data-request-selection-label]');

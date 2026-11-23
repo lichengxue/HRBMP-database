@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.2.0" />
+  <link rel="stylesheet" href="style.css?v=1.2.1" />
 </head>
 <body>
   <header class="site-nav">
@@ -169,7 +169,7 @@
             <div class="intro-block">
               <p class="eyebrow">Hudson River Biological Monitoring Program</p>
               <h1>HRBMP Data Portal</h1>
-              <p class="portal-version">Beta Version 1.2.0</p>
+              <p class="portal-version">Beta Version 1.2.1</p>
               <p class="lead">
                 Browse HRBMP program information, biological observations,
                 environmental measurements, and sampling image records.
@@ -502,19 +502,20 @@
     <section class="tab-page" id="news" data-tab-page="news">
       <div class="page-header"><h1>Version Updates</h1></div>
       <div class="news-list">
-        <article id="release-1-2-0" aria-labelledby="release-1-2-0-title">
+        <article id="release-1-2-1" aria-labelledby="release-1-2-1-title">
           <div class="news-meta"><time datetime="2026-11-23">November 23, 2026</time></div>
-          <h2 id="release-1-2-0-title">Beta Version 1.2.0</h2>
+          <h2 id="release-1-2-1-title">Beta Version 1.2.1</h2>
           <ul class="version-updates">
-            <li><strong>Faster loading:</strong> saved totals and availability load quickly on return visits; refresh whenever you need the latest records.</li>
-            <li><strong>Easier browsing:</strong> labeled buttons, search, larger pages, page jumps, and requests across all matching pages simplify large result sets.</li>
-            <li><strong>Cleaner pages:</strong> field and lab sheets are hidden from user listings, unclassified files explained, and repeated status subheaders removed.</li>
+            <li><strong>Curated public results:</strong> count records, fish photos, and environmental data remain visible; jar labels, unclassified files, and internal sheets stay in the archive.</li>
+            <li><strong>Simpler browsing:</strong> repeated availability headings, selection explanations, and table group banners are removed; compact selection buttons keep requests clear.</li>
+            <li><strong>Photo review:</strong> unmatched photos stay internal until sample and taxon links are reviewed; a missing abundance row does not mean a zero count.</li>
           </ul>
         </article>
       </div>
       <details class="release-history">
         <summary>Earlier version updates</summary>
         <ul class="version-updates">
+          <li>Beta 1.2.0: Cached snapshots, clearer controls, searchable results, page jumps, and requests across matching pages.</li>
           <li>Beta 1.1.4: Load saved totals quickly, search results, and request matches across pages.</li>
           <li>Beta 1.1.3: Browse separate HRBMP news and clearer availability page titles.</li>
           <li>Beta 1.1.2: Explore availability on restored maps with improved basemaps.</li>
@@ -632,7 +633,6 @@
       <section class="database-availability" aria-label="Biological data availability">
         <div class="summary-strip" id="bio-availability-summary"></div>
         <div class="database-results-header">
-          <div><h2 id="bio-availability-heading">Data Availability</h2><p id="bio-selection-status" aria-live="polite"></p></div>
           <button type="button" class="primary-button" data-request-selection="biological" disabled><i data-lucide="send" aria-hidden="true"></i><span data-request-selection-label>Request all matching data</span></button>
         </div>
         <div id="bio-data-categories" class="database-category-tabs" role="tablist" aria-label="Biological data types"></div>
@@ -641,12 +641,11 @@
             <input type="search" id="bio-result-search" placeholder="Sample, date, species, filename or region" autocomplete="off" />
           </label>
           <div class="database-selection-actions">
-            <button id="bio-select-page" type="button" class="secondary-button">Select this page only</button>
-            <button id="bio-clear-selection" type="button" class="secondary-button">Clear selection</button>
+            <button id="bio-select-all" type="button" class="secondary-button" title="Select every available match across all pages" aria-pressed="true">Select all</button>
+            <button id="bio-select-page" type="button" class="secondary-button" title="Select only the available items on this page">Select page</button>
+            <button id="bio-clear-selection" type="button" class="secondary-button" title="Clear the current selection">Clear</button>
           </div>
         </div>
-        <label class="archive-select-all"><input id="bio-select-all" type="checkbox" checked /> Select all matching available items across every page</label>
-        <p id="bio-classification-note" class="classification-note" hidden></p>
         <div id="bio-availability-table" class="table-scroll database-table" role="tabpanel" tabindex="0"></div>
         <div class="archive-pagination">
           <label>Rows per page <select id="bio-page-size"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label>
@@ -842,7 +841,6 @@
       <section class="database-availability" aria-label="Environmental data availability">
         <div class="summary-strip" id="env-availability-summary"></div>
         <div class="database-results-header">
-          <div><h2>Available Environmental Data</h2><p id="env-selection-status" aria-live="polite"></p></div>
           <button type="button" class="primary-button" data-request-selection="environmental" disabled><i data-lucide="send" aria-hidden="true"></i><span data-request-selection-label>Request all matching data</span></button>
         </div>
         <div class="database-result-tools">
@@ -850,11 +848,11 @@
             <input type="search" id="env-result-search" placeholder="Sample, date, variable, program or region" autocomplete="off" />
           </label>
           <div class="database-selection-actions">
-            <button id="env-select-page" type="button" class="secondary-button">Select this page only</button>
-            <button id="env-clear-selection" type="button" class="secondary-button">Clear selection</button>
+            <button id="env-select-all" type="button" class="secondary-button" title="Select every available match across all pages" aria-pressed="true">Select all</button>
+            <button id="env-select-page" type="button" class="secondary-button" title="Select only the available items on this page">Select page</button>
+            <button id="env-clear-selection" type="button" class="secondary-button" title="Clear the current selection">Clear</button>
           </div>
         </div>
-        <label class="archive-select-all"><input id="env-select-all" type="checkbox" checked /> Select all matching available samples across every page</label>
         <div id="env-availability-table" class="table-scroll database-table"></div>
         <div class="archive-pagination">
           <label>Rows per page <select id="env-page-size"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label>
@@ -1008,7 +1006,6 @@
       <section class="database-availability" aria-label="Sampling image availability">
         <div class="summary-strip" id="catalog-availability-summary"></div>
         <div class="database-results-header">
-          <div><h2 id="catalog-availability-heading">Image Availability</h2><p id="catalog-selection-status" aria-live="polite"></p></div>
           <button type="button" class="primary-button" data-request-selection="catalog" disabled><i data-lucide="send" aria-hidden="true"></i><span data-request-selection-label>Request all matching images</span></button>
         </div>
         <div id="catalog-data-categories" class="database-category-tabs" role="tablist" aria-label="Sampling image types"></div>
@@ -1017,12 +1014,11 @@
             <input type="search" id="catalog-result-search" placeholder="Sample, date, species, filename or region" autocomplete="off" />
           </label>
           <div class="database-selection-actions">
-            <button id="catalog-select-page" type="button" class="secondary-button">Select this page only</button>
-            <button id="catalog-clear-selection" type="button" class="secondary-button">Clear selection</button>
+            <button id="catalog-select-all" type="button" class="secondary-button" title="Select every available match across all pages" aria-pressed="true">Select all</button>
+            <button id="catalog-select-page" type="button" class="secondary-button" title="Select only the available items on this page">Select page</button>
+            <button id="catalog-clear-selection" type="button" class="secondary-button" title="Clear the current selection">Clear</button>
           </div>
         </div>
-        <label class="archive-select-all"><input id="catalog-select-all" type="checkbox" checked /> Select all matching available images across every page</label>
-        <p id="catalog-classification-note" class="classification-note" hidden></p>
         <div id="catalog-availability-table" class="table-scroll database-table" role="tabpanel" tabindex="0"></div>
         <div class="archive-pagination">
           <label>Rows per page <select id="catalog-page-size"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label>
@@ -2599,8 +2595,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="config.js"></script>
-  <script src="archive.js?v=1.2.0"></script>
-  <script src="archive-cache.js?v=1.2.0"></script>
-  <script src="app.js?v=1.2.0"></script>
+  <script src="archive.js?v=1.2.1"></script>
+  <script src="archive-cache.js?v=1.2.1"></script>
+  <script src="app.js?v=1.2.1"></script>
 </body>
 </html>

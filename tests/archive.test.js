@@ -106,14 +106,14 @@ test('environmental filters show only samples with the requested recorded variab
   assert.equal(archive.filterDatabaseItems(rows, 'environmental', { variable: 'mean_salinity_psu' }).length, 0);
 });
 
-test('unlinked uploads remain selectable without invented metadata; missing uploads cannot be requested', () => {
+test('unclassified uploads stay internal; missing uploads cannot be requested', () => {
   const pending = archive.normalizeItem(item(1, { metadata_linked: false, sample_id: null, sample_date: null, common_name: null, taxon_code: null, asset_kind: 'other' }));
   const missing = archive.normalizeItem(item(2, { available: false }));
   const rows = [pending, missing];
-  assert.deepEqual(archive.filterDatabaseItems(rows, 'biological', { availability: 'metadata_pending' }), [pending]);
+  assert.deepEqual(archive.filterDatabaseItems(rows, 'biological', { availability: 'metadata_pending' }), []);
   assert.deepEqual(archive.filterDatabaseItems(rows, 'biological', { availability: 'awaiting_upload' }), [missing]);
   assert.equal(archive.filterDatabaseItems(rows, 'biological', { yearStart: '2024' }).includes(pending), false);
-  assert.deepEqual(archive.requestItems(rows), [pending]);
+  assert.deepEqual(archive.requestItems(rows), []);
 });
 
 function deliveryHelpers(client = {}) {
@@ -279,21 +279,22 @@ test('GUI starts empty and offers only actually recorded HRBMP variables, withou
   assert.doesNotMatch(fs.readFileSync('gui/app.js', 'utf8'), /example_summary\.json|deriveEnvironmentalCovariates|FALLBACK_DATA|FALLBACK_METADATA/);
 });
 
-test('image catalog filters only real image assets, including missing and unlinked uploads', () => {
+test('image catalog shows public fish photos and preserves missing-upload status', () => {
   const rows = [
     archive.normalizeItem(item(1, { sample_id: 'S1', river_region_name: 'Battery', mime_type: 'image/jpeg' })),
     archive.normalizeItem(item(2, { sample_id: 'S2', asset_kind: 'jar_label_image', available: false })),
     archive.normalizeItem(item(3, { sample_id: null, sample_date: null, metadata_linked: false, asset_kind: 'other', original_file_name: 'TEST_unlinked.PNG' })),
     archive.normalizeItem(item(4, { asset_kind: 'field_sheet_pdf', mime_type: 'application/pdf' })),
     archive.normalizeItem(item(5, { asset_kind: 'processed_abundance_count' })),
-    archive.normalizeItem(item(6, { asset_kind: 'environmental_data' }))
+    archive.normalizeItem(item(6, { asset_kind: 'environmental_data' })),
+    archive.normalizeItem(item(7, { sample_id: 'S3', available: false }))
   ];
-  assert.equal(archive.filterImageItems(rows).length, 3);
+  assert.equal(archive.filterImageItems(rows).length, 2);
   assert.deepEqual(archive.filterImageItems(rows, { species: 'TEST SPECIES', region: 'Battery', sample: 'S1', program: 'FJS', yearStart: '2024', dataType: 'representative_species_image' }), [rows[0]]);
-  assert.deepEqual(archive.filterImageItems(rows, { availability: 'awaiting_upload' }), [rows[1]]);
-  assert.deepEqual(archive.filterImageItems(rows, { availability: 'metadata_pending' }), [rows[2]]);
+  assert.deepEqual(archive.filterImageItems(rows, { availability: 'awaiting_upload' }), [rows[6]]);
+  assert.deepEqual(archive.filterImageItems(rows, { availability: 'metadata_pending' }), []);
   assert.equal(archive.filterImageItems(rows, { yearStart: '2024' }).includes(rows[2]), false);
-  assert.equal(archive.requestItems(archive.filterImageItems(rows)).length, 2);
+  assert.equal(archive.requestItems(archive.filterImageItems(rows)).length, 1);
 });
 
 test('image map groups actual files per sample and does not fabricate coordinates or count missing files as available', () => {
@@ -310,34 +311,34 @@ test('image map groups actual files per sample and does not fabricate coordinate
   ];
   const samples = archive.buildImageMapRows(rows);
   assert.equal(samples.length, 2);
-  assert.equal(samples[0].image_count, 2);
+  assert.equal(samples[0].image_count, 1);
   assert.equal(samples[0].missing_image_count, 1);
-  assert.equal(samples[0].image_items.length, 3);
+  assert.equal(samples[0].image_items.length, 2);
   assert.equal(samples[1].image_count, 0);
   assert.equal(samples[1].missing_image_count, 1);
   assert.equal(samples[0].latitude, located.latitude);
   const context = guiHelpers(adminClient());
-  assert.equal(context.helpers.sumRecordCounts(samples, 'catalog'), 2);
+  assert.equal(context.helpers.sumRecordCounts(samples, 'catalog'), 1);
 });
 
 test('beta version, asset references and dated major-change News release agree', () => {
   const html = fs.readFileSync('gui/index.html', 'utf8');
   const app = fs.readFileSync('gui/app.js', 'utf8');
-  assert.match(html, /class="portal-version">Beta Version 1\.2\.0</);
-  assert.match(app, /const DATA_VERSION = '1\.2\.0';/);
-  for (const file of ['style.css', 'archive.js', 'archive-cache.js', 'app.js']) assert.ok(html.includes(`${file}?v=1.2.0`));
+  assert.match(html, /class="portal-version">Beta Version 1\.2\.1</);
+  assert.match(app, /const DATA_VERSION = '1\.2\.1';/);
+  for (const file of ['style.css', 'archive.js', 'archive-cache.js', 'app.js']) assert.ok(html.includes(`${file}?v=1.2.1`));
   const start = html.indexOf('id="news"');
   const news = html.slice(start, html.indexOf('</section>', start));
   const release = news.slice(news.indexOf('<article'), news.indexOf('</article>'));
-  assert.match(release, /Beta Version 1\.2\.0/);
+  assert.match(release, /Beta Version 1\.2\.1/);
   assert.match(release, /datetime="2026-11-23"/);
   const changes = [...release.matchAll(/<li>(.*?)<\/li>/g)].map(match => match[1].replace(/<[^>]*>/g, ''));
   assert.equal(changes.length, 3);
   assert.ok(changes.every(change => change.split(/\s+/).length <= 26));
   const history = news.slice(news.indexOf('<details'));
   const older = [...history.matchAll(/<li>(.*?)<\/li>/g)].map(match => match[1].replace(/<[^>]*>/g, ''));
-  assert.equal(older.length, 3);
-  for (const [index, version] of ['1.1.4', '1.1.3', '1.1.2'].entries()) {
+  assert.equal(older.length, 4);
+  for (const [index, version] of ['1.2.0', '1.1.4', '1.1.3', '1.1.2'].entries()) {
     assert.ok(older[index].startsWith(`Beta ${version}:`));
     assert.ok(older[index].split(/\s+/).length <= 16);
   }
@@ -380,7 +381,7 @@ test('availability pages each retain one semantic heading in the shared green up
   const css = fs.readFileSync('gui/style.css', 'utf8');
   assert.match(css, /\.eyebrow\s*\{[^}]*color: var\(--teal\);[^}]*text-transform: uppercase;/);
   assert.match(css, /#sampling-image-catalog \.page-header h1\.eyebrow\s*\{[^}]*color: var\(--teal\);[^}]*font-size: 0\.82rem;/);
-  assert.ok(html.includes('style.css?v=1.2.0'));
+  assert.ok(html.includes('style.css?v=1.2.1'));
 });
 
 test('data-type groups contain only real records and distinguish available items from missing uploads', () => {
@@ -393,12 +394,11 @@ test('data-type groups contain only real records and distinguish available items
   ];
   const before = rows.map((row) => row.catalog_id);
   const groups = archive.groupItemsByDataType(rows);
-  assert.deepEqual(groups.map((group) => group.kind), ['processed_abundance_count', 'representative_species_image', 'other']);
+  assert.deepEqual(groups.map((group) => group.kind), ['processed_abundance_count', 'representative_species_image']);
   assert.equal(groups[0].label, 'Abundance / Counts');
   assert.equal(groups[1].availableCount, 1);
   assert.equal(groups[1].awaitingUploadCount, 1);
   assert.equal(groups[1].items.length, 2);
-  assert.equal(groups[2].availableCount, 1);
   assert.equal(groups.reduce((total, group) => total + group.items.length, 0), rows.filter(archive.isPublicCatalogItem).length);
   assert.deepEqual(new Set(groups.flatMap((group) => group.items.map((row) => row.catalog_id))), new Set(rows.filter(archive.isPublicCatalogItem).map((row) => row.catalog_id)));
   assert.deepEqual(rows.map((row) => row.catalog_id), before);
@@ -560,28 +560,26 @@ test('search narrows scientific metadata and direct page jumps handle hundreds o
   assert.equal(archive.resultPage(0, -9, 999).size, 25);
 });
 
-test('unclassified JPEGs remain visible while folder placeholders never become requestable data', async () => {
-  const rows = await archive.fetchAvailability('https://example.supabase.co', publicTestKey, async () => ({ ok: true, json: async () => ({
-    has_more: false, items: [item(1, { asset_kind: 'other', mime_type: 'image/jpeg', original_file_name: 'unclassified.jpg' }),
-      item(2, { asset_kind: 'other', metadata_linked: false, original_file_name: '.emptyFolderPlaceholder' })]
-  }) }));
-  assert.equal(rows.length, 1);
-  assert.equal(rows[0].asset_kind, 'other');
-  assert.equal(archive.fileDescription(rows[0]), 'JPEG image');
-  assert.equal(archive.DATA_TYPE_GROUPS.other, 'Unclassified Files');
-  assert.equal(archive.requestItems(rows).length, 1);
-});
-
-
-test('field and lab sheets stay out of public lists, maps, selections and saved catalogs', async () => {
-  const rows = [item(1), item(2, { asset_kind: 'field_sheet_pdf' }), item(3, { asset_kind: 'lab_sheet_pdf' })];
+test('internal archive files never enter public lists, maps, selections or browser caches', async () => {
+  const rows = [item(1, { latitude: 40.8, longitude: -73.9 }),
+    ...['field_sheet_pdf', 'lab_sheet_pdf', 'jar_label_image', 'other', 'unknown_future_kind'].map((asset_kind, i) =>
+      item(i + 2, { asset_kind, latitude: 40.8, longitude: -73.9, mime_type: 'image/jpeg' })),
+    item(8, { asset_kind: 'other', original_file_name: '.emptyFolderPlaceholder' }),
+    item(9, { asset_kind: 'processed_abundance_count' }), item(10, { asset_kind: 'environmental_data' })];
   const fetched = await archive.fetchAvailability('https://example.supabase.co', publicTestKey, async () => ({ ok: true,
     json: async () => ({ items: rows, has_more: false }) }));
-  assert.equal(fetched.length, 1);
-  assert.equal(archive.filterDatabaseItems(rows, 'biological').length, 1);
-  assert.equal(archive.requestItems(rows).length, 1);
-  assert.equal(publicCache.publicItems(rows).length, 1);
-  assert.deepEqual(archive.groupItemsByDataType(rows).map(group => group.kind), ['representative_species_image']);
+  assert.equal(fetched.length, 3);
+  assert.equal(archive.filterDatabaseItems(rows, 'biological').length, 2);
+  assert.equal(archive.requestItems(rows).length, 3);
+  assert.equal(publicCache.publicItems(rows).length, 3);
+  assert.equal(archive.filterImageItems(rows).length, 1);
+  assert.equal(archive.buildImageMapRows(rows)[0].image_count, 1);
+  assert.deepEqual(archive.groupItemsByDataType(rows).map(group => group.kind),
+    ['processed_abundance_count', 'representative_species_image', 'environmental_data']);
+  const cache = { readSnapshot: () => null, readCatalog: async () => ({ fetchedAt: new Date().toISOString(), items: rows }), isFresh: () => true };
+  const gui = cachedGui(cache, async () => { throw Error('A fresh cache should not fetch'); });
+  await gui.initializeArchive();
+  assert.equal(gui.state.demoRows.length, 3);
 });
 
 

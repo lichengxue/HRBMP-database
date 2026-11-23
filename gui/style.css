@@ -2135,7 +2135,7 @@ textarea {
 .database-results-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   flex-wrap: wrap;
   gap: 12px;
   margin: 20px 0 12px;
@@ -2195,13 +2195,6 @@ textarea {
 .database-category-pending {
   color: #76540c;
   font-size: 12px;
-}
-
-.database-type-heading th {
-  background: #edf4f2;
-  color: var(--ink);
-  font-size: 14px;
-  text-transform: none;
 }
 
 [data-request-selection] {
@@ -3623,9 +3616,8 @@ tbody tr:hover {
 .archive-pagination>span{flex:1 1 200px;text-align:center;font-variant-numeric:tabular-nums}
 .page-jump-form{display:flex;align-items:center;gap:8px;margin-left:auto}
 .page-jump-form input{width:80px;min-width:65px;min-height:38px;padding:7px 10px;border:1px solid #cbd8d3;border-radius:6px;background:var(--surface);color:var(--ink)}
-.classification-note{border-left:3px solid #b68521;background:#fffaf0;padding:12px 15px;line-height:1.55;font-size:.9rem;color:#624e22}
-.classification-note[hidden]{display:none}
-.archive-file-description{display:block;margin-top:5px;color:var(--muted);font-size:.8rem;line-height:1.4}
 @media(max-width:600px){.database-selection-actions{width:100%}.database-selection-actions button{flex:1}.page-jump-form{margin-left:0;width:100%;justify-content:flex-end}.archive-pagination>span{flex-basis:100%;order:4}}
 
 .news-list article .version-updates{margin-top:14px}.release-history{margin-top:20px}.release-history>summary{cursor:pointer;padding:10px 0;font-weight:600;color:var(--teal)}.release-history .version-updates{margin-top:8px}
+
+.database-selection-actions button[aria-pressed="true"]{border-color:var(--teal);color:var(--teal);background:var(--surface-soft)}
