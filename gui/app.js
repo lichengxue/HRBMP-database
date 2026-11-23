@@ -14,7 +14,7 @@ const MONTH_NAMES = [
   'December'
 ];
 
-const DATA_VERSION = '1.1.4';
+const DATA_VERSION = '1.2.0';
 const DATA_REQUEST_VERSION = `${DATA_VERSION}-${Date.now()}`;
 const API_PORT = '8010';
 const DEMO_SUPABASE_URL = window.HRBMP_CONFIG?.supabaseUrl || 'https://vnqulddrlhkftcqpekpl.supabase.co';
