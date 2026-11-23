@@ -324,21 +324,21 @@ test('image map groups actual files per sample and does not fabricate coordinate
 test('beta version, asset references and dated major-change News release agree', () => {
   const html = fs.readFileSync('gui/index.html', 'utf8');
   const app = fs.readFileSync('gui/app.js', 'utf8');
-  assert.match(html, /class="portal-version">Beta Version 1\.2\.1</);
-  assert.match(app, /const DATA_VERSION = '1\.2\.1';/);
-  for (const file of ['style.css', 'archive.js', 'archive-cache.js', 'app.js']) assert.ok(html.includes(`${file}?v=1.2.1`));
+  assert.match(html, /class="portal-version">Beta Version 1\.2\.2</);
+  assert.match(app, /const DATA_VERSION = '1\.2\.2';/);
+  for (const file of ['style.css', 'archive.js', 'archive-cache.js', 'app.js']) assert.ok(html.includes(`${file}?v=1.2.2`));
   const start = html.indexOf('id="news"');
   const news = html.slice(start, html.indexOf('</section>', start));
   const release = news.slice(news.indexOf('<article'), news.indexOf('</article>'));
-  assert.match(release, /Beta Version 1\.2\.1/);
+  assert.match(release, /Beta Version 1\.2\.2/);
   assert.match(release, /datetime="2026-11-23"/);
   const changes = [...release.matchAll(/<li>(.*?)<\/li>/g)].map(match => match[1].replace(/<[^>]*>/g, ''));
   assert.equal(changes.length, 3);
   assert.ok(changes.every(change => change.split(/\s+/).length <= 26));
   const history = news.slice(news.indexOf('<details'));
   const older = [...history.matchAll(/<li>(.*?)<\/li>/g)].map(match => match[1].replace(/<[^>]*>/g, ''));
-  assert.equal(older.length, 4);
-  for (const [index, version] of ['1.2.0', '1.1.4', '1.1.3', '1.1.2'].entries()) {
+  assert.equal(older.length, 5);
+  for (const [index, version] of ['1.2.1', '1.2.0', '1.1.4', '1.1.3', '1.1.2'].entries()) {
     assert.ok(older[index].startsWith(`Beta ${version}:`));
     assert.ok(older[index].split(/\s+/).length <= 16);
   }
@@ -381,7 +381,7 @@ test('availability pages each retain one semantic heading in the shared green up
   const css = fs.readFileSync('gui/style.css', 'utf8');
   assert.match(css, /\.eyebrow\s*\{[^}]*color: var\(--teal\);[^}]*text-transform: uppercase;/);
   assert.match(css, /#sampling-image-catalog \.page-header h1\.eyebrow\s*\{[^}]*color: var\(--teal\);[^}]*font-size: 0\.82rem;/);
-  assert.ok(html.includes('style.css?v=1.2.1'));
+  assert.ok(html.includes('style.css?v=1.2.2'));
 });
 
 test('data-type groups contain only real records and distinguish available items from missing uploads', () => {

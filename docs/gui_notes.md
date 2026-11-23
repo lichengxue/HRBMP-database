@@ -25,7 +25,7 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 
 - Displays repository-level counts, export metadata, institutional partner
   logos, and collaborator logos on the home page.
-- Displays Beta Version 1.2.1. Version Updates presents a dated release with
+- Displays Beta Version 1.2.2. Version Updates presents a dated release with
   three major-change highlights and expandable earlier updates. HRBMP News
   remains a separate page with official source links.
 - Uses one green uppercase title on each biological, environmental, and
@@ -84,12 +84,20 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 
 ## Spatial Structure
 
+The HRBMP River Regions reference panel is a horizontal, equal-width schematic
+from Battery (downstream) to Albany (upstream), separate from the interactive GIS
+map. It retains all 13 region names, codes, numbers, and river-mile ranges.
+Alternating labels show biological record totals from the full loaded catalog,
+independent of map filters. Counts are records, not fish abundance. Until the
+catalog loads, a dash is shown instead of zero. On smaller screens the diagram
+scrolls horizontally; its accessible description lists every region and count.
+
 The test map data are organized around the 13 HRBMP longitudinal river regions.
 The HRBMP source material describes these as numbered regions based on river
 mile. The interface displays the region number first, followed by a readable
 place label and river-mile range:
 
-- Region 0 - Battery (BT), River Mile 1-11
+- Region 0 - Battery (BT), River Mile 0-11
 - Region 1 - Yonkers (YK), River Mile 12-23
 - Region 2 - Tappan Zee (TZ), River Mile 24-33
 - Region 3 - Croton-Haverstraw (CH), River Mile 34-38
