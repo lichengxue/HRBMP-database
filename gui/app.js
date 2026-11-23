@@ -14,7 +14,7 @@ const MONTH_NAMES = [
   'December'
 ];
 
-const DATA_VERSION = '1.2.3';
+const DATA_VERSION = '1.2.4';
 const DATA_REQUEST_VERSION = `${DATA_VERSION}-${Date.now()}`;
 const API_PORT = '8010';
 const DEMO_SUPABASE_URL = window.HRBMP_CONFIG?.supabaseUrl || 'https://vnqulddrlhkftcqpekpl.supabase.co';
@@ -1342,7 +1342,7 @@ function renderAll() {
   fillCounts();
   renderMetadata();
   populateFilters();
-  renderBiologicalRegionReference();
+  renderRiverRegionReferences();
   renderBiologicalMap();
   renderDatabaseAvailability('biological');
   updateDataRequestSummary();
@@ -2960,7 +2960,7 @@ function syncLiveArchivePages() {
   };
   populateFilters();
   fillCounts();
-  renderBiologicalRegionReference();
+  renderRiverRegionReferences();
   renderBiologicalMap();
   renderDatabaseAvailability('biological');
   updateDataRequestSummary();
@@ -3479,10 +3479,23 @@ function formatAccessLevel(value) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function biologicalRegionReferenceSvg(rows, countsReady) {
-  const counts = summarizeRowsByRegionCode(rows, 'biological');
+const RIVER_REGION_METRICS = {
+  biological: { prefix: 'bio', label: 'biological records', singularLabel: 'biological record', unit: 'record', units: 'records',
+    description: 'Counts cover the full loaded biological catalog and represent records, not numbers of fish.' },
+  environmental: { prefix: 'env', label: 'environmental records', singularLabel: 'environmental record', unit: 'record', units: 'records',
+    description: 'Counts cover the full loaded environmental catalog. Each record is a sample with recorded environmental data, not an individual variable measurement.' },
+  catalog: { prefix: 'catalog', label: 'available images', singularLabel: 'available image', unit: 'image', units: 'images',
+    description: 'Counts cover available public fish photos in the full loaded image catalog, including photos with a known region but no map coordinates. Files awaiting upload and internal or mismatched uploads are excluded.' }
+};
+
+function riverRegionReferenceSvg(rows, scope, countsReady) {
+  const metric = RIVER_REGION_METRICS[scope];
+  const counts = summarizeRowsByRegionCode(rows, scope);
   const segmentWidth = 1200 / HRBMP_REGIONS.length;
-  const details = HRBMP_REGIONS.map((region) => `Region ${region.number}, ${region.name} (${region.code}), river miles ${region.river_mile_range}: ${countsReady ? `${formatNumber(counts.get(region.code) || 0)} biological records` : 'records not yet loaded'}.`).join(' ');
+  const details = HRBMP_REGIONS.map((region) => {
+    const count = counts.get(region.code) || 0;
+    return `Region ${region.number}, ${region.name} (${region.code}), river miles ${region.river_mile_range}: ${countsReady ? `${formatNumber(count)} ${count === 1 ? metric.singularLabel : metric.label}` : 'count not yet loaded'}.`;
+  }).join(' ');
   const regions = HRBMP_REGIONS.map((region, index) => {
     const x = 60 + index * segmentWidth;
     const center = x + segmentWidth / 2;
@@ -3498,20 +3511,25 @@ function biologicalRegionReferenceSvg(rows, countsReady) {
         <text class="river-region-code" x="${center}" y="${labelY}">REGION ${region.number} · ${escapeHtml(region.code)}</text>
         <text class="river-region-name" x="${center}" y="${labelY + 25}">${escapeHtml(region.name)}</text>
         <text class="river-region-miles" x="${center}" y="${labelY + 47}">River Mile ${escapeHtml(region.river_mile_range.replace('-', '–'))}</text>
-        <text class="river-region-count" x="${center}" y="${labelY + 77}">${countsReady ? formatNumber(count) : '—'}<tspan class="river-region-count-unit"> ${count === 1 && countsReady ? 'record' : 'records'}</tspan></text>
+        <text class="river-region-count" x="${center}" y="${labelY + 77}">${countsReady ? formatNumber(count) : '—'}<tspan class="river-region-count-unit"> ${count === 1 && countsReady ? metric.unit : metric.units}</tspan></text>
       </g>`;
   }).join('');
-  return `<svg class="river-region-svg" viewBox="0 0 1320 338" role="img" aria-labelledby="river-regions-title river-regions-description" xmlns="http://www.w3.org/2000/svg">
-    <title id="river-regions-title">Hudson River regions from Battery to Albany</title>
-    <desc id="river-regions-description">Equal-width schematic, not a distance scale. Counts cover the full loaded biological catalog and represent records, not numbers of fish. ${escapeHtml(details)}</desc>
+  return `<svg class="river-region-svg" viewBox="0 0 1320 338" role="img" aria-labelledby="${metric.prefix}-river-regions-title ${metric.prefix}-river-regions-description" xmlns="http://www.w3.org/2000/svg">
+    <title id="${metric.prefix}-river-regions-title">Hudson River regions from Battery to Albany: ${metric.label}</title>
+    <desc id="${metric.prefix}-river-regions-description">Equal-width schematic, not a distance scale. ${escapeHtml(metric.description)} ${escapeHtml(details)}</desc>
     ${regions}
   </svg>`;
 }
 
-function renderBiologicalRegionReference() {
-  const container = document.getElementById('bio-region-reference');
-  if (!container) return;
-  container.innerHTML = biologicalRegionReferenceSvg(state.biologicalRows, state.demoApiLoaded);
+function renderRiverRegionReferences() {
+  const images = window.HRBMPArchive ? state.demoRows
+    .filter((row) => row.available && window.HRBMPArchive.isImageItem(row))
+    .map((row) => ({ ...row, image_count: 1 })) : [];
+  const rowsByScope = { biological: state.biologicalRows, environmental: state.environmentalRows, catalog: images };
+  Object.entries(rowsByScope).forEach(([scope, rows]) => {
+    const container = document.getElementById(`${RIVER_REGION_METRICS[scope].prefix}-region-reference`);
+    if (container) container.innerHTML = riverRegionReferenceSvg(rows, scope, state.demoApiLoaded);
+  });
 }
 
 function renderEnvironmental() {
