@@ -8,7 +8,7 @@
     field_sheet_pdf: 'Field sheet',
     lab_sheet_pdf: 'Lab sheet',
     environmental_data: 'Environmental data',
-    other: 'Other file'
+    other: 'Unclassified file'
   };
   const PROGRAM_NAMES = { FJS: 'Fall Juvenile Survey', LRS: 'Long River Survey', BSS: 'Beach Seine Survey' };
   const DATA_TYPE_GROUPS = {
@@ -18,8 +18,40 @@
     field_sheet_pdf: 'Field Sheets',
     lab_sheet_pdf: 'Lab Sheets',
     environmental_data: 'Environmental Data',
-    other: 'Other Files'
+    other: 'Unclassified Files'
   };
+
+  const INTERNAL_SHEET_KINDS = new Set(['field_sheet_pdf', 'lab_sheet_pdf']);
+  function isPublicCatalogItem(item) {
+    return !INTERNAL_SHEET_KINDS.has(item.asset_kind) && !isFolderPlaceholder(item);
+  }
+  function isFolderPlaceholder(item) {
+    return String(item.original_file_name || '').split('/').at(-1) === '.emptyFolderPlaceholder';
+  }
+  function searchItems(items, query = '') {
+    const words = String(query).trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if (!words.length) return items;
+    return items.filter((item) => {
+      const text = [item.sample_id, item.sample_date, item.common_name, item.scientific_name,
+        item.original_file_name, item.program, item.monitoring_program, item.river_region_name,
+        DATA_TYPES[item.asset_kind], ...(item.available_variables || [])].join(' ').toLowerCase();
+      return words.every((word) => text.includes(word));
+    });
+  }
+  function resultPage(total, page, size = 25) {
+    size = [25, 50, 100].includes(Number(size)) ? Number(size) : 25;
+    const pages = Math.max(1, Math.ceil(total / size));
+    page = Number.isFinite(Number(page)) ? Math.max(0, Math.min(Math.trunc(Number(page)), pages - 1)) : 0;
+    return { page, size, pages, start: page * size, end: Math.min((page + 1) * size, total) };
+  }
+  function fileDescription(item) {
+    const name = item.original_file_name || '';
+    const mime = item.mime_type || '';
+    if (/jpe?g$/i.test(name) || mime === 'image/jpeg') return 'JPEG image';
+    if (/\.pdf$/i.test(name) || mime === 'application/pdf') return 'PDF document';
+    if (/^image\//i.test(mime)) return 'Image';
+    return mime && mime !== 'application/octet-stream' ? mime : 'File format not assigned';
+  }
 
   function isPublishableKey(key) {
     if (typeof key !== 'string' || !key.trim()) return false;
@@ -58,7 +90,7 @@
           throw new Error('The archive returned duplicate or invalid item identifiers.');
         }
         seen.add(row.catalog_id);
-        rows.push(normalizeItem(row));
+        if (isPublicCatalogItem(row)) rows.push(normalizeItem(row));
       }
       if (!page.has_more) return rows;
       const next = page.items.at(-1)?.catalog_id;
@@ -107,7 +139,7 @@
   function buildMapRows(items) {
     const biological = new Map();
     const environmental = [];
-    for (const item of items) {
+    for (const item of items.filter(isPublicCatalogItem)) {
       if (!item.metadata_linked || !item.sample_id) continue;
       if (item.asset_kind === 'environmental_data') {
         environmental.push({ ...item, environmental_records: 1, availability_only: true });
@@ -126,13 +158,13 @@
   }
 
   function requestItems(items) {
-    return items.filter((item) => item.available);
+    return items.filter((item) => item.available && isPublicCatalogItem(item));
   }
 
   function groupItemsByDataType(items) {
     const groups = new Map();
     const order = Object.keys(DATA_TYPE_GROUPS);
-    for (const item of items) {
+    for (const item of items.filter(isPublicCatalogItem)) {
       const kind = item.asset_kind || 'other';
       if (!groups.has(kind)) groups.set(kind, {
         kind, label: DATA_TYPE_GROUPS[kind] || DATA_TYPES[kind] || kind,
@@ -184,6 +216,7 @@
       return value !== null && value !== undefined && (lower === null || value >= lower) && (upper === null || value <= upper);
     };
     return items.filter((item) => {
+      if (!isPublicCatalogItem(item)) return false;
       if ((item.asset_kind === 'environmental_data') !== (scope === 'environmental')) return false;
       if (!matches(item.monitoring_program, filters.program) && !matches(item.program, filters.program)) return false;
       if (!matches(item.river_region_name, filters.region) || !matches(item.sample_id, filters.sample)) return false;
@@ -198,5 +231,5 @@
     });
   }
 
-  root.HRBMPArchive = { DATA_TYPES, DATA_TYPE_GROUPS, PROGRAM_NAMES, isPublishableKey, fetchPublishableKey, fetchAvailability, normalizeItem, buildMapRows, buildImageMapRows, isImageItem, filterImageItems, groupItemsByDataType, requestItems, filterDatabaseItems };
+  root.HRBMPArchive = { DATA_TYPES, DATA_TYPE_GROUPS, PROGRAM_NAMES, isPublicCatalogItem, isFolderPlaceholder, searchItems, resultPage, fileDescription, isPublishableKey, fetchPublishableKey, fetchAvailability, normalizeItem, buildMapRows, buildImageMapRows, isImageItem, filterImageItems, groupItemsByDataType, requestItems, filterDatabaseItems };
 })(typeof window === 'undefined' ? globalThis : window);

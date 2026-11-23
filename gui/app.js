@@ -14,7 +14,7 @@ const MONTH_NAMES = [
   'December'
 ];
 
-const DATA_VERSION = '1.1.3';
+const DATA_VERSION = '1.1.4';
 const DATA_REQUEST_VERSION = `${DATA_VERSION}-${Date.now()}`;
 const API_PORT = '8010';
 const DEMO_SUPABASE_URL = window.HRBMP_CONFIG?.supabaseUrl || 'https://vnqulddrlhkftcqpekpl.supabase.co';
@@ -891,6 +891,9 @@ const state = {
   demoLastFilteredRows: [],
   demoApiLoaded: false,
   archiveLoading: false,
+  archiveFromCache: false,
+  archiveError: '',
+  savedSnapshot: null,
   archiveRefreshVersion: 0,
   archivePage: 0,
   catalogPage: 0,
@@ -919,7 +922,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAll();
   bindControls();
   refreshActiveMap();
-  refreshDemoArchive();
+  initializeArchive();
   window.lucide?.createIcons();
 });
 
@@ -1540,6 +1543,34 @@ function bindControls() {
       tabs[next].click();
       document.getElementById(id)?.focus();
     });
+    let searchTimer;
+    document.getElementById(`${prefix}-result-search`)?.addEventListener('input', () => {
+      window.clearTimeout(searchTimer);
+      searchTimer = window.setTimeout(() => {
+        resetDatabaseSelection(scope);
+        renderDatabaseAvailability(scope);
+        if (scope === 'biological') renderBiologicalMap();
+        else if (scope === 'environmental') renderEnvironmentalMap();
+        else renderImageCatalogMap();
+      }, 200);
+    });
+    document.getElementById(`${prefix}-page-size`)?.addEventListener('change', () => {
+      state.databasePages[scope] = 0;
+      renderDatabaseAvailability(scope);
+    });
+    document.getElementById(`${prefix}-page-jump-form`)?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      state.databasePages[scope] = Number(document.getElementById(`${prefix}-page-jump`).value) - 1;
+      renderDatabaseAvailability(scope);
+    });
+    document.getElementById(`${prefix}-select-page`)?.addEventListener('click', () => {
+      state.databaseSelections[scope] = new Set(databasePageItems(scope).filter((row) => row.available).map((row) => row.catalog_id));
+      renderDatabaseAvailability(scope);
+    });
+    document.getElementById(`${prefix}-clear-selection`)?.addEventListener('click', () => {
+      state.databaseSelections[scope] = new Set();
+      renderDatabaseAvailability(scope);
+    });
     document.getElementById(`${prefix}-select-all`)?.addEventListener('change', (event) => {
       state.databaseSelections[scope] = event.target.checked ? null : new Set();
       renderDatabaseAvailability(scope);
@@ -1551,11 +1582,13 @@ function bindControls() {
       });
     });
   });
-  document.querySelectorAll('[data-refresh-archive]').forEach((button) => button.addEventListener('click', refreshDemoArchive));
+  document.querySelectorAll('[data-refresh-archive]').forEach((button) => button.addEventListener('click', () => refreshDemoArchive()));
   document.querySelectorAll('[data-clear-database]').forEach((button) => button.addEventListener('click', () => {
     const scope = button.dataset.clearDatabase;
     const pageId = scope === 'catalog' ? 'sampling-image-catalog' : `${scope}-database`;
     document.querySelectorAll(`#${pageId} .control-row select`).forEach((select) => { select.value = 'all'; });
+    const search = document.getElementById(`${databasePrefix(scope)}-result-search`);
+    if (search) search.value = '';
     resetDatabaseSelection(scope);
     renderDatabaseAvailability(scope);
     if (scope === 'biological') renderBiologicalMap();
@@ -1574,7 +1607,7 @@ function bindControls() {
   bindAdminLoginControls();
 
   window.addEventListener('hrbmp-tab-change', (event) => {
-    if (event.detail?.tabId === 'data-archive' && !state.demoApiLoaded && !state.archiveLoading && demoSupabaseKey()) {
+    if (archivePageNeedsData(event.detail?.tabId) && !state.demoApiLoaded && !state.archiveLoading) {
       refreshDemoArchive();
     }
     if (event.detail?.tabId === 'user-login') {
@@ -1607,12 +1640,23 @@ function bindPolicyAcknowledgments() {
 }
 
 function fillCounts() {
-  const counts = state.data.counts;
-  setText('count-stations', formatNumber(counts.stations));
-  setText('count-events', formatNumber(counts.sampling_events));
-  setText('count-taxa', formatNumber(counts.taxa));
-  setText('count-observations', formatNumber(counts.observations));
-  setText('snapshot-date', state.data.generated_at_utc || 'Archive not loaded');
+  const counts = state.demoApiLoaded ? state.data.counts : state.savedSnapshot?.counts;
+  for (const [id, key] of [['stations', 'stations'], ['events', 'sampling_events'], ['taxa', 'taxa'], ['observations', 'observations']]) {
+    setText(`count-${id}`, counts ? formatNumber(counts[key]) : '—');
+  }
+  const checkedAt = state.data.generated_at_utc || state.savedSnapshot?.fetchedAt;
+  setText('snapshot-date', checkedAt ? `Last checked ${formatTimestamp(checkedAt)}` : 'Loading archive totals…');
+  setText('snapshot-status', state.archiveLoading ? 'Checking for updates. Saved totals remain visible.'
+    : state.archiveError ? 'Update unavailable. Showing the last saved totals.'
+    : counts ? 'Saved for quick loading. Use Update totals for the latest counts.' : 'The first visit loads the live archive.');
+  updateRefreshControls();
+}
+
+function updateRefreshControls() {
+  document.querySelectorAll('[data-refresh-archive]').forEach((button) => {
+    button.disabled = state.archiveLoading;
+    button.setAttribute('aria-busy', String(state.archiveLoading));
+  });
 }
 
 function populateFilters() {
@@ -2462,20 +2506,40 @@ function setLoginStatus(message, level = '') {
   status.className = level ? `demo-request-status ${level}` : 'demo-request-status';
 }
 
+function archivePageNeedsData(page) {
+  return ['biological-database', 'environmental-database', 'sampling-image-catalog',
+    'biological-data-request', 'environmental-data-request', 'data-archive'].includes(page);
+}
+
+async function initializeArchive() {
+  const cache = window.HRBMPArchiveCache;
+  state.savedSnapshot = cache?.readSnapshot(DEMO_SUPABASE_URL) || null;
+  fillCounts();
+  const version = state.archiveRefreshVersion;
+  const saved = await cache?.readCatalog(DEMO_SUPABASE_URL);
+  if (version !== state.archiveRefreshVersion) return;
+  if (saved) {
+    state.demoRows = saved.items.filter(window.HRBMPArchive.isPublicCatalogItem).map(window.HRBMPArchive.normalizeItem);
+    state.demoApiLoaded = true;
+    state.archiveFromCache = true;
+    state.data.generated_at_utc = saved.fetchedAt;
+    syncLiveArchivePages();
+    setArchiveStatus('Saved availability loaded.', 'success');
+    if (cache.isFresh(saved)) return;
+  }
+  if (saved || !state.savedSnapshot || !cache.isFresh(state.savedSnapshot)
+      || archivePageNeedsData(window.location.hash.slice(1))) await refreshDemoArchive();
+}
+
 async function refreshDemoArchive() {
+  if (state.archiveLoading) return;
   let key = demoSupabaseKey();
   const version = ++state.archiveRefreshVersion;
-  state.demoRows = [];
-  state.demoApiLoaded = false;
   state.archiveLoading = true;
-  state.archivePage = 0;
-  state.archiveSelectedIds = null;
-  resetDatabaseSelection('biological');
-  resetDatabaseSelection('environmental');
-  resetDatabaseSelection('catalog');
-  syncLiveArchivePages();
+  state.archiveError = '';
+  fillCounts();
   window.dispatchEvent(new Event('hrbmp-archive-state'));
-  setArchiveStatus('Loading archive...', 'warning');
+  setArchiveStatus(state.demoApiLoaded ? 'Checking for updates. Saved results remain available.' : 'Loading archive...', 'warning');
   try {
     if (!key) {
       key = await window.HRBMPArchive.fetchPublishableKey(DEMO_SUPABASE_URL);
@@ -2488,16 +2552,22 @@ async function refreshDemoArchive() {
     state.demoRows = rows;
     state.demoRowsSource = 'supabase';
     state.demoApiLoaded = true;
+    state.archiveFromCache = false;
     state.data.generated_at_utc = new Date().toISOString();
     syncLiveArchivePages();
-    const files = rows.filter((row) => !['processed_abundance_count', 'environmental_data'].includes(row.asset_kind));
-    setArchiveStatus(`${formatNumber(files.filter((row) => row.available).length)} uploaded file(s); ${formatNumber(rows.length)} catalog item(s). Updated ${new Date().toLocaleString()}.`, 'success');
+    const cache = window.HRBMPArchiveCache;
+    state.savedSnapshot = cache?.writeSnapshot(DEMO_SUPABASE_URL, state.data.counts, state.data.generated_at_utc)
+      || { counts: { ...state.data.counts }, fetchedAt: state.data.generated_at_utc };
+    cache?.writeCatalog(DEMO_SUPABASE_URL, rows, state.data.generated_at_utc);
+    setArchiveStatus('Availability updated.', 'success');
   } catch (error) {
     if (version !== state.archiveRefreshVersion) return;
-    setArchiveStatus(`Archive unavailable. ${error.message}`, 'error');
+    state.archiveError = error.message;
+    setArchiveStatus(`${state.demoApiLoaded ? 'Update unavailable; showing saved availability.' : 'Archive unavailable.'} ${error.message}`, 'error');
   } finally {
     if (version === state.archiveRefreshVersion) {
       state.archiveLoading = false;
+      fillCounts();
       renderDatabaseAvailability('biological');
       renderDatabaseAvailability('environmental');
       renderDatabaseAvailability('catalog');
@@ -2518,15 +2588,15 @@ function setArchiveStatus(message, level) {
       return;
     }
     const page = element.closest('[data-tab-page]')?.dataset.tabPage;
-    const updated = new Date().toLocaleString();
+    const updated = formatTimestamp(state.data.generated_at_utc);
     if (page === 'environmental-database') {
-      element.textContent = `${formatNumber(state.environmentalRows.length)} samples with recorded environmental data. Updated ${updated}.`;
+      element.textContent = `${formatNumber(state.environmentalRows.length)} samples with recorded environmental data. Last checked ${updated}.`;
     } else if (page === 'biological-database') {
       const counts = state.demoRows.filter((row) => row.asset_kind === 'processed_abundance_count').length;
       const files = state.demoRows.filter((row) => row.available && row.catalog_id.startsWith('upload:')).length;
-      element.textContent = `${formatNumber(counts)} count records; ${formatNumber(files)} uploaded files. Updated ${updated}.`;
+      element.textContent = `${formatNumber(counts)} count records; ${formatNumber(files)} uploaded files. Last checked ${updated}.`;
     } else {
-      element.textContent = `${formatNumber(state.data.sampling_image_catalog.filter((row) => row.available).length)} uploaded images. Updated ${updated}.`;
+      element.textContent = `${formatNumber(state.data.sampling_image_catalog.filter((row) => row.available).length)} uploaded images. Last checked ${updated}.`;
     }
   });
 }
@@ -2612,6 +2682,8 @@ function databasePrefix(scope) {
 
 function transferCatalogImageSelection() {
   const selected = mainRequestItems('catalog');
+  const search = document.getElementById('bio-result-search');
+  if (search) search.value = '';
   document.querySelectorAll('#biological-database .control-row select').forEach((select) => { select.value = 'all'; });
   for (const [catalogField, bioField] of [['species', 'species'], ['type', 'data-type'],
     ['program', 'program'], ['region', 'region'], ['sample', 'sample'],
@@ -2638,7 +2710,18 @@ function databaseMatchingItems(scope, { allTypes = false } = {}) {
   };
   const rows = scope === 'catalog' ? window.HRBMPArchive.filterImageItems(state.demoRows, filters)
     : window.HRBMPArchive.filterDatabaseItems(state.demoRows, scope, filters);
-  return rows.sort((a, b) => String(b.sample_date || '').localeCompare(String(a.sample_date || '')) || compareDemoRows(a, b));
+  return window.HRBMPArchive.searchItems(rows, document.getElementById(`${prefix}-result-search`)?.value || '').sort((a, b) => String(b.sample_date || '').localeCompare(String(a.sample_date || '')) || compareDemoRows(a, b));
+}
+
+function databaseResultRows(scope) {
+  const matching = databaseMatchingItems(scope);
+  const groups = scope === 'environmental' ? [] : window.HRBMPArchive.groupItemsByDataType(matching);
+  return { groups, rows: scope === 'environmental' ? matching : groups.flatMap((group) => group.items) };
+}
+function databasePageItems(scope) {
+  const { rows } = databaseResultRows(scope);
+  const paging = window.HRBMPArchive.resultPage(rows.length, state.databasePages[scope], valueOf(`${databasePrefix(scope)}-page-size`));
+  return rows.slice(paging.start, paging.end);
 }
 
 function mainRequestItems(scope) {
@@ -2757,6 +2840,12 @@ function createDatabaseAvailabilityTable(rows, scope, allGroups = []) {
       appendCell(tr, row.asset_kind === 'processed_abundance_count' ? 'Sample-species count record' : row.original_file_name || 'Unnamed file');
       tr.lastElementChild.className = 'archive-file-name';
       if (row.original_file_name) tr.lastElementChild.title = row.original_file_name;
+      if (row.asset_kind === 'other') {
+        const description = document.createElement('small');
+        description.className = 'archive-file-description';
+        description.textContent = `${window.HRBMPArchive.fileDescription(row)} · File category awaiting review`;
+        tr.lastElementChild.appendChild(description);
+      }
     }
     appendCell(tr, !row.available ? 'Awaiting upload' : !row.metadata_linked ? 'Uploaded; metadata pending' : 'Available on request');
     tr.lastElementChild.className = `archive-item-status${!row.available || !row.metadata_linked ? ' pending' : ''}`;
@@ -2775,15 +2864,13 @@ function renderDatabaseAvailability(scope) {
   const container = document.getElementById(`${prefix}-availability-table`);
   if (!container) return;
   renderDatabaseCategories(scope);
-  const matching = databaseMatchingItems(scope);
-  const groups = scope === 'environmental' ? [] : window.HRBMPArchive.groupItemsByDataType(matching);
-  const rows = scope === 'environmental' ? matching : groups.flatMap((group) => group.items);
+  const { groups, rows } = databaseResultRows(scope);
   const selected = mainRequestItems(scope);
   const available = window.HRBMPArchive.requestItems(rows);
-  const pages = Math.max(1, Math.ceil(rows.length / 25));
-  state.databasePages[scope] = Math.max(0, Math.min(state.databasePages[scope], pages - 1));
-  const page = state.databasePages[scope];
-  container.replaceChildren(createDatabaseAvailabilityTable(rows.slice(page * 25, (page + 1) * 25), scope, groups));
+  const paging = window.HRBMPArchive.resultPage(rows.length, state.databasePages[scope], valueOf(`${prefix}-page-size`));
+  const { page, pages } = paging;
+  state.databasePages[scope] = page;
+  container.replaceChildren(createDatabaseAvailabilityTable(rows.slice(paging.start, paging.end), scope, groups));
   const summary = scope === 'biological' ? [
     ['Matching Items', rows.length], ['Samples', new Set(rows.map((row) => row.sample_id).filter(Boolean)).size],
     ['Count Records', rows.filter((row) => row.asset_kind === 'processed_abundance_count').length],
@@ -2797,9 +2884,17 @@ function renderDatabaseAvailability(scope) {
     ['Selected Samples', selected.length], ['Source', 'HRBMP']
   ];
   renderSummaryStrip(`${prefix}-availability-summary`, summary);
-  setText(`${prefix}-selection-status`, `${formatNumber(available.length)} available; ${formatNumber(selected.length)} selected for request; ${formatNumber(rows.filter((row) => !row.available).length)} awaiting upload.`);
+  setText(`${prefix}-selection-status`, `${formatNumber(selected.length)} of ${formatNumber(available.length)} available matches selected across all ${formatNumber(pages)} page(s). You can request all matches without visiting every page.`);
   setText(`${prefix}-request-selection-status`, `${formatNumber(selected.length)} available item(s) selected for this request.`);
-  setText(`${prefix}-page-status`, rows.length ? `${formatNumber(page * 25 + 1)}-${formatNumber(Math.min((page + 1) * 25, rows.length))} of ${formatNumber(rows.length)}; Page ${page + 1} of ${pages}` : '0 matches');
+  setText(`${prefix}-page-status`, rows.length ? `${formatNumber(paging.start + 1)}–${formatNumber(paging.end)} of ${formatNumber(rows.length)} · Page ${formatNumber(page + 1)} of ${formatNumber(pages)}` : '0 matches');
+  const jump = document.getElementById(`${prefix}-page-jump`);
+  if (jump) { jump.max = String(pages); jump.value = String(page + 1); jump.disabled = !rows.length; }
+  const classification = document.getElementById(`${prefix}-classification-note`);
+  if (classification) {
+    const unknown = rows.filter((row) => row.asset_kind === 'other').length;
+    classification.hidden = !unknown;
+    classification.textContent = `${formatNumber(unknown)} unclassified file(s): these uploads have not been assigned a scientific file category. Some may also need sample or species metadata. Their formats appear beside the filenames. File access still requires an approved request.`;
+  }
   document.getElementById(`${prefix}-page-previous`).disabled = page === 0;
   document.getElementById(`${prefix}-page-next`).disabled = page >= pages - 1;
   const selectAll = document.getElementById(`${prefix}-select-all`);
@@ -2808,6 +2903,13 @@ function renderDatabaseAvailability(scope) {
   selectAll.disabled = available.length === 0;
   const requestButton = document.querySelector(`[data-request-selection="${scope}"]`);
   requestButton.disabled = !state.demoApiLoaded || state.archiveLoading || selected.length === 0;
+  const requestLabel = requestButton.querySelector('[data-request-selection-label]');
+  if (requestLabel) requestLabel.textContent = selected.length === available.length && selected.length
+    ? `Request all ${formatNumber(selected.length)} matches` : `Request ${formatNumber(selected.length)} selected`;
+  const pageButton = document.getElementById(`${prefix}-select-page`);
+  if (pageButton) pageButton.disabled = state.archiveLoading || !available.length;
+  const clearButton = document.getElementById(`${prefix}-clear-selection`);
+  if (clearButton) clearButton.disabled = state.archiveLoading || !selected.length;
   if (scope === 'biological') updateDataRequestSummary();
   else if (scope === 'environmental') updateEnvironmentalDataRequestSummary();
 }

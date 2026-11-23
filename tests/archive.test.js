@@ -186,7 +186,7 @@ function guiHelpers(client) {
     renderAdminRequestRows = () => {};
     resetAdminRequestReport = () => {};
     setLoginStatus = (message) => { globalThis.loginStatus = message; };
-    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, variablesForSource, emptyLiveData, sumRecordCounts, MAP_BASEMAPS, DEFAULT_BASEMAP };
+    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, variablesForSource, emptyLiveData, sumRecordCounts, MAP_BASEMAPS, DEFAULT_BASEMAP, mainRequestItems, databasePageItems };
   `, context);
   return { ...context, panel };
 }
@@ -323,15 +323,15 @@ test('image map groups actual files per sample and does not fabricate coordinate
 test('beta version and asset references agree, with just three concise update bullets', () => {
   const html = fs.readFileSync('gui/index.html', 'utf8');
   const app = fs.readFileSync('gui/app.js', 'utf8');
-  assert.match(html, /class="portal-version">Beta Version 1\.1\.3</);
-  assert.match(app, /const DATA_VERSION = '1\.1\.3';/);
-  for (const file of ['style.css', 'archive.js', 'app.js']) assert.ok(html.includes(`${file}?v=1.1.3`));
+  assert.match(html, /class="portal-version">Beta Version 1\.1\.4</);
+  assert.match(app, /const DATA_VERSION = '1\.1\.4';/);
+  for (const file of ['style.css', 'archive.js', 'app.js']) assert.ok(html.includes(`${file}?v=1.1.4`));
   const start = html.indexOf('id="news"');
   const end = html.indexOf('</section>', start);
   const news = html.slice(start, end);
   const bullets = [...news.matchAll(/<li>(.*?)<\/li>/g)].map((match) => match[1].replace(/<[^>]*>/g, ''));
   assert.equal(bullets.length, 3);
-  for (const [index, version] of ['1.1.1', '1.1.2', '1.1.3'].entries()) {
+  for (const [index, version] of ['1.1.2', '1.1.3', '1.1.4'].entries()) {
     assert.ok(bullets[index].startsWith(`Beta ${version}:`));
     assert.ok(bullets[index].split(/\s+/).length <= 16);
   }
@@ -374,7 +374,7 @@ test('availability pages each retain one semantic heading in the shared green up
   const css = fs.readFileSync('gui/style.css', 'utf8');
   assert.match(css, /\.eyebrow\s*\{[^}]*color: var\(--teal\);[^}]*text-transform: uppercase;/);
   assert.match(css, /#sampling-image-catalog \.page-header h1\.eyebrow\s*\{[^}]*color: var\(--teal\);[^}]*font-size: 0\.82rem;/);
-  assert.ok(html.includes('style.css?v=1.1.3-news'));
+  assert.ok(html.includes('style.css?v=1.1.4-usability'));
 });
 
 test('data-type groups contain only real records and distinguish available items from missing uploads', () => {
@@ -387,14 +387,14 @@ test('data-type groups contain only real records and distinguish available items
   ];
   const before = rows.map((row) => row.catalog_id);
   const groups = archive.groupItemsByDataType(rows);
-  assert.deepEqual(groups.map((group) => group.kind), ['processed_abundance_count', 'representative_species_image', 'lab_sheet_pdf', 'other']);
+  assert.deepEqual(groups.map((group) => group.kind), ['processed_abundance_count', 'representative_species_image', 'other']);
   assert.equal(groups[0].label, 'Abundance / Counts');
   assert.equal(groups[1].availableCount, 1);
   assert.equal(groups[1].awaitingUploadCount, 1);
   assert.equal(groups[1].items.length, 2);
-  assert.equal(groups[3].availableCount, 1);
-  assert.equal(groups.reduce((total, group) => total + group.items.length, 0), rows.length);
-  assert.deepEqual(new Set(groups.flatMap((group) => group.items.map((row) => row.catalog_id))), new Set(before));
+  assert.equal(groups[2].availableCount, 1);
+  assert.equal(groups.reduce((total, group) => total + group.items.length, 0), rows.filter(archive.isPublicCatalogItem).length);
+  assert.deepEqual(new Set(groups.flatMap((group) => group.items.map((row) => row.catalog_id))), new Set(rows.filter(archive.isPublicCatalogItem).map((row) => row.catalog_id)));
   assert.deepEqual(rows.map((row) => row.catalog_id), before);
   assert.deepEqual(archive.groupItemsByDataType([]), []);
 });
@@ -433,4 +433,193 @@ test('environmental delivery appears in the manifest and email', () => {
   assert.match(csv, /https:\/\/example.test\/download/);
   const email = context.helpers.buildEmailText({ request_id: 'TEST_REQUEST' }, { assetLinks: [], countsUrl: null, environmentalUrl: 'https://example.test/environment', manifestUrl: 'https://example.test/manifest', expiresAt: 'TEST_DATE' });
   assert.match(email, /Environmental data CSV: https:\/\/example.test\/environment/);
+});
+
+
+require('../gui/archive-cache.js');
+const publicCache = globalThis.HRBMPArchiveCache;
+
+test('saved totals are reusable for one hour and reject corrupt or unavailable storage', () => {
+  const entries = new Map();
+  const storage = { getItem: (key) => entries.get(key) || null, setItem: (key, value) => entries.set(key, value) };
+  const counts = { stations: 264, sampling_events: 1219, taxa: 52, observations: 5672, secret: 'PRIVATE_TEST_VALUE' };
+  const checked = '2026-11-23T20:00:00.000Z';
+  const saved = publicCache.writeSnapshot('https://example.supabase.co', counts, checked, storage);
+  assert.equal(publicCache.readSnapshot('https://example.supabase.co', storage).counts.observations, 5672);
+  assert.equal(publicCache.isFresh(saved, Date.parse(checked) + 3599999), true);
+  assert.equal(publicCache.isFresh(saved, Date.parse(checked) + 3600000), false);
+  assert.equal(publicCache.isFresh(saved, Date.parse(checked) - 1), false);
+  assert.equal(publicCache.readSnapshot('https://another.supabase.co', storage), null);
+  assert.doesNotMatch([...entries.values()].join(''), /PRIVATE_TEST_VALUE/);
+  entries.set('hrbmp:snapshot:https://example.supabase.co', '{broken');
+  assert.equal(publicCache.readSnapshot('https://example.supabase.co', storage), null);
+  const unavailable = { getItem: () => { throw Error('Blocked'); }, setItem: () => { throw Error('Full'); } };
+  assert.equal(publicCache.readSnapshot('https://example.supabase.co', unavailable), null);
+  assert.equal(publicCache.writeSnapshot('https://example.supabase.co', counts, checked, unavailable), null);
+});
+
+test('catalog caching has an explicit public-field allowlist and never stores private values or file paths', () => {
+  const row = item(1, { requester_email: 'PRIVATE_TEST_VALUE', storage_object_path: 'PRIVATE_TEST_VALUE',
+    download_url: 'PRIVATE_TEST_VALUE', total_count_corrected: 'PRIVATE_TEST_VALUE', secret_key: 'PRIVATE_TEST_VALUE' });
+  const stored = publicCache.publicItems([row]);
+  assert.equal(stored[0].catalog_id, row.catalog_id);
+  assert.doesNotMatch(JSON.stringify(stored), /PRIVATE_TEST_VALUE/);
+});
+
+function cachedGui(cache, fetchRows) {
+  const elements = new Map();
+  const document = { addEventListener: () => {}, querySelectorAll: () => [], querySelector: () => null,
+    getElementById: (id) => {
+      if (!['count-stations', 'count-events', 'count-taxa', 'count-observations', 'snapshot-date', 'snapshot-status'].includes(id)) return null;
+      if (!elements.has(id)) elements.set(id, {});
+      return elements.get(id);
+    } };
+  const context = vm.createContext({ console: { error: () => {} }, Event, URL, setTimeout, clearTimeout, document,
+    window: { HRBMP_CONFIG: { publishableKey: publicTestKey }, HRBMPArchive: archive, HRBMPArchiveCache: cache,
+      location: { hash: '#home' }, dispatchEvent: () => {} } });
+  vm.runInContext(fs.readFileSync('gui/app.js', 'utf8') + `
+    populateFilters = renderBiologicalRegionReference = renderBiologicalMap = renderDatabaseAvailability =
+      updateDataRequestSummary = renderEnvironmental = renderCatalog = refreshAdminSession = setArchiveStatus = () => {};
+    fetchDemoArchiveRows = () => globalThis.fetchRows();
+    state.data = emptyLiveData();
+    globalThis.helpers = { state, initializeArchive, refreshDemoArchive, archivePageNeedsData };
+  `, context);
+  context.fetchRows = fetchRows;
+  return { ...context.helpers, elements, window: context.window };
+}
+
+test('a fresh saved catalog displays totals without any live catalog request', async () => {
+  let requests = 0;
+  const cache = { readSnapshot: () => null, readCatalog: async () => ({ fetchedAt: new Date().toISOString(), items: [item(1)] }), isFresh: () => true };
+  const gui = cachedGui(cache, async () => { requests++; return []; });
+  await gui.initializeArchive();
+  assert.equal(requests, 0);
+  assert.equal(gui.state.demoApiLoaded, true);
+  assert.equal(gui.elements.get('count-events').textContent, '1');
+  assert.match(gui.elements.get('snapshot-date').textContent, /Last checked/);
+});
+
+test('fresh saved totals keep the homepage fast even if full-catalog storage is unavailable', async () => {
+  let requests = 0;
+  const cache = { readSnapshot: () => ({ fetchedAt: new Date().toISOString(), counts: { stations: 264, sampling_events: 1219, taxa: 52, observations: 5672 } }),
+    readCatalog: async () => null, isFresh: () => true };
+  const gui = cachedGui(cache, async () => { requests++; return []; });
+  await gui.initializeArchive();
+  assert.equal(requests, 0);
+  assert.equal(gui.elements.get('count-stations').textContent, '264');
+  assert.equal(gui.state.demoApiLoaded, false);
+  assert.equal(gui.archivePageNeedsData('biological-database'), true);
+  assert.equal(gui.archivePageNeedsData('environmental-data-request'), true);
+  assert.equal(gui.archivePageNeedsData('home'), false);
+});
+
+test('a failed background update preserves cached records and totals', async () => {
+  let fail;
+  const cache = { readSnapshot: () => null, readCatalog: async () => ({ fetchedAt: '2020-01-01T00:00:00Z', items: [item(1)] }), isFresh: () => false };
+  const gui = cachedGui(cache, () => new Promise((_, reject) => { fail = reject; }));
+  const pending = gui.initializeArchive();
+  await new Promise(setImmediate);
+  assert.equal(gui.state.archiveLoading, true);
+  assert.equal(gui.state.demoRows.length, 1);
+  assert.equal(gui.elements.get('count-events').textContent, '1');
+  fail(Error('Offline'));
+  await pending;
+  assert.equal(gui.state.demoRows.length, 1);
+  assert.equal(gui.state.demoApiLoaded, true);
+  assert.equal(gui.state.archiveLoading, false);
+  assert.match(gui.elements.get('snapshot-status').textContent, /last saved totals/);
+});
+
+test('a late cache read cannot overwrite a completed manual refresh', async () => {
+  let restore;
+  const cache = { readSnapshot: () => null, readCatalog: () => new Promise(resolve => { restore = resolve; }),
+    writeSnapshot: () => null, writeCatalog: async () => true, isFresh: () => true };
+  const gui = cachedGui(cache, async () => [item(2), item(3)]);
+  const pending = gui.initializeArchive();
+  await gui.refreshDemoArchive();
+  restore({ fetchedAt: new Date().toISOString(), items: [item(1)] });
+  await pending;
+  assert.equal(gui.state.demoRows.length, 2);
+  assert.equal(gui.state.demoRows[0].catalog_id, item(2).catalog_id);
+});
+
+test('search narrows scientific metadata and direct page jumps handle hundreds of pages', () => {
+  const rows = [archive.normalizeItem(item(1, { sample_id: 'S1', original_file_name: 'fish-a.jpg', river_region_name: 'Battery' })),
+    archive.normalizeItem(item(2, { sample_id: 'S2', original_file_name: 'fish-b.jpg', river_region_name: 'Albany' }))];
+  assert.deepEqual(archive.searchItems(rows, 'BATTERY fish-a'), [rows[0]]);
+  assert.equal(archive.searchItems(rows, 'S2 Albany').length, 1);
+  assert.equal(archive.searchItems(rows, 'no match').length, 0);
+  assert.deepEqual(archive.resultPage(14021, 560, 25), { page: 560, size: 25, pages: 561, start: 14000, end: 14021 });
+  assert.equal(archive.resultPage(14021, 9999, 100).page, 140);
+  assert.equal(archive.resultPage(0, -9, 999).size, 25);
+});
+
+test('unclassified JPEGs remain visible while folder placeholders never become requestable data', async () => {
+  const rows = await archive.fetchAvailability('https://example.supabase.co', publicTestKey, async () => ({ ok: true, json: async () => ({
+    has_more: false, items: [item(1, { asset_kind: 'other', mime_type: 'image/jpeg', original_file_name: 'unclassified.jpg' }),
+      item(2, { asset_kind: 'other', metadata_linked: false, original_file_name: '.emptyFolderPlaceholder' })]
+  }) }));
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].asset_kind, 'other');
+  assert.equal(archive.fileDescription(rows[0]), 'JPEG image');
+  assert.equal(archive.DATA_TYPE_GROUPS.other, 'Unclassified Files');
+  assert.equal(archive.requestItems(rows).length, 1);
+});
+
+
+test('field and lab sheets stay out of public lists, maps, selections and saved catalogs', async () => {
+  const rows = [item(1), item(2, { asset_kind: 'field_sheet_pdf' }), item(3, { asset_kind: 'lab_sheet_pdf' })];
+  const fetched = await archive.fetchAvailability('https://example.supabase.co', publicTestKey, async () => ({ ok: true,
+    json: async () => ({ items: rows, has_more: false }) }));
+  assert.equal(fetched.length, 1);
+  assert.equal(archive.filterDatabaseItems(rows, 'biological').length, 1);
+  assert.equal(archive.requestItems(rows).length, 1);
+  assert.equal(publicCache.publicItems(rows).length, 1);
+  assert.deepEqual(archive.groupItemsByDataType(rows).map(group => group.kind), ['representative_species_image']);
+});
+
+
+test('all matching items can be requested without visiting hundreds of preview pages', () => {
+  const context = guiHelpers(adminClient());
+  context.helpers.state.demoRows = Array.from({ length: 3501 }, (_, index) => archive.normalizeItem(item(index)));
+  assert.equal(context.helpers.mainRequestItems('biological').length, 3501);
+  context.helpers.state.databasePages.biological = 123;
+  const page = context.helpers.databasePageItems('biological');
+  assert.equal(page.length, 25);
+  context.helpers.state.databaseSelections.biological = new Set(page.map(row => row.catalog_id));
+  context.helpers.state.databasePages.biological = 0;
+  assert.equal(context.helpers.mainRequestItems('biological').length, 25);
+});
+
+test('browser catalog writes wait for the complete transaction and recover from storage failure', async () => {
+  let stored, failWrite = false;
+  const database = { close: () => {}, transaction: () => {
+    const tx = { objectStore: () => ({
+      get: () => request(false), put: (value) => request(true, value)
+    }) };
+    function request(write, value) {
+      const req = {};
+      queueMicrotask(() => {
+        req.result = write ? 'source' : stored;
+        req.onsuccess?.();
+        queueMicrotask(() => {
+          if (write && failWrite) tx.onabort?.();
+          else { if (write) stored = value; tx.oncomplete?.(); }
+        });
+      });
+      return req;
+    }
+    return tx;
+  } };
+  const root = { HRBMPArchive: archive, setTimeout, clearTimeout,
+    indexedDB: { open: () => { const req = {}; queueMicrotask(() => { req.result = database; req.onsuccess(); }); return req; } } };
+  vm.runInNewContext(fs.readFileSync('gui/archive-cache.js', 'utf8'), { window: root, URL, setTimeout, clearTimeout });
+  const cache = root.HRBMPArchiveCache;
+  const date = new Date().toISOString();
+  assert.equal(await cache.writeCatalog('https://example.supabase.co', [item(1)], date), true);
+  assert.equal((await cache.readCatalog('https://example.supabase.co')).items.length, 1);
+  failWrite = true;
+  assert.equal(await cache.writeCatalog('https://example.supabase.co', [item(1), item(2)], date), false);
+  assert.equal((await cache.readCatalog('https://example.supabase.co')).items.length, 1);
+  assert.equal(await cache.readCatalog('https://different.supabase.co'), null);
 });
