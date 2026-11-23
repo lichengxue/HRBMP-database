@@ -1089,30 +1089,47 @@ textarea {
   color: #8f2f25;
 }
 
-.region-reference-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 10px;
-  margin-top: 14px;
+.river-region-panel {
+  margin-top: 20px;
+  background: #f5f8fa;
 }
 
-.region-reference-card {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px;
-  background: #ffffff;
-  display: grid;
-  gap: 5px;
-}
-
-.region-reference-card strong {
-  color: var(--ink);
-}
-
-.region-reference-card span {
+.river-region-panel > p {
   color: var(--muted);
-  font-size: 0.88rem;
+  line-height: 1.6;
+  margin: 0 0 14px;
 }
+
+.river-region-diagram {
+  overflow-x: auto;
+  border: 1px solid #d8e3e7;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.river-region-diagram:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
+}
+
+.river-region-svg {
+  display: block;
+  width: 100%;
+  min-width: 1120px;
+  height: auto;
+  font-family: inherit;
+  text-anchor: middle;
+}
+
+.river-region-segment rect { stroke: #fff; stroke-width: 2; }
+.river-region-number { fill: #fff; font-size: 20px; font-weight: 700; }
+.river-region-connector { fill: none; stroke: #93aeb8; stroke-width: 1.5; }
+.river-region-dot { fill: #477f97; }
+.river-region-code { fill: #526b75; font-size: 14px; font-weight: 600; letter-spacing: 0.6px; }
+.river-region-name { fill: var(--ink); font-size: 18px; font-weight: 600; }
+.river-region-miles { fill: #526b75; font-size: 16px; }
+.river-region-count { fill: #176b78; font-size: 23px; font-weight: 700; }
+.river-region-count-unit { fill: #526b75; font-size: 16px; font-weight: 400; }
 
 .region-line-label {
   color: var(--ink);

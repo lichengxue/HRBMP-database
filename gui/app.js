@@ -14,7 +14,7 @@ const MONTH_NAMES = [
   'December'
 ];
 
-const DATA_VERSION = '1.2.1';
+const DATA_VERSION = '1.2.2';
 const DATA_REQUEST_VERSION = `${DATA_VERSION}-${Date.now()}`;
 const API_PORT = '8010';
 const DEMO_SUPABASE_URL = window.HRBMP_CONFIG?.supabaseUrl || 'https://vnqulddrlhkftcqpekpl.supabase.co';
@@ -3479,22 +3479,39 @@ function formatAccessLevel(value) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function biologicalRegionReferenceSvg(rows, countsReady) {
+  const counts = summarizeRowsByRegionCode(rows, 'biological');
+  const segmentWidth = 1200 / HRBMP_REGIONS.length;
+  const details = HRBMP_REGIONS.map((region) => `Region ${region.number}, ${region.name} (${region.code}), river miles ${region.river_mile_range}: ${countsReady ? `${formatNumber(counts.get(region.code) || 0)} biological records` : 'records not yet loaded'}.`).join(' ');
+  const regions = HRBMP_REGIONS.map((region, index) => {
+    const x = 60 + index * segmentWidth;
+    const center = x + segmentWidth / 2;
+    const above = index % 2 === 0;
+    const labelY = above ? 28 : 232;
+    const count = counts.get(region.code) || 0;
+    return `
+      <g class="river-region-segment">
+        <rect x="${x}" y="142" width="${segmentWidth}" height="46" fill="${above ? '#176b78' : '#477f97'}" />
+        <text class="river-region-number" x="${center}" y="172">${region.number}</text>
+        <path class="river-region-connector" d="M ${center} ${above ? 142 : 188} V ${above ? 118 : 208}" />
+        <circle class="river-region-dot" cx="${center}" cy="${above ? 118 : 208}" r="3" />
+        <text class="river-region-code" x="${center}" y="${labelY}">REGION ${region.number} · ${escapeHtml(region.code)}</text>
+        <text class="river-region-name" x="${center}" y="${labelY + 25}">${escapeHtml(region.name)}</text>
+        <text class="river-region-miles" x="${center}" y="${labelY + 47}">River Mile ${escapeHtml(region.river_mile_range.replace('-', '–'))}</text>
+        <text class="river-region-count" x="${center}" y="${labelY + 77}">${countsReady ? formatNumber(count) : '—'}<tspan class="river-region-count-unit"> ${count === 1 && countsReady ? 'record' : 'records'}</tspan></text>
+      </g>`;
+  }).join('');
+  return `<svg class="river-region-svg" viewBox="0 0 1320 338" role="img" aria-labelledby="river-regions-title river-regions-description" xmlns="http://www.w3.org/2000/svg">
+    <title id="river-regions-title">Hudson River regions from Battery to Albany</title>
+    <desc id="river-regions-description">Equal-width schematic, not a distance scale. Counts cover the full loaded biological catalog and represent records, not numbers of fish. ${escapeHtml(details)}</desc>
+    ${regions}
+  </svg>`;
+}
+
 function renderBiologicalRegionReference() {
   const container = document.getElementById('bio-region-reference');
   if (!container) return;
-  container.replaceChildren();
-
-  HRBMP_REGIONS.forEach((region) => {
-    const rows = rowsForHudsonRegion(state.biologicalRows, region);
-    const card = document.createElement('article');
-    card.className = 'region-reference-card';
-    card.innerHTML = `
-      <strong>Region ${region.number} - ${escapeHtml(region.name)}</strong>
-      <span>${escapeHtml(region.code)}; River Mile ${escapeHtml(region.river_mile_range)}</span>
-      <span>${formatNumber(rows.length)} Biological Record${rows.length === 1 ? '' : 's'}</span>
-    `;
-    container.appendChild(card);
-  });
+  container.innerHTML = biologicalRegionReferenceSvg(state.biologicalRows, state.demoApiLoaded);
 }
 
 function renderEnvironmental() {
