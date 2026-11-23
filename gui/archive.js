@@ -23,7 +23,7 @@
 
   const PUBLIC_ASSET_KINDS = new Set(['processed_abundance_count', 'representative_species_image', 'environmental_data']);
   function isPublicCatalogItem(item) {
-    return PUBLIC_ASSET_KINDS.has(item.asset_kind) && !isFolderPlaceholder(item);
+    return item.metadata_linked === true && PUBLIC_ASSET_KINDS.has(item.asset_kind) && !isFolderPlaceholder(item);
   }
   function isFolderPlaceholder(item) {
     return String(item.original_file_name || '').split('/').at(-1) === '.emptyFolderPlaceholder';

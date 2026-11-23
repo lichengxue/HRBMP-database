@@ -25,7 +25,7 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 
 - Displays repository-level counts, export metadata, institutional partner
   logos, and collaborator logos on the home page.
-- Displays Beta Version 1.2.2. Version Updates presents a dated release with
+- Displays Beta Version 1.2.3. Version Updates presents a dated release with
   three major-change highlights and expandable earlier updates. HRBMP News
   remains a separate page with official source links.
 - Uses one green uppercase title on each biological, environmental, and
@@ -156,8 +156,11 @@ available item across all pages, or select a single preview page. Previews suppo
 refer to all matching items, not just the currently displayed page.
 
 The end-user interface shows count records, representative fish photos, and
-environmental data. Jar labels, field/lab sheets, and unclassified uploads are
-excluded before caching, mapping, grouping, and request selection. The archive
+environmental data only when metadata_linked is explicitly true. Mismatched or
+unverified metadata never enter public lists, maps, filters, request selections,
+or browser caches, even if an upload already has a public scientific category.
+The public availability menus omit the metadata-pending category. Jar labels,
+field/lab sheets, and unclassified uploads are excluded before caching, mapping, grouping, and request selection. The archive
 and uploader retain these files. This display policy does not delete files or
 change Storage permissions. Storage folder placeholders are omitted as well.
 
