@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.2.2" />
+  <link rel="stylesheet" href="style.css?v=1.2.3" />
 </head>
 <body>
   <header class="site-nav">
@@ -169,7 +169,7 @@
             <div class="intro-block">
               <p class="eyebrow">Hudson River Biological Monitoring Program</p>
               <h1>HRBMP Data Portal</h1>
-              <p class="portal-version">Beta Version 1.2.2</p>
+              <p class="portal-version">Beta Version 1.2.3</p>
               <p class="lead">
                 Browse HRBMP program information, biological observations,
                 environmental measurements, and sampling image records.
@@ -502,19 +502,20 @@
     <section class="tab-page" id="news" data-tab-page="news">
       <div class="page-header"><h1>Version Updates</h1></div>
       <div class="news-list">
-        <article id="release-1-2-2" aria-labelledby="release-1-2-2-title">
+        <article id="release-1-2-3" aria-labelledby="release-1-2-3-title">
           <div class="news-meta"><time datetime="2026-11-23">November 23, 2026</time></div>
-          <h2 id="release-1-2-2-title">Beta Version 1.2.2</h2>
+          <h2 id="release-1-2-3-title">Beta Version 1.2.3</h2>
           <ul class="version-updates">
-            <li><strong>River regions:</strong> a horizontal Hudson River schematic replaces the region cards, showing all 13 regions from Battery to Albany.</li>
-            <li><strong>Record counts:</strong> each region shows biological records from the full catalog alongside its name, code, number, and river-mile range.</li>
-            <li><strong>Readable layout:</strong> alternating labels keep the diagram clear; smaller screens can scroll, and an accessible description includes all region counts.</li>
+            <li><strong>Matched records:</strong> uploads without verified metadata links are hidden from public lists, maps, filters, and request selections.</li>
+            <li><strong>Cleaner filters:</strong> the public availability menus no longer offer a metadata-pending category; original files remain in the archive for review.</li>
+            <li><strong>River regions:</strong> the horizontal Battery-to-Albany diagram retains all 13 regions, river-mile ranges, and biological record counts.</li>
           </ul>
         </article>
       </div>
       <details class="release-history">
         <summary>Earlier version updates</summary>
         <ul class="version-updates">
+          <li>Beta 1.2.2: Horizontal Hudson River regions show names, river miles, and biological record counts.</li>
           <li>Beta 1.2.1: Curated public results, hidden internal files, and simpler availability headings and selection controls.</li>
           <li>Beta 1.2.0: Cached snapshots, clearer controls, searchable results, page jumps, and requests across matching pages.</li>
           <li>Beta 1.1.4: Load saved totals quickly, search results, and request matches across pages.</li>
@@ -562,7 +563,7 @@
           <label>Region<select id="bio-region"></select></label>
           <label>Sample<select id="bio-sample"></select></label>
           <label>Data Type<select id="bio-data-type"></select></label>
-          <label>Availability<select id="bio-availability"><option value="all">All Statuses</option><option value="available">Available on request</option><option value="awaiting_upload">Awaiting upload</option><option value="metadata_pending">Metadata pending</option></select></label>
+          <label>Availability<select id="bio-availability"><option value="all">All Statuses</option><option value="available">Available on request</option><option value="awaiting_upload">Awaiting upload</option></select></label>
           <label>
             Year From
             <select id="bio-year-start"></select>
@@ -970,7 +971,7 @@
           <label>Monitoring Program<select id="catalog-program"></select></label>
           <label>Region<select id="catalog-region"></select></label>
           <label>Sample<select id="catalog-sample"></select></label>
-          <label>Availability<select id="catalog-availability"><option value="all">All Statuses</option><option value="available">Available on request</option><option value="awaiting_upload">Awaiting upload</option><option value="metadata_pending">Metadata pending</option></select></label>
+          <label>Availability<select id="catalog-availability"><option value="all">All Statuses</option><option value="available">Available on request</option><option value="awaiting_upload">Awaiting upload</option></select></label>
           <label>Year From<select id="catalog-year-start"></select></label>
           <label>Year To<select id="catalog-year-end"></select></label>
           <button type="button" class="secondary-button filter-action" data-clear-database="catalog" title="Clear filters" aria-label="Clear image catalog filters"><i data-lucide="rotate-ccw" aria-hidden="true"></i><span>Clear filters</span></button>
@@ -2594,8 +2595,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="config.js"></script>
-  <script src="archive.js?v=1.2.2"></script>
-  <script src="archive-cache.js?v=1.2.2"></script>
-  <script src="app.js?v=1.2.2"></script>
+  <script src="archive.js?v=1.2.3"></script>
+  <script src="archive-cache.js?v=1.2.3"></script>
+  <script src="app.js?v=1.2.3"></script>
 </body>
 </html>

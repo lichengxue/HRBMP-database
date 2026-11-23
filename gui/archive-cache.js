@@ -1,7 +1,7 @@
 /* Cache public availability metadata only; never credentials, requests or file contents. */
 (function (root) {
   'use strict';
-  const VERSION = 3;
+  const VERSION = 4;
   const MAX_AGE = 60 * 60 * 1000;
   const PUBLIC_FIELDS = ['catalog_id', 'sample_id', 'program', 'sample_date', 'river_mile',
     'river_region_number', 'river_region_name', 'latitude', 'longitude', 'taxon_code',
