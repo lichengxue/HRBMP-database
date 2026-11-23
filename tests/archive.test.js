@@ -186,7 +186,7 @@ function guiHelpers(client) {
     renderAdminRequestRows = () => {};
     resetAdminRequestReport = () => {};
     setLoginStatus = (message) => { globalThis.loginStatus = message; };
-    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, variablesForSource, emptyLiveData, sumRecordCounts, MAP_BASEMAPS, DEFAULT_BASEMAP, mainRequestItems, databasePageItems };
+    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, variablesForSource, emptyLiveData, sumRecordCounts, MAP_BASEMAPS, DEFAULT_BASEMAP, mainRequestItems, databasePageItems, renderRiverRegionReferences };
   `, context);
   return { ...context, panel };
 }
@@ -324,21 +324,21 @@ test('image map groups actual files per sample and does not fabricate coordinate
 test('beta version, asset references and dated major-change News release agree', () => {
   const html = fs.readFileSync('gui/index.html', 'utf8');
   const app = fs.readFileSync('gui/app.js', 'utf8');
-  assert.match(html, /class="portal-version">Beta Version 1\.2\.3</);
-  assert.match(app, /const DATA_VERSION = '1\.2\.3';/);
-  for (const file of ['style.css', 'archive.js', 'archive-cache.js', 'app.js']) assert.ok(html.includes(`${file}?v=1.2.3`));
+  assert.match(html, /class="portal-version">Beta Version 1\.2\.4</);
+  assert.match(app, /const DATA_VERSION = '1\.2\.4';/);
+  for (const file of ['style.css', 'archive.js', 'archive-cache.js', 'app.js']) assert.ok(html.includes(`${file}?v=1.2.4`));
   const start = html.indexOf('id="news"');
   const news = html.slice(start, html.indexOf('</section>', start));
   const release = news.slice(news.indexOf('<article'), news.indexOf('</article>'));
-  assert.match(release, /Beta Version 1\.2\.3/);
+  assert.match(release, /Beta Version 1\.2\.4/);
   assert.match(release, /datetime="2026-11-23"/);
   const changes = [...release.matchAll(/<li>(.*?)<\/li>/g)].map(match => match[1].replace(/<[^>]*>/g, ''));
   assert.equal(changes.length, 3);
   assert.ok(changes.every(change => change.split(/\s+/).length <= 26));
   const history = news.slice(news.indexOf('<details'));
   const older = [...history.matchAll(/<li>(.*?)<\/li>/g)].map(match => match[1].replace(/<[^>]*>/g, ''));
-  assert.equal(older.length, 6);
-  for (const [index, version] of ['1.2.2', '1.2.1', '1.2.0', '1.1.4', '1.1.3', '1.1.2'].entries()) {
+  assert.equal(older.length, 7);
+  for (const [index, version] of ['1.2.3', '1.2.2', '1.2.1', '1.2.0', '1.1.4', '1.1.3', '1.1.2'].entries()) {
     assert.ok(older[index].startsWith(`Beta ${version}:`));
     assert.ok(older[index].split(/\s+/).length <= 16);
   }
@@ -381,7 +381,7 @@ test('availability pages each retain one semantic heading in the shared green up
   const css = fs.readFileSync('gui/style.css', 'utf8');
   assert.match(css, /\.eyebrow\s*\{[^}]*color: var\(--teal\);[^}]*text-transform: uppercase;/);
   assert.match(css, /#sampling-image-catalog \.page-header h1\.eyebrow\s*\{[^}]*color: var\(--teal\);[^}]*font-size: 0\.82rem;/);
-  assert.ok(html.includes('style.css?v=1.2.3'));
+  assert.ok(html.includes('style.css?v=1.2.4'));
 });
 
 test('data-type groups contain only real records and distinguish available items from missing uploads', () => {
@@ -484,7 +484,7 @@ function cachedGui(cache, fetchRows) {
     window: { HRBMP_CONFIG: { publishableKey: publicTestKey }, HRBMPArchive: archive, HRBMPArchiveCache: cache,
       location: { hash: '#home' }, dispatchEvent: () => {} } });
   vm.runInContext(fs.readFileSync('gui/app.js', 'utf8') + `
-    populateFilters = renderBiologicalRegionReference = renderBiologicalMap = renderDatabaseAvailability =
+    populateFilters = renderRiverRegionReferences = renderBiologicalMap = renderDatabaseAvailability =
       updateDataRequestSummary = renderEnvironmental = renderCatalog = refreshAdminSession = setArchiveStatus = () => {};
     fetchDemoArchiveRows = () => globalThis.fetchRows();
     state.data = emptyLiveData();
@@ -629,4 +629,39 @@ test('browser catalog writes wait for the complete transaction and recover from 
   assert.equal(await cache.writeCatalog('https://example.supabase.co', [item(1), item(2)], date), false);
   assert.equal((await cache.readCatalog('https://example.supabase.co')).items.length, 1);
   assert.equal(await cache.readCatalog('https://different.supabase.co'), null);
+});
+
+
+test('river region totals use the corresponding catalog and count available photos without coordinates', () => {
+  const context = guiHelpers(adminClient());
+  const panels = new Map(['bio', 'env', 'catalog'].map(prefix => [`${prefix}-region-reference`, { innerHTML: '' }]));
+  context.document.getElementById = id => panels.get(id) || null;
+  const rows = [
+    item(1, { asset_kind: 'processed_abundance_count', river_region_number: 0 }),
+    item(2, { river_region_number: 0, latitude: null, longitude: null }),
+    item(3, { river_region_number: 0, available: false }),
+    item(4, { river_region_number: 0, metadata_linked: false }),
+    item(5, { river_region_number: 0, asset_kind: 'jar_label_image' }),
+    item(6, { sample_id: 'ENV_SAMPLE', river_region_number: 12, asset_kind: 'environmental_data', available_variables: ['mean_temperature_c', 'mean_ph'] })
+  ].map(archive.normalizeItem);
+  const maps = archive.buildMapRows(rows);
+  Object.assign(context.helpers.state, { demoRows: rows, biologicalRows: maps.biological, environmentalRows: maps.environmental, demoApiLoaded: true });
+  context.helpers.renderRiverRegionReferences();
+  const bio = panels.get('bio-region-reference').innerHTML;
+  const env = panels.get('env-region-reference').innerHTML;
+  const images = panels.get('catalog-region-reference').innerHTML;
+  assert.match(bio, /Battery \(BT\), river miles 0-11: 1 biological record/);
+  assert.match(env, /Albany \(AL\), river miles 125-152: 1 environmental record/);
+  assert.match(images, /Battery \(BT\), river miles 0-11: 1 available image/);
+  assert.match(images, />1<tspan[^>]*> image<\/tspan>/);
+  for (const [prefix, panel] of [['bio', bio], ['env', env], ['catalog', images]]) {
+    assert.equal((panel.match(/class="river-region-segment"/g) || []).length, 13);
+    assert.ok(panel.includes(`id="${prefix}-river-regions-title"`));
+  }
+  context.helpers.state.demoApiLoaded = false;
+  context.helpers.renderRiverRegionReferences();
+  for (const panel of panels.values()) {
+    assert.match(panel.innerHTML, /count not yet loaded/);
+    assert.doesNotMatch(panel.innerHTML, />0<tspan/);
+  }
 });

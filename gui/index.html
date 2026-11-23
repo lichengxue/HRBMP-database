@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.2.3" />
+  <link rel="stylesheet" href="style.css?v=1.2.4" />
 </head>
 <body>
   <header class="site-nav">
@@ -169,7 +169,7 @@
             <div class="intro-block">
               <p class="eyebrow">Hudson River Biological Monitoring Program</p>
               <h1>HRBMP Data Portal</h1>
-              <p class="portal-version">Beta Version 1.2.3</p>
+              <p class="portal-version">Beta Version 1.2.4</p>
               <p class="lead">
                 Browse HRBMP program information, biological observations,
                 environmental measurements, and sampling image records.
@@ -502,19 +502,20 @@
     <section class="tab-page" id="news" data-tab-page="news">
       <div class="page-header"><h1>Version Updates</h1></div>
       <div class="news-list">
-        <article id="release-1-2-3" aria-labelledby="release-1-2-3-title">
+        <article id="release-1-2-4" aria-labelledby="release-1-2-4-title">
           <div class="news-meta"><time datetime="2026-11-23">November 23, 2026</time></div>
-          <h2 id="release-1-2-3-title">Beta Version 1.2.3</h2>
+          <h2 id="release-1-2-4-title">Beta Version 1.2.4</h2>
           <ul class="version-updates">
-            <li><strong>Matched records:</strong> uploads without verified metadata links are hidden from public lists, maps, filters, and request selections.</li>
-            <li><strong>Cleaner filters:</strong> the public availability menus no longer offer a metadata-pending category; original files remain in the archive for review.</li>
-            <li><strong>River regions:</strong> the horizontal Battery-to-Albany diagram retains all 13 regions, river-mile ranges, and biological record counts.</li>
+            <li><strong>Consistent river regions:</strong> biological, environmental, and sampling-image pages each show the horizontal Battery-to-Albany bar with all 13 regions and river-mile ranges.</li>
+            <li><strong>Relevant totals:</strong> regional counts show biological records, environmental samples with data, or available public fish photos for the corresponding catalog.</li>
+            <li><strong>Complete regional coverage:</strong> image totals include photos with a known region even when map coordinates are missing; internal and mismatched uploads stay hidden.</li>
           </ul>
         </article>
       </div>
       <details class="release-history">
         <summary>Earlier version updates</summary>
         <ul class="version-updates">
+          <li>Beta 1.2.3: Hide mismatched uploads throughout public results, filters, maps, requests, and caches.</li>
           <li>Beta 1.2.2: Horizontal Hudson River regions show names, river miles, and biological record counts.</li>
           <li>Beta 1.2.1: Curated public results, hidden internal files, and simpler availability headings and selection controls.</li>
           <li>Beta 1.2.0: Cached snapshots, clearer controls, searchable results, page jumps, and requests across matching pages.</li>
@@ -865,6 +866,12 @@
           </form>
         </div>
       </section>
+
+      <section class="data-panel river-region-panel" aria-labelledby="env-regions-heading">
+        <h2 id="env-regions-heading">HRBMP River Regions</h2>
+        <p>Battery (downstream) to Albany (upstream). Equal-width regions; environmental record counts cover the full catalog.</p>
+        <div class="river-region-diagram" id="env-region-reference" tabindex="0" role="region" aria-label="Horizontal Hudson River region diagram; scroll horizontally to see all regions on smaller screens"></div>
+      </section>
     </section>
 
     <section class="tab-page" id="environmental-data-request" data-tab-page="environmental-data-request">
@@ -1030,6 +1037,12 @@
             <button type="submit" class="secondary-button">Go</button>
           </form>
         </div>
+      </section>
+
+      <section class="data-panel river-region-panel" aria-labelledby="catalog-regions-heading">
+        <h2 id="catalog-regions-heading">HRBMP River Regions</h2>
+        <p>Battery (downstream) to Albany (upstream). Equal-width regions; available public fish-photo counts cover the full catalog.</p>
+        <div class="river-region-diagram" id="catalog-region-reference" tabindex="0" role="region" aria-label="Horizontal Hudson River region diagram; scroll horizontally to see all regions on smaller screens"></div>
       </section>
     </section>
 
@@ -2595,8 +2608,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="config.js"></script>
-  <script src="archive.js?v=1.2.3"></script>
-  <script src="archive-cache.js?v=1.2.3"></script>
-  <script src="app.js?v=1.2.3"></script>
+  <script src="archive.js?v=1.2.4"></script>
+  <script src="archive-cache.js?v=1.2.4"></script>
+  <script src="app.js?v=1.2.4"></script>
 </body>
 </html>

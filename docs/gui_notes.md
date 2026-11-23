@@ -25,7 +25,7 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 
 - Displays repository-level counts, export metadata, institutional partner
   logos, and collaborator logos on the home page.
-- Displays Beta Version 1.2.3. Version Updates presents a dated release with
+- Displays Beta Version 1.2.4. Version Updates presents a dated release with
   three major-change highlights and expandable earlier updates. HRBMP News
   remains a separate page with official source links.
 - Uses one green uppercase title on each biological, environmental, and
@@ -84,13 +84,19 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 
 ## Spatial Structure
 
-The HRBMP River Regions reference panel is a horizontal, equal-width schematic
-from Battery (downstream) to Albany (upstream), separate from the interactive GIS
-map. It retains all 13 region names, codes, numbers, and river-mile ranges.
-Alternating labels show biological record totals from the full loaded catalog,
-independent of map filters. Counts are records, not fish abundance. Until the
-catalog loads, a dash is shown instead of zero. On smaller screens the diagram
-scrolls horizontally; its accessible description lists every region and count.
+Each biological, environmental, and sampling-image page has an HRBMP River
+Regions panel: a horizontal, equal-width schematic from Battery (downstream) to
+Albany (upstream), separate from its interactive GIS map. All three use the same
+13 region names, codes, numbers, river-mile ranges, and layout.
+
+Counts cover the full loaded catalog, independent of map filters. Biological
+totals represent sample-taxon records, not fish abundance. Environmental totals
+count samples with recorded environmental data, not individual measurements.
+Image totals count available public fish photos, including photos with a known
+region but no map coordinates; files awaiting upload, internal files, and
+mismatched uploads are excluded. Until the catalog loads, a dash is shown instead
+of zero. The diagrams scroll horizontally on smaller screens. Each has its own
+accessible title and description listing every region and count.
 
 The test map data are organized around the 13 HRBMP longitudinal river regions.
 The HRBMP source material describes these as numbered regions based on river
