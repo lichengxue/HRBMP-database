@@ -3604,3 +3604,26 @@ tbody tr:hover {
     display: grid;
   }
 }
+
+/* Readable actions and browsing controls for large availability result sets. */
+.snapshot-panel #snapshot-date{font-size:.88rem;line-height:1.5;overflow-wrap:anywhere}
+.snapshot-panel #snapshot-status{margin:8px 0;color:rgba(245,251,249,.8);font-size:.82rem;line-height:1.5}
+.snapshot-panel .snapshot-refresh{margin-top:8px;padding:8px 14px;color:#fff;background:transparent;border-color:rgba(255,255,255,.5)}
+.snapshot-panel .snapshot-refresh:hover{background:rgba(255,255,255,.12)}
+.filter-action,.page-action{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px;min-height:40px}
+.filter-action svg,.page-action svg{width:18px;height:18px;flex-shrink:0}
+.database-result-tools{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;margin:16px 0}
+.database-result-tools>label{display:grid;gap:6px;flex:1 1 300px;max-width:620px;color:var(--muted);font-size:.88rem;font-weight:600}
+.database-result-tools input{width:100%;font-weight:400;font-size:1rem}
+.database-selection-actions{display:flex;flex-wrap:wrap;gap:8px}
+.database-selection-actions button,.page-jump-form button{padding:8px 12px}
+.archive-pagination{flex-wrap:wrap;justify-content:flex-start;gap:10px}
+.archive-pagination>label,.page-jump-form label{display:flex;align-items:center;gap:8px;font-weight:400;margin:0;font-size:.88rem}
+.archive-pagination select{min-width:70px;width:auto}
+.archive-pagination>span{flex:1 1 200px;text-align:center;font-variant-numeric:tabular-nums}
+.page-jump-form{display:flex;align-items:center;gap:8px;margin-left:auto}
+.page-jump-form input{width:80px;min-width:65px;min-height:38px;padding:7px 10px;border:1px solid #cbd8d3;border-radius:6px;background:var(--surface);color:var(--ink)}
+.classification-note{border-left:3px solid #b68521;background:#fffaf0;padding:12px 15px;line-height:1.55;font-size:.9rem;color:#624e22}
+.classification-note[hidden]{display:none}
+.archive-file-description{display:block;margin-top:5px;color:var(--muted);font-size:.8rem;line-height:1.4}
+@media(max-width:600px){.database-selection-actions{width:100%}.database-selection-actions button{flex:1}.page-jump-form{margin-left:0;width:100%;justify-content:flex-end}.archive-pagination>span{flex-basis:100%;order:4}}

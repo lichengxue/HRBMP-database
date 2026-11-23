@@ -25,7 +25,7 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 
 - Displays repository-level counts, export metadata, institutional partner
   logos, and collaborator logos on the home page.
-- Displays Beta Version 1.1.3. News has separate Version Updates (three concise
+- Displays Beta Version 1.1.4. News has separate Version Updates (three concise
   beta-update bullets) and HRBMP News pages, with links to official articles.
 - Uses one green uppercase title on each biological, environmental, and
   sampling-image availability page.
@@ -129,3 +129,25 @@ node scripts/generate_gui_test_points.js
   Enterprise, hosted FeatureLayers, or official institutional basemaps.
 - Add real station coordinates, official HRBMP data, and an image metadata table.
 - Host directly with GitHub Pages for easy sharing.
+
+
+## Saved availability and large result sets
+
+The portal saves only public availability metadata in IndexedDB and the four
+snapshot totals in localStorage, scoped to the Supabase project. Catalog data is
+reused for one hour; older results appear immediately while a live update runs.
+Refresh data or Update totals bypasses the cache. Storage failures fall back to
+live loading, and failed updates retain the saved result set and its timestamp.
+Credentials, admin requests, private measurements, storage paths, download URLs,
+and file contents are excluded from this cache.
+
+Search filters the complete matching result set. Users can select every matching
+available item across all pages, or select a single preview page. Previews support
+25, 50, or 100 rows and a direct page jump. Selection and request counts always
+refer to all matching items, not just the currently displayed page.
+
+The end-user interface excludes field-sheet and lab-sheet items before caching,
+mapping, grouping, and request selection. These sheets remain in the private
+archive and uploader; the portal change does not delete stored files or change
+Storage permissions. Unclassified files remain visible with their actual format
+and an explanation. Storage folder placeholders are omitted from data lists.
