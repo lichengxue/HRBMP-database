@@ -3627,3 +3627,5 @@ tbody tr:hover {
 .classification-note[hidden]{display:none}
 .archive-file-description{display:block;margin-top:5px;color:var(--muted);font-size:.8rem;line-height:1.4}
 @media(max-width:600px){.database-selection-actions{width:100%}.database-selection-actions button{flex:1}.page-jump-form{margin-left:0;width:100%;justify-content:flex-end}.archive-pagination>span{flex-basis:100%;order:4}}
+
+.news-list article .version-updates{margin-top:14px}.release-history{margin-top:20px}.release-history>summary{cursor:pointer;padding:10px 0;font-weight:600;color:var(--teal)}.release-history .version-updates{margin-top:8px}
