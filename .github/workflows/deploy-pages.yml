@@ -46,6 +46,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Upload GUI artifact
+        id: pages_upload
         uses: actions/upload-pages-artifact@v3
         with:
           name: ${{ env.PAGES_ARTIFACT_NAME }}
@@ -75,6 +76,43 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/github-script@v7
+        timeout-minutes: 11
+        env:
+          PAGES_ARTIFACT_ID: ${{ steps.pages_upload.outputs.artifact_id }}
         with:
-          artifact_name: ${{ env.PAGES_ARTIFACT_NAME }}
+          script: |
+            const artifactId = process.env.PAGES_ARTIFACT_ID;
+            if (!/^\d+$/.test(artifactId || '')) throw new Error('The Pages upload has no artifact ID.');
+            const oidcToken = await core.getIDToken();
+            core.setSecret(oidcToken);
+            const { data: deployment } = await github.request('POST /repos/{owner}/{repo}/pages/deployments', {
+              ...context.repo,
+              artifact_id: Number(artifactId),
+              pages_build_version: context.sha,
+              oidc_token: oidcToken
+            });
+            const deploymentId = deployment.id || deployment.status_url?.split('/').pop();
+            if (!deploymentId) throw new Error('Pages did not return a deployment ID.');
+            core.setOutput('page_url', deployment.page_url);
+            const failed = new Set([
+              'deployment_failed', 'deployment_perms_error', 'deployment_content_failed',
+              'deployment_cancelled', 'deployment_lost'
+            ]);
+            for (let attempt = 0; attempt < 120; attempt++) {
+              const { data } = await github.request('GET /repos/{owner}/{repo}/pages/deployments/{deployment_id}', {
+                ...context.repo,
+                deployment_id: deploymentId
+              });
+              if (data.status === 'succeed') {
+                core.info('The HRBMP website is published.');
+                return;
+              }
+              if (failed.has(data.status)) throw new Error(`Pages deployment failed: ${data.status}`);
+              if (attempt < 119) await new Promise(resolve => setTimeout(resolve, 5000));
+            }
+            await github.request('POST /repos/{owner}/{repo}/pages/deployments/{deployment_id}/cancel', {
+              ...context.repo,
+              deployment_id: deploymentId
+            }).catch(() => {});
+            throw new Error('The Pages deployment did not finish within ten minutes.');
