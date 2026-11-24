@@ -14,7 +14,7 @@ const MONTH_NAMES = [
   'December'
 ];
 
-const DATA_VERSION = '1.2.5';
+const DATA_VERSION = '1.2.6';
 const DATA_REQUEST_VERSION = `${DATA_VERSION}-${Date.now()}`;
 const DEMO_SUPABASE_URL = window.HRBMP_CONFIG?.supabaseUrl || 'https://vnqulddrlhkftcqpekpl.supabase.co';
 const DEMO_SUPABASE_KEY_STORAGE = 'hrbmp_demo_supabase_publishable_key';
