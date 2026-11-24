@@ -14,7 +14,7 @@ const MONTH_NAMES = [
   'December'
 ];
 
-const DATA_VERSION = '1.2.6';
+const DATA_VERSION = '1.2.7';
 const DATA_REQUEST_VERSION = `${DATA_VERSION}-${Date.now()}`;
 const DEMO_SUPABASE_URL = window.HRBMP_CONFIG?.supabaseUrl || 'https://vnqulddrlhkftcqpekpl.supabase.co';
 const DEMO_SUPABASE_KEY_STORAGE = 'hrbmp_demo_supabase_publishable_key';
@@ -917,6 +917,7 @@ document.addEventListener('DOMContentLoaded', () => {
   organizeFieldSamplingGallery();
   organizeLabSampleProcessingGallery();
   initTabs();
+  bindFishTalesSearch();
   state.data = emptyLiveData();
   state.ready = true;
   renderAll();
@@ -955,10 +956,13 @@ function initTabs() {
     pages.forEach((page) => {
       page.classList.toggle('active', page.dataset.tabPage === nextId);
     });
+    document.body.classList.toggle('education-reading-page', nextId === 'educational-materials' || nextId === 'education-fish-tales' || nextId === 'education-classroom' || nextId === 'education-supplementary' || nextId.startsWith('fish-tale-') || nextId.startsWith('activity-'));
 
     links.forEach((link) => {
       const isMenuParent = link.parentElement?.classList.contains('nav-dropdown');
-      link.classList.toggle('active', link.dataset.tabLink === nextId || (isMenuParent && link.dataset.tabLink === parentId));
+      const isFishTalesParent = link.dataset.tabLink === 'education-fish-tales' && nextId.startsWith('fish-tale-');
+      const isActivitiesParent = link.dataset.tabLink === 'education-classroom' && nextId.startsWith('activity-');
+      link.classList.toggle('active', link.dataset.tabLink === nextId || isFishTalesParent || isActivitiesParent || (isMenuParent && link.dataset.tabLink === parentId));
     });
 
     if (updateHash && window.location.hash !== `#${nextId}`) {
@@ -966,6 +970,17 @@ function initTabs() {
     }
 
     window.dispatchEvent(new CustomEvent('hrbmp-tab-change', { detail: { tabId: nextId } }));
+
+    if (document.body.classList.contains('education-reading-page')) {
+      window.requestAnimationFrame(() => {
+        const heading = document.getElementById(nextId)?.querySelector('h1');
+        if (heading) {
+          heading.tabIndex = -1;
+          heading.focus({ preventScroll: true });
+        }
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      });
+    }
   }
 
   const siteSearchForm = document.getElementById('site-search-form');
@@ -1153,6 +1168,7 @@ function initTabs() {
 
   links.forEach((link) => {
     link.addEventListener('click', (event) => {
+      if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       showTab(link.dataset.tabLink);
     });
@@ -1216,6 +1232,32 @@ function initTabs() {
   window.addEventListener('resize', refreshActiveMap);
 
   showTab(window.location.hash.replace('#', '') || 'home', false);
+}
+
+function bindFishTalesSearch() {
+  const input = document.getElementById('fish-tales-search');
+  if (!input) return;
+  const cards = Array.from(document.querySelectorAll('[data-fish-tale-search]'));
+  const clear = document.getElementById('fish-tales-clear');
+  const empty = document.getElementById('fish-tales-empty');
+  const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const filter = () => {
+    const words = normalize(input.value).split(' ').filter(Boolean);
+    let visible = 0;
+    cards.forEach((card) => {
+      card.hidden = !words.every((word) => normalize(card.dataset.fishTaleSearch).includes(word));
+      if (!card.hidden) visible += 1;
+    });
+    clear.hidden = input.value.length === 0;
+    empty.hidden = visible > 0;
+  };
+  input.addEventListener('input', filter);
+  clear.addEventListener('click', () => {
+    input.value = '';
+    filter();
+    input.focus();
+  });
+  filter();
 }
 
 function focusCurriculumSection(sectionId) {

@@ -33,9 +33,14 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
   Fund are omitted from the funding grid. Agency logos do not appear on either
   research page. All acknowledgement images are local files with source and
   integrity records in `gui/assets/acknowledgements/README.md`.
-- Displays Beta Version 1.2.6. Version Updates presents a dated release with
+- Displays Beta Version 1.2.7. Version Updates presents a dated release with
   three major-change highlights and expandable earlier updates. HRBMP News
   remains a separate page with official source links.
+- Fish Tales has 16 complete species profiles and a search by common or
+  scientific name. Classroom Activities includes survey design with a live
+  budget, fish life-stage matching, plan downloads, and print layouts.
+- Supplementary Materials previews the two supplied survey teaching decks
+  as PDFs and provides original PowerPoint and PDF downloads.
 - Uses one green uppercase title on each biological, environmental, and
   sampling-image availability page.
 - Organizes Program Description navigation into a Program Overview plus the

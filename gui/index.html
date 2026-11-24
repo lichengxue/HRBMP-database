@@ -7,7 +7,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.2.6&amp;build=20261123-cleanup" />
+  <link rel="stylesheet" href="style.css?v=1.2.7" />
+  <link rel="stylesheet" href="fish-tales.css?v=1.2.7" />
+  <link rel="stylesheet" href="education-activities.css?v=1.2.7" />
 </head>
 <body>
   <header class="site-nav">
@@ -59,7 +61,7 @@
             <a href="#research-publications" data-tab-link="research-publications">Publications</a>
           </div>
         </div>
-        <div class="nav-dropdown">
+        <div class="nav-dropdown education-navigation">
           <a href="#educational-materials" data-tab-link="educational-materials">Educational Materials</a>
           <div class="nav-submenu" aria-label="Educational Materials subsections">
             <div class="nav-subitem">
@@ -75,19 +77,22 @@
             <div class="nav-subitem">
               <a href="#education-fish-tales" data-tab-link="education-fish-tales">Fish Tales</a>
               <div class="nav-nested-submenu" aria-label="Fish Tales species">
-                <a href="#education-fish-tales" data-fish-tale-focus="atlantic-tomcod">Atlantic Tomcod</a>
-                <a href="#education-fish-tales" data-fish-tale-focus="american-shad">American Shad</a>
-                <a href="#education-fish-tales" data-fish-tale-focus="striped-bass">Striped Bass</a>
-                <a href="#education-fish-tales" data-fish-tale-focus="white-perch">White Perch</a>
-                <a href="#education-fish-tales" data-fish-tale-focus="bay-anchovy">Bay Anchovy</a>
-                <a href="#education-fish-tales" data-fish-tale-focus="alewife">Alewife</a>
-                <a href="#education-fish-tales" data-fish-tale-focus="blueback-herring">Blueback Herring</a>
-                <a href="#education-fish-tales" data-fish-tale-focus="rainbow-smelt">Rainbow Smelt</a>
-                <a href="#education-fish-tales" data-fish-tale-focus="yellow-perch">Yellow Perch</a>
-                <a href="#education-fish-tales" data-fish-tale-focus="spottail-shiner">Spottail Shiner</a>
-                <a href="#education-fish-tales" data-fish-tale-focus="bluefish">Bluefish</a>
-                <a href="#education-fish-tales" data-fish-tale-focus="hogchoker">Hogchoker</a>
-                <a href="#education-fish-tales" data-fish-tale-focus="atlantic-menhaden">Atlantic Menhaden</a>
+                <a href="#fish-tale-alewife" data-tab-link="fish-tale-alewife">Alewife</a>
+                <a href="#fish-tale-american-shad" data-tab-link="fish-tale-american-shad">American Shad</a>
+                <a href="#fish-tale-atlantic-sturgeon" data-tab-link="fish-tale-atlantic-sturgeon">Atlantic Sturgeon</a>
+                <a href="#fish-tale-atlantic-tomcod" data-tab-link="fish-tale-atlantic-tomcod">Atlantic Tomcod</a>
+                <a href="#fish-tale-bay-anchovy" data-tab-link="fish-tale-bay-anchovy">Bay Anchovy</a>
+                <a href="#fish-tale-blueback-herring" data-tab-link="fish-tale-blueback-herring">Blueback Herring</a>
+                <a href="#fish-tale-bluefish" data-tab-link="fish-tale-bluefish">Bluefish</a>
+                <a href="#fish-tale-channel-catfish" data-tab-link="fish-tale-channel-catfish">Channel Catfish</a>
+                <a href="#fish-tale-gizzard-shad" data-tab-link="fish-tale-gizzard-shad">Gizzard Shad</a>
+                <a href="#fish-tale-hogchoker" data-tab-link="fish-tale-hogchoker">Hogchoker</a>
+                <a href="#fish-tale-rainbow-smelt" data-tab-link="fish-tale-rainbow-smelt">Rainbow Smelt</a>
+                <a href="#fish-tale-shortnose-sturgeon" data-tab-link="fish-tale-shortnose-sturgeon">Shortnose Sturgeon</a>
+                <a href="#fish-tale-spottail-shiner" data-tab-link="fish-tale-spottail-shiner">Spottail Shiner</a>
+                <a href="#fish-tale-tessellated-darter" data-tab-link="fish-tale-tessellated-darter">Tessellated Darter</a>
+                <a href="#fish-tale-white-catfish" data-tab-link="fish-tale-white-catfish">White Catfish</a>
+                <a href="#fish-tale-white-perch" data-tab-link="fish-tale-white-perch">White Perch</a>
               </div>
             </div>
             <div class="nav-subitem">
@@ -117,13 +122,11 @@
               </div>
             </div>
             <div class="nav-subitem">
-              <a href="#education-classroom" data-tab-link="education-classroom">Classroom Materials</a>
+              <a href="#education-classroom" data-tab-link="education-classroom">Classroom Activities</a>
               <div class="nav-nested-submenu" aria-label="Classroom Materials subsections">
-                <a href="#education-classroom" data-classroom-focus="lesson-plans">Lesson Plans</a>
-                <a href="#education-classroom" data-classroom-focus="student-worksheets">Student Worksheets</a>
-                <a href="#education-classroom" data-classroom-focus="slide-decks">Teacher Slide Decks</a>
-                <a href="#education-classroom" data-classroom-focus="data-activities">Data Activities</a>
-                <a href="#education-classroom" data-classroom-focus="field-lab-activities">Field &amp; Lab Activities</a>
+                <a href="#activity-survey-design" data-tab-link="activity-survey-design">Survey Design Challenge</a>
+                <a href="#activity-match-fish" data-tab-link="activity-match-fish">Match Young Fish to Adults</a>
+                <a href="#education-supplementary" data-tab-link="education-supplementary">Supplementary Materials</a>
               </div>
             </div>
             <div class="nav-subitem">
@@ -171,7 +174,7 @@
             <div class="intro-block">
               <p class="eyebrow">Hudson River Biological Monitoring Program</p>
               <h1>HRBMP Data Portal</h1>
-              <p class="portal-version">Beta Version 1.2.6</p>
+            <p class="portal-version">Beta Version 1.2.7</p>
               <p class="lead">
                 Browse HRBMP program information, biological observations,
                 environmental measurements, and sampling image records.
@@ -485,19 +488,20 @@
     <section class="tab-page" id="news" data-tab-page="news">
       <div class="page-header"><h1>Version Updates</h1></div>
       <div class="news-list">
-        <article id="release-1-2-6" aria-labelledby="release-1-2-6-title">
+        <article id="release-1-2-7" aria-labelledby="release-1-2-7-title">
           <div class="news-meta"><time datetime="2026-11-23">November 23, 2026</time></div>
-          <h2 id="release-1-2-6-title">Beta Version 1.2.6</h2>
+          <h2 id="release-1-2-7-title">Beta Version 1.2.7</h2>
           <ul class="version-updates">
-            <li><strong>Research:</strong> organized current and previous projects, funding information, and publications, including work under review and revision.</li>
-            <li><strong>Data access:</strong> clearer availability displays, regional heatmaps, filters, and faster loading.</li>
-            <li><strong>Resources and partnerships:</strong> expanded species information, simplified request management, and updated institutional and supporting organization acknowledgements.</li>
+            <li><strong>Education materials:</strong> complete Fish Tales species profiles with photographs, life histories, ecological roles, and monitoring context.</li>
+            <li><strong>Classroom activities:</strong> interactive survey design with live budgeting, fish life-stage matching, and printable learning materials.</li>
+            <li><strong>Supplementary resources:</strong> survey background and challenge slides with in-page PDF previews and downloadable PowerPoint and PDF files.</li>
           </ul>
         </article>
       </div>
       <details class="release-history">
         <summary>Earlier version updates</summary>
         <ul class="version-updates">
+            <li>Beta 1.2.6: Organized research, publications, data access, species resources, request management, and institutional acknowledgements.</li>
           <li>Beta 1.2.5: Research tabs, verified projects, year-grouped publications, species photos, regional heatmaps, and homepage acknowledgements.</li>
           <li>Beta 1.2.4: River-region diagrams show catalog-specific totals across biological, environmental, and image pages.</li>
           <li>Beta 1.2.3: Hide mismatched uploads throughout public results, filters, maps, requests, and caches.</li>
@@ -1046,15 +1050,15 @@
         <article class="resource-card data-panel">
           <span class="resource-kicker">Species Stories</span>
           <h2>Fish Tales</h2>
-          <p>Short species spotlights for the 13 key Hudson River fishes, written for classroom and outreach storytelling.</p>
+          <p>Meet Hudson River fishes through species profiles, photographs, and stories about their lives in the estuary.</p>
           <div class="history-source-links">
             <a href="#education-fish-tales" data-tab-link="education-fish-tales">Open Fish Tales</a>
           </div>
         </article>
         <article class="resource-card data-panel">
           <span class="resource-kicker">Classroom</span>
-          <h2>Classroom Materials</h2>
-          <p>Future worksheet packets, slides, vocabulary lists, and printable activity sheets for teachers and outreach partners.</p>
+          <h2>Classroom Activities</h2>
+          <p>Design a fisheries survey or match young fish to adults. <a href="#education-classroom" data-tab-link="education-classroom">Open classroom activities &rarr;</a></p>
         </article>
         <article class="resource-card data-panel">
           <span class="resource-kicker">Oral History</span>
@@ -1180,107 +1184,1175 @@
       </div>
     </section>
 
-    <section class="tab-page" id="education-fish-tales" data-tab-page="education-fish-tales">
-      <div class="page-header">
-        <p class="eyebrow">Educational Materials</p>
-        <h1>Fish Tales</h1>
-        <p class="page-note">
-          Species spotlights for the 13 key Hudson River fishes, designed as a starting place for classroom stories, photos, monitoring notes, and outreach activities.
-        </p>
+    <section class="tab-page fish-tales-directory" id="education-fish-tales" data-tab-page="education-fish-tales">
+      <div class="page-header fish-tales-page-header">
+        <div><p class="eyebrow">Educational Materials</p><h1 tabindex="-1">Fish Tales</h1></div>
+        <div class="fish-tales-search">
+          <label for="fish-tales-search">Find a species</label>
+          <div class="fish-tales-search-controls">
+            <input type="search" id="fish-tales-search" placeholder="Common or scientific name" autocomplete="off" aria-controls="fish-tales-grid" />
+            <button type="button" id="fish-tales-clear" class="secondary-button" hidden>Clear search</button>
+          </div>
+        </div>
       </div>
-
-      <div class="education-topic-grid">
-        <article class="education-topic-card data-panel" data-fish-tale-section="atlantic-tomcod">
-          <span class="resource-kicker">Key Species 1</span>
-          <h2>Atlantic Tomcod</h2>
-          <p><em>Microgadus tomcod</em></p>
-          <p>Story focus: a winter-associated estuarine fish that connects cold-season sampling, spawning habitat, and long-term Hudson River monitoring.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-fish-tale-section="american-shad">
-          <span class="resource-kicker">Key Species 2</span>
-          <h2>American Shad</h2>
-          <p><em>Alosa sapidissima</em></p>
-          <p>Story focus: a migratory fish whose river spawning runs help students connect life cycles, timing, and estuary conservation.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-fish-tale-section="striped-bass">
-          <span class="resource-kicker">Key Species 3</span>
-          <h2>Striped Bass</h2>
-          <p><em>Morone saxatilis</em></p>
-          <p>Story focus: an iconic Hudson River fish for discussing spawning, nursery habitat, population change, and fishery management.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-fish-tale-section="white-perch">
-          <span class="resource-kicker">Key Species 4</span>
-          <h2>White Perch</h2>
-          <p><em>Morone americana</em></p>
-          <p>Story focus: a common estuarine fish that can anchor lessons about resident species, food webs, and regional habitat patterns.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-fish-tale-section="bay-anchovy">
-          <span class="resource-kicker">Key Species 5</span>
-          <h2>Bay Anchovy</h2>
-          <p><em>Anchoa mitchilli</em></p>
-          <p>Story focus: a small forage fish that helps explain why tiny organisms matter to larger predators and estuary food webs.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-fish-tale-section="alewife">
-          <span class="resource-kicker">Key Species 6</span>
-          <h2>Alewife</h2>
-          <p><em>Alosa pseudoharengus</em></p>
-          <p>Story focus: a river herring species useful for comparing migration, spawning runs, and shared life histories among related fishes.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-fish-tale-section="blueback-herring">
-          <span class="resource-kicker">Key Species 7</span>
-          <h2>Blueback Herring</h2>
-          <p><em>Alosa aestivalis</em></p>
-          <p>Story focus: a migratory river herring that pairs well with alewife for lessons about species comparison and seasonal movement.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-fish-tale-section="rainbow-smelt">
-          <span class="resource-kicker">Key Species 8</span>
-          <h2>Rainbow Smelt</h2>
-          <p><em>Osmerus mordax</em></p>
-          <p>Story focus: a cool-water fish that can introduce temperature, habitat sensitivity, and environmental change in the estuary.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-fish-tale-section="yellow-perch">
-          <span class="resource-kicker">Key Species 9</span>
-          <h2>Yellow Perch</h2>
-          <p><em>Perca flavescens</em></p>
-          <p>Story focus: a familiar freshwater and brackish-water fish for discussing shallow habitats, juveniles, and local observations.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-fish-tale-section="spottail-shiner">
-          <span class="resource-kicker">Key Species 10</span>
-          <h2>Spottail Shiner</h2>
-          <p><em>Notropis hudsonius</em></p>
-          <p>Story focus: a small schooling fish that can help students practice observation, body features, and habitat association.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-fish-tale-section="bluefish">
-          <span class="resource-kicker">Key Species 11</span>
-          <h2>Bluefish</h2>
-          <p><em>Pomatomus saltatrix</em></p>
-          <p>Story focus: an active predator that brings food-web interactions, seasonal visitors, and estuary-ocean connections into view.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-fish-tale-section="hogchoker">
-          <span class="resource-kicker">Key Species 12</span>
-          <h2>Hogchoker</h2>
-          <p><em>Trinectes maculatus</em></p>
-          <p>Story focus: a small flatfish for introducing bottom habitats, camouflage, body shape, and benthic life in the Hudson River.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-fish-tale-section="atlantic-menhaden">
-          <span class="resource-kicker">Key Species 13</span>
-          <h2>Atlantic Menhaden</h2>
-          <p><em>Brevoortia tyrannus</em></p>
-          <p>Story focus: a filter-feeding forage fish that connects plankton, water-column ecology, predators, and broader coastal food webs.</p>
-        </article>
+      <p class="fish-tales-empty" id="fish-tales-empty" role="status" aria-live="polite" hidden>No matching species. Try another name.</p>
+      <div class="fish-tales-grid" id="fish-tales-grid">
+          <a class="fish-tale-card" href="#fish-tale-alewife" data-tab-link="fish-tale-alewife" data-fish-tale-search="Alewife Alosa pseudoharengus Alosa pseudoharengus">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 2.259887; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/alewife.png" alt="Alewife" width="800" height="354" loading="lazy" decoding="async" title="Photo: Connecticut Department of Energy &amp; Environmental Protection" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Alewife</h2>
+              <p class="fish-tale-scientific"><em>Alosa pseudoharengus</em></p>
+              <p class="fish-tale-card-summary">Component of the forage base for coastal fishes, marine mammals and seabirds, but also terrestrial animals and shorebirds</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-american-shad" data-tab-link="fish-tale-american-shad" data-fish-tale-search="American Shad Alosa sapidissima Alosa sapidissima">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 3.660455; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/american-shad.jpg" alt="American Shad" width="1768" height="483" loading="lazy" decoding="async" title="Photo: Virginia Institute of Marine Science" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>American Shad</h2>
+              <p class="fish-tale-scientific"><em>Alosa sapidissima</em></p>
+              <p class="fish-tale-card-summary">Migratory link between the river and open ocean – transporting nutrients between the systems</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-atlantic-sturgeon" data-tab-link="fish-tale-atlantic-sturgeon" data-fish-tale-search="Atlantic Sturgeon Acipenser oxyrinchus Acipenser oxyrinchus">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 2.921409; --fish-image-width: 100.000000%; --fish-image-height: 194.912777%; --fish-image-left: -0.000000%; --fish-image-top: -49.297339%;"><img src="assets/fish_tales/atlantic-sturgeon.png" alt="Atlantic Sturgeon" width="640" height="427" loading="lazy" decoding="async" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Atlantic Sturgeon</h2>
+              <p class="fish-tale-scientific"><em>Acipenser oxyrinchus</em></p>
+              <p class="fish-tale-card-summary">Regulate benthic prey populations</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-atlantic-tomcod" data-tab-link="fish-tale-atlantic-tomcod" data-fish-tale-search="Atlantic Tomcod Microgadus tomcod Microgadus tomcod">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 2.484472; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/atlantic-tomcod.jpg" alt="Atlantic Tomcod" width="800" height="322" loading="lazy" decoding="async" title="Photo: Connecticut Department of Energy &amp; Environmental Protection" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Atlantic Tomcod</h2>
+              <p class="fish-tale-scientific"><em>Microgadus tomcod</em></p>
+              <p class="fish-tale-card-summary">Important prey for larger predatory fish</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-bay-anchovy" data-tab-link="fish-tale-bay-anchovy" data-fish-tale-search="Bay Anchovy Anchoa mitchilli Anchoa mitchilli">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 3.927164; --fish-image-width: 103.575424%; --fish-image-height: 271.304159%; --fish-image-left: -3.316485%; --fish-image-top: -75.110556%;"><img src="assets/fish_tales/bay-anchovy.jpg" alt="Bay Anchovy" width="1024" height="683" loading="lazy" decoding="async" title="Photo: Virginia Institute of Marine Science" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Bay Anchovy</h2>
+              <p class="fish-tale-scientific"><em>Anchoa mitchilli</em></p>
+              <p class="fish-tale-card-summary">Important forage fish for many other birds and recreationally and commercially important fishes</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-blueback-herring" data-tab-link="fish-tale-blueback-herring" data-fish-tale-search="Blueback Herring Alosa aestivalis Alosa aestivalis">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 2.228412; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/blueback-herring.jpg" alt="Blueback Herring" width="800" height="359" loading="lazy" decoding="async" title="Photo: Connecticut Department of Energy &amp; Environmental Protection" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Blueback Herring</h2>
+              <p class="fish-tale-scientific"><em>Alosa aestivalis</em></p>
+              <p class="fish-tale-card-summary">Important food web link – eat plankton and they themselves are then eaten by larger predatory fish and birds</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-bluefish" data-tab-link="fish-tale-bluefish" data-fish-tale-search="Bluefish Pomatomus saltatrix Pomatomus saltatrix">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 2.544712; --fish-image-width: 100.000000%; --fish-image-height: 169.730299%; --fish-image-left: -0.000000%; --fish-image-top: -28.840572%;"><img src="assets/fish_tales/bluefish.jpg" alt="Bluefish" width="1024" height="683" loading="lazy" decoding="async" title="Photo: Virginia Institute of Marine Science" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Bluefish</h2>
+              <p class="fish-tale-scientific"><em>Pomatomus saltatrix</em></p>
+              <p class="fish-tale-card-summary">Voracious apex predator fish regulating smaller forage fish populations</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-channel-catfish" data-tab-link="fish-tale-channel-catfish" data-fish-tale-search="Channel Catfish Ictalurus punctatus Ictalurus punctatus">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 3.000000; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/channel-catfish.jpg" alt="Channel Catfish" width="5040" height="1680" loading="lazy" decoding="async" title="Photo: USFWS Mountain Prairie" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Channel Catfish</h2>
+              <p class="fish-tale-scientific"><em>Ictalurus punctatus</em></p>
+              <p class="fish-tale-card-summary">Invasive species that could outcompete native catfish species like the white catfish</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-gizzard-shad" data-tab-link="fish-tale-gizzard-shad" data-fish-tale-search="Gizzard Shad Dorosoma cepedianum Dorosoma cepedianum">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 1.882353; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/gizzard-shad.jpg" alt="Gizzard Shad" width="800" height="425" loading="lazy" decoding="async" title="Photo: Connecticut Department of Energy &amp; Environmental Protection" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Gizzard Shad</h2>
+              <p class="fish-tale-scientific"><em>Dorosoma cepedianum</em></p>
+              <p class="fish-tale-card-summary">Forage fish for valued game fishes</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-hogchoker" data-tab-link="fish-tale-hogchoker" data-fish-tale-search="Hogchoker Trinectes maculatus Trinectes maculatus">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 1.649485; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/hogchoker.jpg" alt="Hogchoker" width="800" height="485" loading="lazy" decoding="async" title="Photo: Connecticut Department of Energy &amp; Environmental Protection" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Hogchoker</h2>
+              <p class="fish-tale-scientific"><em>Trinectes maculatus</em></p>
+              <p class="fish-tale-card-summary">Important predators in benthic food web</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-rainbow-smelt" data-tab-link="fish-tale-rainbow-smelt" data-fish-tale-search="Rainbow Smelt Osmerus mordax Osmerus mordax">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 2.962963; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/rainbow-smelt.jpg" alt="Rainbow Smelt" width="400" height="135" loading="lazy" decoding="async" title="Photo: New Hampshire Fish &amp; Game Department" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Rainbow Smelt</h2>
+              <p class="fish-tale-scientific"><em>Osmerus mordax</em></p>
+              <p class="fish-tale-card-summary">Prey for larger predatory fish and birds</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-shortnose-sturgeon" data-tab-link="fish-tale-shortnose-sturgeon" data-fish-tale-search="Shortnose Sturgeon Acipenser brevirostrum Acipenser brevirostrum">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 3.175411; --fish-image-width: 100.000000%; --fish-image-height: 211.958710%; --fish-image-left: -0.000000%; --fish-image-top: -57.152547%;"><img src="assets/fish_tales/shortnose-sturgeon.png" alt="Shortnose Sturgeon" width="800" height="534" loading="lazy" decoding="async" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Shortnose Sturgeon</h2>
+              <p class="fish-tale-scientific"><em>Acipenser brevirostrum</em></p>
+              <p class="fish-tale-card-summary">Benthic scavenger regulating invertebrate populations</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-spottail-shiner" data-tab-link="fish-tale-spottail-shiner" data-fish-tale-search="Spottail Shiner Notropis hudsonius hudsonius Notropis hudsonius hudsonius">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 3.801980; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/spottail-shiner.png" alt="Spottail Shiner" width="1920" height="505" loading="lazy" decoding="async" title="Photo: Robert Aguilar/Smithsonian Environmental Research Center, CC BY 2.0" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Spottail Shiner</h2>
+              <p class="fish-tale-scientific"><em>Notropis hudsonius hudsonius</em></p>
+              <p class="fish-tale-card-summary">Forage fish in the Hudson River food web</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-tessellated-darter" data-tab-link="fish-tale-tessellated-darter" data-fish-tale-search="Tessellated Darter Etheostoma olmstedi Etheostoma olmstedi">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 2.688172; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/tessellated-darter.png" alt="Tessellated Darter" width="1000" height="372" loading="lazy" decoding="async" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>Tessellated Darter</h2>
+              <p class="fish-tale-scientific"><em>Etheostoma olmstedi</em></p>
+              <p class="fish-tale-card-summary">Serve as food source for larger fish and birds</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-white-catfish" data-tab-link="fish-tale-white-catfish" data-fish-tale-search="White Catfish Ameiurus catus Ameriurus catus">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 3.290136; --fish-image-width: 100.000000%; --fish-image-height: 220.439115%; --fish-image-left: -0.000000%; --fish-image-top: -56.280310%;"><img src="assets/fish_tales/white-catfish.png" alt="White Catfish" width="1200" height="804" loading="lazy" decoding="async" title="Illustration: Duane Raver/U.S. Fish &amp; Wildlife Service" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>White Catfish</h2>
+              <p class="fish-tale-scientific"><em>Ameiurus catus</em></p>
+              <p class="fish-tale-card-summary">Adult fish are important predators</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
+          <a class="fish-tale-card" href="#fish-tale-white-perch" data-tab-link="fish-tale-white-perch" data-fish-tale-search="White Perch Morone americana Morone americana">
+            <div class="fish-photo-frame"><div class="fish-photo-window" style="--fish-aspect: 1.777778; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/white-perch.png" alt="White Perch" width="960" height="540" loading="lazy" decoding="async" title="Photo: University of Nebraska-Lincoln" /></div></div>
+            <div class="fish-tale-card-body">
+              <h2>White Perch</h2>
+              <p class="fish-tale-scientific"><em>Morone americana</em></p>
+              <p class="fish-tale-card-summary">Prolific mid-trophic level species linking lower and higher trophic level species</p>
+              <span class="fish-tale-read">Read profile <span aria-hidden="true">&rarr;</span></span>
+            </div>
+          </a>
       </div>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-alewife" data-tab-page="fish-tale-alewife">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Alewife</h1>
+          <p class="fish-profile-scientific"><em>Alosa pseudoharengus</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 2.259887; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/alewife.png" alt="Alewife" width="800" height="354" loading="lazy" decoding="async" title="Photo: Connecticut Department of Energy &amp; Environmental Protection" /></div></div>
+            <figcaption>Photo: Connecticut Department of Energy &amp; Environmental Protection</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="alewife-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="alewife-fact-title">Did you know?</h2>
+            <p>It is thought that a fish will return to reproduce in the same river in which they were born</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="alewife-appearance-title">
+            <h2 id="alewife-appearance-title">Appearance</h2>
+            <ul>
+                <li>Large eye and relatively deep body</li>
+                <li>Black spot located behind shoulder</li>
+                <li>Forked tail</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="alewife-biology-title">
+            <h2 id="alewife-biology-title">Life history</h2>
+            <ul>
+                <li>Spend most of life in saltwater and reproduce in freshwater</li>
+                <li>Reproduction in the Hudson River occurs from late March to early May</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="alewife-diet-title">
+            <h2 id="alewife-diet-title">Diet</h2>
+            <ul>
+                <li>Fish eggs and larval fish</li>
+                <li>Insects</li>
+                <li>Zooplankton</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="alewife-ecosystem-title">
+            <h2 id="alewife-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Component of the forage base for coastal fishes, marine mammals and seabirds, but also terrestrial animals and shorebirds</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="alewife-monitoring-title">
+            <h2 id="alewife-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Ecologically and economically important species</li>
+                <li>Population changes can reveal broader ecosystem level changes</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-american-shad" data-tab-link="fish-tale-american-shad"><span>Next species</span><strong>American Shad</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-american-shad" data-tab-page="fish-tale-american-shad">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">American Shad</h1>
+          <p class="fish-profile-scientific"><em>Alosa sapidissima</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 3.660455; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/american-shad.jpg" alt="American Shad" width="1768" height="483" loading="lazy" decoding="async" title="Photo: Virginia Institute of Marine Science" /></div></div>
+            <figcaption>Photo: Virginia Institute of Marine Science</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="american-shad-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="american-shad-fact-title">Did you know?</h2>
+            <p>The Shadbush tree is named after this fish because the spring bloom aligns with the return of shad for river reproduction</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="american-shad-appearance-title">
+            <h2 id="american-shad-appearance-title">Appearance</h2>
+            <ul>
+                <li>Thin metallic body varying in color from greenish to dark blue</li>
+                <li>Large dark shoulder spot may be followed by several paler spots</li>
+                <li>Deeply forked tail</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="american-shad-biology-title">
+            <h2 id="american-shad-biology-title">Life history</h2>
+            <ul>
+                <li>Reproduction in the Hudson River occurs on sandy, gravelly shoals and other shallow areas</li>
+                <li>A female may release 100,000 to 600,000 eggs</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="american-shad-diet-title">
+            <h2 id="american-shad-diet-title">Diet</h2>
+            <ul>
+                <li>Juveniles eat zooplankton and terrestrial insects</li>
+                <li>Feed on plankton, crustaceans, and small fish in the ocean</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="american-shad-ecosystem-title">
+            <h2 id="american-shad-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Migratory link between the river and open ocean – transporting nutrients between the systems</li>
+                <li>Food source to larger fish, birds, and some terrestrial animals</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="american-shad-monitoring-title">
+            <h2 id="american-shad-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Historically very abundant and now population reduced to low levels – important to track population recovery</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-alewife" data-tab-link="fish-tale-alewife"><span>Previous species</span><strong>Alewife</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-atlantic-sturgeon" data-tab-link="fish-tale-atlantic-sturgeon"><span>Next species</span><strong>Atlantic Sturgeon</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-atlantic-sturgeon" data-tab-page="fish-tale-atlantic-sturgeon">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Atlantic Sturgeon</h1>
+          <p class="fish-profile-scientific"><em>Acipenser oxyrinchus</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 2.921409; --fish-image-width: 100.000000%; --fish-image-height: 194.912777%; --fish-image-left: -0.000000%; --fish-image-top: -49.297339%;"><img src="assets/fish_tales/atlantic-sturgeon.png" alt="Atlantic Sturgeon" width="640" height="427" loading="lazy" decoding="async" /></div></div>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="atlantic-sturgeon-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="atlantic-sturgeon-fact-title">Did you know?</h2>
+            <p>This is the largest sturgeon species found in New York</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="atlantic-sturgeon-appearance-title">
+            <h2 id="atlantic-sturgeon-appearance-title">Appearance</h2>
+            <ul>
+                <li>Have a series of bony plates called scutes on their back, sides, and belly</li>
+                <li>Can reach 14 feet in length</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="atlantic-sturgeon-biology-title">
+            <h2 id="atlantic-sturgeon-biology-title">Life history</h2>
+            <ul>
+                <li>Adults return to the Hudson River to spawn in May and June</li>
+                <li>Young fish remain in their natal river for up to 6 years before swimming out to the ocean</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="atlantic-sturgeon-diet-title">
+            <h2 id="atlantic-sturgeon-diet-title">Diet</h2>
+            <ul>
+                <li>Bottom-feeders that primarily eat crustaceans, mollusks, insects, and worms</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="atlantic-sturgeon-ecosystem-title">
+            <h2 id="atlantic-sturgeon-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Regulate benthic prey populations</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="atlantic-sturgeon-monitoring-title">
+            <h2 id="atlantic-sturgeon-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Listed under the Endangered Species Act and population recovery is a key goal</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+        <p class="fish-profile-references">Species reference: <a href="https://dec.ny.gov/nature/animals-fish-plants/hudson-delaware-marine-fisheries/atlantic-and-shortnose-sturgeon" target="_blank" rel="noopener">NYSDEC: Atlantic and Shortnose Sturgeon</a></p>
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-american-shad" data-tab-link="fish-tale-american-shad"><span>Previous species</span><strong>American Shad</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-atlantic-tomcod" data-tab-link="fish-tale-atlantic-tomcod"><span>Next species</span><strong>Atlantic Tomcod</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-atlantic-tomcod" data-tab-page="fish-tale-atlantic-tomcod">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Atlantic Tomcod</h1>
+          <p class="fish-profile-scientific"><em>Microgadus tomcod</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 2.484472; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/atlantic-tomcod.jpg" alt="Atlantic Tomcod" width="800" height="322" loading="lazy" decoding="async" title="Photo: Connecticut Department of Energy &amp; Environmental Protection" /></div></div>
+            <figcaption>Photo: Connecticut Department of Energy &amp; Environmental Protection</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="atlantic-tomcod-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="atlantic-tomcod-fact-title">Did you know?</h2>
+            <p>Have developed the ability to produce antifreeze proteins making them very tolerant of cold water temperatures</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="atlantic-tomcod-appearance-title">
+            <h2 id="atlantic-tomcod-appearance-title">Appearance</h2>
+            <ul>
+                <li>Reach up to 9-12 inches in length</li>
+                <li>Three distinct dorsal fins and two anal fins</li>
+                <li>Single barbel on chin</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="atlantic-tomcod-biology-title">
+            <h2 id="atlantic-tomcod-biology-title">Life history</h2>
+            <ul>
+                <li>Rarely live past 1 year old in the Hudson River</li>
+                <li>Primarily demersal and reproduce from November to February over gravel and sand</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="atlantic-tomcod-diet-title">
+            <h2 id="atlantic-tomcod-diet-title">Diet</h2>
+            <ul>
+                <li>Juveniles eat copepods and small amphipods</li>
+                <li>Adults eat small crustaceans, shellfish, worms, and other fish</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="atlantic-tomcod-ecosystem-title">
+            <h2 id="atlantic-tomcod-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Important prey for larger predatory fish</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="atlantic-tomcod-monitoring-title">
+            <h2 id="atlantic-tomcod-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Can be used for tracing chemical contaminants as they tend to accumulate high concentrations in polluted areas</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-atlantic-sturgeon" data-tab-link="fish-tale-atlantic-sturgeon"><span>Previous species</span><strong>Atlantic Sturgeon</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-bay-anchovy" data-tab-link="fish-tale-bay-anchovy"><span>Next species</span><strong>Bay Anchovy</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-bay-anchovy" data-tab-page="fish-tale-bay-anchovy">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Bay Anchovy</h1>
+          <p class="fish-profile-scientific"><em>Anchoa mitchilli</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 3.927164; --fish-image-width: 103.575424%; --fish-image-height: 271.304159%; --fish-image-left: -3.316485%; --fish-image-top: -75.110556%;"><img src="assets/fish_tales/bay-anchovy.jpg" alt="Bay Anchovy" width="1024" height="683" loading="lazy" decoding="async" title="Photo: Virginia Institute of Marine Science" /></div></div>
+            <figcaption>Photo: Virginia Institute of Marine Science</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="bay-anchovy-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="bay-anchovy-fact-title">Did you know?</h2>
+            <p>Adults may live to be slightly older than 3 years old, but few often survive past their first year</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="bay-anchovy-appearance-title">
+            <h2 id="bay-anchovy-appearance-title">Appearance</h2>
+            <ul>
+                <li>Slender and grows up to 4 inches in length</li>
+                <li>Silvery-green with a translucent body and a silver stripe on its sides</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="bay-anchovy-biology-title">
+            <h2 id="bay-anchovy-biology-title">Life history</h2>
+            <ul>
+                <li>Schooling fish</li>
+                <li>Can reach maturity at around 2.5 months</li>
+                <li>Reproduce in the nighttime between April and September</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="bay-anchovy-diet-title">
+            <h2 id="bay-anchovy-diet-title">Diet</h2>
+            <ul>
+                <li>Fish less than 25 mm eat planktonic copepods and larvae</li>
+                <li>Larger fish eat amphipods, ostracods, and small mollusks</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="bay-anchovy-ecosystem-title">
+            <h2 id="bay-anchovy-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Important forage fish for many other birds and recreationally and commercially important fishes</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="bay-anchovy-monitoring-title">
+            <h2 id="bay-anchovy-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Good indicator of estuary pollution stress</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-atlantic-tomcod" data-tab-link="fish-tale-atlantic-tomcod"><span>Previous species</span><strong>Atlantic Tomcod</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-blueback-herring" data-tab-link="fish-tale-blueback-herring"><span>Next species</span><strong>Blueback Herring</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-blueback-herring" data-tab-page="fish-tale-blueback-herring">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Blueback Herring</h1>
+          <p class="fish-profile-scientific"><em>Alosa aestivalis</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 2.228412; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/blueback-herring.jpg" alt="Blueback Herring" width="800" height="359" loading="lazy" decoding="async" title="Photo: Connecticut Department of Energy &amp; Environmental Protection" /></div></div>
+            <figcaption>Photo: Connecticut Department of Energy &amp; Environmental Protection</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="blueback-herring-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="blueback-herring-fact-title">Did you know?</h2>
+            <p>Blueback herring and alewife are collectively termed “river herring”</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="blueback-herring-appearance-title">
+            <h2 id="blueback-herring-appearance-title">Appearance</h2>
+            <ul>
+                <li>Bluish green top coloration and overall silvery color</li>
+                <li>Usually have a dark spot located just behind the gill plate on the upper side of the body</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="blueback-herring-biology-title">
+            <h2 id="blueback-herring-biology-title">Life history</h2>
+            <ul>
+                <li>Schooling species</li>
+                <li>Reproduce in the Hudson River during late spring and early summer</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="blueback-herring-diet-title">
+            <h2 id="blueback-herring-diet-title">Diet</h2>
+            <ul>
+                <li>Planktivore – consumes copepods, pelagic shrimp larvae and larval fishes</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="blueback-herring-ecosystem-title">
+            <h2 id="blueback-herring-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Important food web link – eat plankton and they themselves are then eaten by larger predatory fish and birds</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="blueback-herring-monitoring-title">
+            <h2 id="blueback-herring-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Important forage base for larger predators</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-bay-anchovy" data-tab-link="fish-tale-bay-anchovy"><span>Previous species</span><strong>Bay Anchovy</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-bluefish" data-tab-link="fish-tale-bluefish"><span>Next species</span><strong>Bluefish</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-bluefish" data-tab-page="fish-tale-bluefish">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Bluefish</h1>
+          <p class="fish-profile-scientific"><em>Pomatomus saltatrix</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 2.544712; --fish-image-width: 100.000000%; --fish-image-height: 169.730299%; --fish-image-left: -0.000000%; --fish-image-top: -28.840572%;"><img src="assets/fish_tales/bluefish.jpg" alt="Bluefish" width="1024" height="683" loading="lazy" decoding="async" title="Photo: Virginia Institute of Marine Science" /></div></div>
+            <figcaption>Photo: Virginia Institute of Marine Science</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="bluefish-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="bluefish-fact-title">Did you know?</h2>
+            <p>Baby bluefish are known as snappers</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="bluefish-appearance-title">
+            <h2 id="bluefish-appearance-title">Appearance</h2>
+            <ul>
+                <li>Steel to greenish blue color on upper parts, fading to silver on lower sides and belly</li>
+                <li>Forked tail and streamlined body with sharp teeth</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="bluefish-biology-title">
+            <h2 id="bluefish-biology-title">Life history</h2>
+            <ul>
+                <li>Live up to 12 years</li>
+                <li>Reproduce multiple times in the spring and summer</li>
+                <li>Females can produce over 400,000 eggs or more</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="bluefish-diet-title">
+            <h2 id="bluefish-diet-title">Diet</h2>
+            <ul>
+                <li>Fish, including bay anchovy and silversides</li>
+                <li>Invertebrates</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="bluefish-ecosystem-title">
+            <h2 id="bluefish-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Voracious apex predator fish regulating smaller forage fish populations</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="bluefish-monitoring-title">
+            <h2 id="bluefish-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Assess population status</li>
+                <li>Track PCB contamination levels</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-blueback-herring" data-tab-link="fish-tale-blueback-herring"><span>Previous species</span><strong>Blueback Herring</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-channel-catfish" data-tab-link="fish-tale-channel-catfish"><span>Next species</span><strong>Channel Catfish</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-channel-catfish" data-tab-page="fish-tale-channel-catfish">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Channel Catfish</h1>
+          <p class="fish-profile-scientific"><em>Ictalurus punctatus</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 3.000000; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/channel-catfish.jpg" alt="Channel Catfish" width="5040" height="1680" loading="lazy" decoding="async" title="Photo: USFWS Mountain Prairie" /></div></div>
+            <figcaption>Photo: USFWS Mountain Prairie</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="channel-catfish-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="channel-catfish-fact-title">Did you know?</h2>
+            <p>Have taste receptors all over their body, with the highest concentration located on the four pairs of barbels (“whiskers”)</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="channel-catfish-appearance-title">
+            <h2 id="channel-catfish-appearance-title">Appearance</h2>
+            <ul>
+                <li>Bluish or greenish gray body with a silvery white belly and olive fins</li>
+                <li>Four pairs of barbels around mouth</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="channel-catfish-biology-title">
+            <h2 id="channel-catfish-biology-title">Life history</h2>
+            <ul>
+                <li>Parents build nests like under rocks or in submerged hollow logs and guard young</li>
+                <li>Life span varies greatly but some may live for over 25 years</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="channel-catfish-diet-title">
+            <h2 id="channel-catfish-diet-title">Diet</h2>
+            <ul>
+                <li>Bottom feeders eating aquatic insects, arthropods, and fish</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="channel-catfish-ecosystem-title">
+            <h2 id="channel-catfish-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Invasive species that could outcompete native catfish species like the white catfish</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="channel-catfish-monitoring-title">
+            <h2 id="channel-catfish-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Non-native invasive species impacts</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-bluefish" data-tab-link="fish-tale-bluefish"><span>Previous species</span><strong>Bluefish</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-gizzard-shad" data-tab-link="fish-tale-gizzard-shad"><span>Next species</span><strong>Gizzard Shad</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-gizzard-shad" data-tab-page="fish-tale-gizzard-shad">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Gizzard Shad</h1>
+          <p class="fish-profile-scientific"><em>Dorosoma cepedianum</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 1.882353; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/gizzard-shad.jpg" alt="Gizzard Shad" width="800" height="425" loading="lazy" decoding="async" title="Photo: Connecticut Department of Energy &amp; Environmental Protection" /></div></div>
+            <figcaption>Photo: Connecticut Department of Energy &amp; Environmental Protection</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="gizzard-shad-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="gizzard-shad-fact-title">Did you know?</h2>
+            <p>Named for its unique muscular stomach that functions like a bird’s gizzard – use ingested sand or small stones to grind up food</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="gizzard-shad-appearance-title">
+            <h2 id="gizzard-shad-appearance-title">Appearance</h2>
+            <ul>
+                <li>Small head and mouth with a short and blunt snout</li>
+                <li>Greatly elongated last dorsal ray</li>
+                <li>Single faint spot on shoulder</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="gizzard-shad-biology-title">
+            <h2 id="gizzard-shad-biology-title">Life history</h2>
+            <ul>
+                <li>Reproduce near the surface during mid to late spring</li>
+                <li>Occur mainly in freshwater but can be found in brackish or saline waters</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="gizzard-shad-diet-title">
+            <h2 id="gizzard-shad-diet-title">Diet</h2>
+            <ul>
+                <li>Newly hatched larvae eat protozoans and other plankton</li>
+                <li>Diet later includes detritus, algae, and phytoplankton</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="gizzard-shad-ecosystem-title">
+            <h2 id="gizzard-shad-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Forage fish for valued game fishes</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="gizzard-shad-monitoring-title">
+            <h2 id="gizzard-shad-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Tracking population changes can reveal information about broader ecosystem changes</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-channel-catfish" data-tab-link="fish-tale-channel-catfish"><span>Previous species</span><strong>Channel Catfish</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-hogchoker" data-tab-link="fish-tale-hogchoker"><span>Next species</span><strong>Hogchoker</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-hogchoker" data-tab-page="fish-tale-hogchoker">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Hogchoker</h1>
+          <p class="fish-profile-scientific"><em>Trinectes maculatus</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 1.649485; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/hogchoker.jpg" alt="Hogchoker" width="800" height="485" loading="lazy" decoding="async" title="Photo: Connecticut Department of Energy &amp; Environmental Protection" /></div></div>
+            <figcaption>Photo: Connecticut Department of Energy &amp; Environmental Protection</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="hogchoker-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="hogchoker-fact-title">Did you know?</h2>
+            <p>It is said that when farmers would feed the fish to pigs, they would choke on them due to the rough scales, hence their name</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="hogchoker-appearance-title">
+            <h2 id="hogchoker-appearance-title">Appearance</h2>
+            <ul>
+                <li>Right-eyed flatfish</li>
+                <li>Brownish-gray body with vertical lines and spots</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="hogchoker-biology-title">
+            <h2 id="hogchoker-biology-title">Life history</h2>
+            <ul>
+                <li>Bottom-dweller preferring sand, silt, or mud</li>
+                <li>Peak reproduction in July and early-August</li>
+                <li>Can live up to 7 years old</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="hogchoker-diet-title">
+            <h2 id="hogchoker-diet-title">Diet</h2>
+            <ul>
+                <li>Worms</li>
+                <li>Amphipods and other small crustaceans</li>
+                <li>Small fish</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="hogchoker-ecosystem-title">
+            <h2 id="hogchoker-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Important predators in benthic food web</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="hogchoker-monitoring-title">
+            <h2 id="hogchoker-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Close connection to the bottom can indicate water quality and habitat health</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-gizzard-shad" data-tab-link="fish-tale-gizzard-shad"><span>Previous species</span><strong>Gizzard Shad</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-rainbow-smelt" data-tab-link="fish-tale-rainbow-smelt"><span>Next species</span><strong>Rainbow Smelt</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-rainbow-smelt" data-tab-page="fish-tale-rainbow-smelt">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Rainbow Smelt</h1>
+          <p class="fish-profile-scientific"><em>Osmerus mordax</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 2.962963; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/rainbow-smelt.jpg" alt="Rainbow Smelt" width="400" height="135" loading="lazy" decoding="async" title="Photo: New Hampshire Fish &amp; Game Department" /></div></div>
+            <figcaption>Photo: New Hampshire Fish &amp; Game Department</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="rainbow-smelt-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="rainbow-smelt-fact-title">Did you know?</h2>
+            <p>When this fish is taken out of the water, it gives off the odor of freshly cut cucumbers</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="rainbow-smelt-appearance-title">
+            <h2 id="rainbow-smelt-appearance-title">Appearance</h2>
+            <ul>
+                <li>Elongate and slender</li>
+                <li>Pointed head</li>
+                <li>Large mouth</li>
+                <li>Deeply forked caudal fin</li>
+                <li>Bright silvery stripe along body</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="rainbow-smelt-biology-title">
+            <h2 id="rainbow-smelt-biology-title">Life history</h2>
+            <ul>
+                <li>Reproduce in the spring in freshwater at night</li>
+                <li>Can produce an antifreeze protein to enable survival at subfreezing temperatures</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="rainbow-smelt-diet-title">
+            <h2 id="rainbow-smelt-diet-title">Diet</h2>
+            <ul>
+                <li>Aquatic insects, worms, small crustaceans, fish</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="rainbow-smelt-ecosystem-title">
+            <h2 id="rainbow-smelt-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Prey for larger predatory fish and birds</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="rainbow-smelt-monitoring-title">
+            <h2 id="rainbow-smelt-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Broader ecosystem level changes can be revealed by tracking population changes</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-hogchoker" data-tab-link="fish-tale-hogchoker"><span>Previous species</span><strong>Hogchoker</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-shortnose-sturgeon" data-tab-link="fish-tale-shortnose-sturgeon"><span>Next species</span><strong>Shortnose Sturgeon</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-shortnose-sturgeon" data-tab-page="fish-tale-shortnose-sturgeon">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Shortnose Sturgeon</h1>
+          <p class="fish-profile-scientific"><em>Acipenser brevirostrum</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 3.175411; --fish-image-width: 100.000000%; --fish-image-height: 211.958710%; --fish-image-left: -0.000000%; --fish-image-top: -57.152547%;"><img src="assets/fish_tales/shortnose-sturgeon.png" alt="Shortnose Sturgeon" width="800" height="534" loading="lazy" decoding="async" /></div></div>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="shortnose-sturgeon-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="shortnose-sturgeon-fact-title">Did you know?</h2>
+            <p>The oldest female ever recorded was 67 years old and the oldest male was 32 years old</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="shortnose-sturgeon-appearance-title">
+            <h2 id="shortnose-sturgeon-appearance-title">Appearance</h2>
+            <ul>
+                <li>Short conical snout with 4 barbels in front of the mouth</li>
+                <li>Five rows of scutes: one on the back, two on the belly, and one on each side</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="shortnose-sturgeon-biology-title">
+            <h2 id="shortnose-sturgeon-biology-title">Life history</h2>
+            <ul>
+                <li>Reproduction is associated with gravel-dominated bottom-types</li>
+                <li>Reproduction in the Hudson River occurs from April to May</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="shortnose-sturgeon-diet-title">
+            <h2 id="shortnose-sturgeon-diet-title">Diet</h2>
+            <ul>
+                <li>Worms, insect larvae, plants, snails, shrimp, crayfish</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="shortnose-sturgeon-ecosystem-title">
+            <h2 id="shortnose-sturgeon-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Benthic scavenger regulating invertebrate populations</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="shortnose-sturgeon-monitoring-title">
+            <h2 id="shortnose-sturgeon-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Listed under the Endangered Species Act</li>
+                <li>Maintain recovery of the population in the Hudson River</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-rainbow-smelt" data-tab-link="fish-tale-rainbow-smelt"><span>Previous species</span><strong>Rainbow Smelt</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-spottail-shiner" data-tab-link="fish-tale-spottail-shiner"><span>Next species</span><strong>Spottail Shiner</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-spottail-shiner" data-tab-page="fish-tale-spottail-shiner">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Spottail Shiner</h1>
+          <p class="fish-profile-scientific"><em>Notropis hudsonius hudsonius</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 3.801980; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/spottail-shiner.png" alt="Spottail Shiner" width="1920" height="505" loading="lazy" decoding="async" title="Photo: Robert Aguilar/Smithsonian Environmental Research Center, CC BY 2.0" /></div></div>
+            <figcaption>Photo: Robert Aguilar/Smithsonian Environmental Research Center, CC BY 2.0</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="spottail-shiner-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="spottail-shiner-fact-title">Did you know?</h2>
+            <p>The Spottail Shiner was named after the Hudson River!</p><p>Their scientific name, hudsonius, means “of the Hudson.”</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="spottail-shiner-appearance-title">
+            <h2 id="spottail-shiner-appearance-title">Appearance</h2>
+            <ul>
+                <li>Small, slender, silvery fish</li>
+                <li>Distinct black spot at base of tail</li>
+                <li>Average size ranges 2-3 inches</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="spottail-shiner-biology-title">
+            <h2 id="spottail-shiner-biology-title">Life history</h2>
+            <ul>
+                <li>Small, schooling fish found in freshwater and brackish habitats</li>
+                <li>Spawn during warmer months (June-July)</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="spottail-shiner-diet-title">
+            <h2 id="spottail-shiner-diet-title">Diet</h2>
+            <ul>
+                <li>Omnivores. Eat small aquatic organisms including insect larvae, crustaceans, and zooplankton</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="spottail-shiner-ecosystem-title">
+            <h2 id="spottail-shiner-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Forage fish in the Hudson River food web</li>
+                <li>Key food source for larger predatory fish and wading birds</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="spottail-shiner-monitoring-title">
+            <h2 id="spottail-shiner-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Important forage fish species</li>
+                <li>Tracking changes in the population over time helps reveal broader changes in the Hudson River ecosystem</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-shortnose-sturgeon" data-tab-link="fish-tale-shortnose-sturgeon"><span>Previous species</span><strong>Shortnose Sturgeon</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-tessellated-darter" data-tab-link="fish-tale-tessellated-darter"><span>Next species</span><strong>Tessellated Darter</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-tessellated-darter" data-tab-page="fish-tale-tessellated-darter">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">Tessellated Darter</h1>
+          <p class="fish-profile-scientific"><em>Etheostoma olmstedi</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 2.688172; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/tessellated-darter.png" alt="Tessellated Darter" width="1000" height="372" loading="lazy" decoding="async" /></div></div>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="tessellated-darter-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="tessellated-darter-fact-title">Did you know?</h2>
+            <p>Darters get their name from the way they quickly “dart” along the river bottom!</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="tessellated-darter-appearance-title">
+            <h2 id="tessellated-darter-appearance-title">Appearance</h2>
+            <ul>
+                <li>Small fish; slender body</li>
+                <li>Brownish-tan with dark, W-shaped markings</li>
+                <li>Two fins along back</li>
+                <li>Grows 2-4 inches</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="tessellated-darter-biology-title">
+            <h2 id="tessellated-darter-biology-title">Life history</h2>
+            <ul>
+                <li>Bottom dwelling; found in shallow, slow-moving waters</li>
+                <li>Uses large pectoral fins to help rest and move on bottom</li>
+                <li>Spawn in spring</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="tessellated-darter-diet-title">
+            <h2 id="tessellated-darter-diet-title">Diet</h2>
+            <ul>
+                <li>Small crustaceans</li>
+                <li>Insects and insect larvae</li>
+                <li>Snails</li>
+                <li>Algae</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="tessellated-darter-ecosystem-title">
+            <h2 id="tessellated-darter-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Serve as food source for larger fish and birds</li>
+                <li>Help to regulate invertebrate populations</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="tessellated-darter-monitoring-title">
+            <h2 id="tessellated-darter-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Their close connection to bottom habitats can help indicate local water quality and habitat health</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-spottail-shiner" data-tab-link="fish-tale-spottail-shiner"><span>Previous species</span><strong>Spottail Shiner</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-white-catfish" data-tab-link="fish-tale-white-catfish"><span>Next species</span><strong>White Catfish</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-white-catfish" data-tab-page="fish-tale-white-catfish">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">White Catfish</h1>
+          <p class="fish-profile-scientific"><em>Ameiurus catus</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 3.290136; --fish-image-width: 100.000000%; --fish-image-height: 220.439115%; --fish-image-left: -0.000000%; --fish-image-top: -56.280310%;"><img src="assets/fish_tales/white-catfish.png" alt="White Catfish" width="1200" height="804" loading="lazy" decoding="async" title="Illustration: Duane Raver/U.S. Fish &amp; Wildlife Service" /></div></div>
+            <figcaption>Illustration: Duane Raver/U.S. Fish &amp; Wildlife Service</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="white-catfish-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="white-catfish-fact-title">Did you know?</h2>
+            <p>White Catfish can live for more than a decade!</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="white-catfish-appearance-title">
+            <h2 id="white-catfish-appearance-title">Appearance</h2>
+            <ul>
+                <li>Smooth, scaleless body</li>
+                <li>Broad, flattened head</li>
+                <li>Bluish-gray back with pale belly</li>
+                <li>Four pairs of whisker-like barbels</li>
+                <li>Forked tail</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="white-catfish-biology-title">
+            <h2 id="white-catfish-biology-title">Life history</h2>
+            <ul>
+                <li>Bottom dwelling freshwater fish</li>
+                <li>Most active evening through nighttime</li>
+                <li>Builds nests; guards young</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="white-catfish-diet-title">
+            <h2 id="white-catfish-diet-title">Diet</h2>
+            <ul>
+                <li>Opportunistic feeder</li>
+                <li>Aquatic insects, crustaceans, small fish, mollusks</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="white-catfish-ecosystem-title">
+            <h2 id="white-catfish-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Adult fish are important predators</li>
+                <li>Young white catfish are an important prey species for larger predatory fish such as the Striped Bass</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="white-catfish-monitoring-title">
+            <h2 id="white-catfish-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>As bottom dwellers, they reflect local water and habitat quality.</li>
+                <li>Can accumulate pollutants like heavy metals, helping inform safe fish consumption advisories</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-tessellated-darter" data-tab-link="fish-tale-tessellated-darter"><span>Previous species</span><strong>Tessellated Darter</strong></a>
+          <a class="fish-profile-adjacent fish-profile-next" href="#fish-tale-white-perch" data-tab-link="fish-tale-white-perch"><span>Next species</span><strong>White Perch</strong></a>
+        </nav>
+      </article>
+    </section>
+
+    <section class="tab-page fish-profile-page" id="fish-tale-white-perch" data-tab-page="fish-tale-white-perch">
+      <article class="fish-profile">
+        <header class="fish-profile-header">
+          <a class="fish-profile-back" href="#education-fish-tales" data-tab-link="education-fish-tales">&larr; Back to Fish Tales</a>
+          <h1 tabindex="-1">White Perch</h1>
+          <p class="fish-profile-scientific"><em>Morone americana</em></p>
+        </header>
+        <div class="fish-profile-hero">
+          <figure class="fish-profile-figure">
+            <div class="fish-photo-frame fish-photo-frame-hero"><div class="fish-photo-window" style="--fish-aspect: 1.777778; --fish-image-width: 100.000000%; --fish-image-height: 100.000000%; --fish-image-left: 0.000000%; --fish-image-top: 0.000000%;"><img src="assets/fish_tales/white-perch.png" alt="White Perch" width="960" height="540" loading="lazy" decoding="async" title="Photo: University of Nebraska-Lincoln" /></div></div>
+            <figcaption>Photo: University of Nebraska-Lincoln</figcaption>
+          </figure>
+          <aside class="fish-profile-fact" aria-labelledby="white-perch-fact-title">
+            <span class="fish-profile-fact-rule" aria-hidden="true"></span>
+            <h2 id="white-perch-fact-title">Did you know?</h2>
+            <p>In the Hudson River, there are both resident and migratory populations</p>
+          </aside>
+        </div>
+        <div class="fish-profile-content">
+          <section class="fish-profile-section" aria-labelledby="white-perch-appearance-title">
+            <h2 id="white-perch-appearance-title">Appearance</h2>
+            <ul>
+                <li>Deep, laterally compressed body. Can grow up to 22 inches. Silvery-white, with two dorsal fins slightly joined by a membrane.</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="white-perch-biology-title">
+            <h2 id="white-perch-biology-title">Life history</h2>
+            <ul>
+                <li>Semi-anadromous</li>
+                <li>R-selected species</li>
+                <li>Reaches maturity at ~ 2-4 years</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="white-perch-diet-title">
+            <h2 id="white-perch-diet-title">Diet</h2>
+            <ul>
+                <li>Ranges from fish eggs, invertebrates, to small fish like minnows</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section" aria-labelledby="white-perch-ecosystem-title">
+            <h2 id="white-perch-ecosystem-title">Role in the Hudson</h2>
+            <ul>
+                <li>Prolific mid-trophic level species linking lower and higher trophic level species</li>
+            </ul>
+          </section>
+          <section class="fish-profile-section fish-profile-monitoring" aria-labelledby="white-perch-monitoring-title">
+            <h2 id="white-perch-monitoring-title">Why we monitor</h2>
+            <ul>
+                <li>Helps inform ecosystem–based management</li>
+            </ul>
+              <a class="fish-profile-data-link" href="#biological-database" data-tab-link="biological-database">Explore the Biological Database <span aria-hidden="true">&rarr;</span></a>
+          </section>
+        </div>
+
+        <nav class="fish-profile-pagination" aria-label="Browse species profiles">
+          <a class="fish-profile-adjacent fish-profile-previous" href="#fish-tale-white-catfish" data-tab-link="fish-tale-white-catfish"><span>Previous species</span><strong>White Catfish</strong></a>
+        </nav>
+      </article>
     </section>
 
     <section class="tab-page" id="education-history" data-tab-page="education-history">
@@ -1495,46 +2567,98 @@
       </div>
     </section>
 
-    <section class="tab-page" id="education-classroom" data-tab-page="education-classroom">
-      <div class="page-header">
-        <p class="eyebrow">Educational Materials</p>
-        <h1>Classroom Materials</h1>
-        <p class="page-note">
-          Printable and presentation-ready resources that can support classroom use of HRBMP history, maps, images, and monitoring data.
-        </p>
+    <section class="tab-page education-activities-directory" id="education-classroom" data-tab-page="education-classroom">
+      <div class="page-header"><p class="eyebrow">Educational Materials</p><h1>Classroom Activities</h1></div>
+      <div class="learning-activity-grid">
+        <a class="learning-activity-card" href="#activity-survey-design" data-tab-link="activity-survey-design">
+          <div class="activity-card-art survey-card-art" aria-hidden="true"><span class="survey-art-river"></span><span class="survey-art-dot"></span><span class="survey-art-dot"></span><span class="survey-art-dot"></span></div>
+          <div class="activity-card-body"><span class="resource-kicker">Design &amp; discovery</span><h2>Hudson River Survey Design Challenge</h2><p>Take the role of a fisheries science team. Design a survey, balance the budget, and defend your choices.</p><span class="activity-card-action">Build your survey &rarr;</span></div>
+        </a>
+        <a class="learning-activity-card" href="#activity-match-fish" data-tab-link="activity-match-fish">
+          <div class="activity-card-art match-card-art" aria-hidden="true"><img src="assets/education_activities/juvenile-c.jpg" alt="" /><span>?</span><img src="assets/education_activities/juvenile-b.jpg" alt="" /></div>
+          <div class="activity-card-body"><span class="resource-kicker">Observe &amp; compare</span><h2>Match the Young Fish to the Adult</h2><p>Look closely at five young Hudson River fishes. Which adult does each one become?</p><span class="activity-card-action">Start matching &rarr;</span></div>
+        </a>
       </div>
-
-      <div class="education-topic-grid">
-        <article class="education-topic-card data-panel" data-classroom-section="lesson-plans">
-          <span class="resource-kicker">Planning</span>
-          <h2>Lesson Plans</h2>
-          <p>Teacher-facing lesson outlines for estuary ecology, fish life stages, monitoring design, and long-term environmental change.</p>
+      <a class="activity-resource-link" href="#education-fish-tales" data-tab-link="education-fish-tales">Explore species profiles in Fish Tales &rarr;</a>
+      <a class="activity-resource-link supplementary-directory-link" href="#education-supplementary" data-tab-link="education-supplementary">Supplementary Materials: PDF slides and PowerPoint downloads &rarr;</a>
+    </section>
+    <section class="tab-page activity-page" id="activity-survey-design" data-tab-page="activity-survey-design">
+      <header class="activity-page-header"><a href="#education-classroom" data-tab-link="education-classroom">&larr; Classroom Activities</a><h1 tabindex="-1">Hudson River Survey Design Challenge</h1><p>You are the fisheries science team. Build a survey that answers a real management question—and stays on budget.</p><a href="#education-supplementary" data-tab-link="education-supplementary">Read the background slides or download the challenge deck &rarr;</a></header>
+      <p id="survey-load-status" role="status">Loading the activity…</p>
+      <form id="survey-design-form" hidden>
+        <div class="survey-layout"><div class="survey-decisions">
+          <section class="activity-panel"><h2><span>1</span> Choose your question</h2><label for="survey-objective">Research objective</label><select id="survey-objective" name="objective"><option value="1">Where are the blue crabs? — $100,000</option>
+<option value="2">Where are the nursery habitats? — $1,000,000</option>
+<option value="3">Can you find a rare species? — $1,000,000</option>
+<option value="4">What happens when the river changes? — $80,000</option>
+<option value="5">Did restoration work? — $100,000</option></select><div id="survey-objective-detail" class="survey-objective-detail"></div></section>
+          <section class="activity-panel"><h2><span>2</span> Choose your locations</h2><p>Set the number of stations in each area. You can sample more than one area.</p><div class="survey-areas"><label class="survey-area"><span><strong>Marsh / Tributary</strong><small>Shallow structured habitat</small><small>$900 / station / visit</small></span><span class="survey-station-input"><input type="number" name="area-marsh" min="0" max="100" step="1" value="0" aria-label="Stations in Marsh / Tributary" /><span>stations</span></span></label>
+<label class="survey-area"><span><strong>Lower Estuary</strong><small>More marine influence</small><small>$1,200 / station / visit</small></span><span class="survey-station-input"><input type="number" name="area-lower" min="0" max="100" step="1" value="0" aria-label="Stations in Lower Estuary" /><span>stations</span></span></label>
+<label class="survey-area"><span><strong>Mid-Hudson</strong><small>Estuarine transition</small><small>$1,000 / station / visit</small></span><span class="survey-station-input"><input type="number" name="area-mid" min="0" max="100" step="1" value="0" aria-label="Stations in Mid-Hudson" /><span>stations</span></span></label>
+<label class="survey-area"><span><strong>Upper Hudson</strong><small>More freshwater influence</small><small>$1,100 / station / visit</small></span><span class="survey-station-input"><input type="number" name="area-upper" min="0" max="100" step="1" value="0" aria-label="Stations in Upper Hudson" /><span>stations</span></span></label></div></section>
+          <section class="activity-panel"><h2><span>3</span> Plan your visits and gear</h2><div class="survey-control-grid"><label>Sampling schedule<select name="schedule"><option value="once">One visit</option>
+<option value="spring-fall">Spring + fall</option>
+<option value="biannual">Biannually (twice a year)</option>
+<option value="monthly">Monthly × 12</option></select></label><label>Sampling method<select name="gear"><option value="trawl">Bottom Trawl — $1,500 / tow</option>
+<option value="seine">Beach Seine — $500 / haul</option>
+<option value="traps">Crab Traps — $250 / trap set</option>
+<option value="rod">Rod And Reel — $200 / sampling session</option>
+<option value="video">Baited Remote Underwater Video — $200 / station deployment</option>
+<option value="edna">eDNA sample — $450 / sample</option></select></label><label>Gear repeats per station-visit<input name="repeats" type="number" min="1" max="100" step="1" value="1" /></label></div><p id="survey-gear-detail" class="survey-method-note"></p><p class="survey-unit-note">One station-visit means one visit to one station. Gear costs repeat at each station-visit.</p></section>
+          <section class="activity-panel"><h2><span>4</span> Choose measurements</h2><p>Core catch or detection data come from your method. Add measurements that help answer your question.</p><div class="survey-measurements"><label class="survey-measurement"><input type="checkbox" name="measurement" value="size" /><span><strong>Length and weight</strong><small>$150 / station-visit</small></span></label>
+<label class="survey-measurement"><input type="checkbox" name="measurement" value="temperature" /><span><strong>Temperature</strong><small>$50 / station-visit</small></span></label>
+<label class="survey-measurement"><input type="checkbox" name="measurement" value="salinity" /><span><strong>Salinity</strong><small>$50 / station-visit</small></span></label>
+<label class="survey-measurement"><input type="checkbox" name="measurement" value="oxygen" /><span><strong>Dissolved oxygen</strong><small>$50 / station-visit</small></span></label>
+<label class="survey-measurement"><input type="checkbox" name="measurement" value="habitat" /><span><strong>Habitat type</strong><small>$150 / station, once</small></span></label>
+<label class="survey-measurement"><input type="checkbox" name="measurement" value="maturity" /><span><strong>Sex and maturity</strong><small>$150 / specimen assessed</small></span></label></div><label id="survey-specimens-label" hidden>Specimens assessed for sex and maturity per station-visit<input name="specimens" type="number" min="1" max="1000" step="1" value="1" /></label></section>
+          <section class="activity-panel survey-explanation"><h2><span>5</span> Defend your design</h2><div class="survey-notes"><label>Our research question<textarea name="note-question" rows="3" placeholder="We are trying to determine…"></textarea></label>
+<label>When and why<textarea name="note-timing" rows="3" placeholder="Explain your season, frequency, and timing."></textarea></label>
+<label>Why this design works<textarea name="note-reason" rows="3" placeholder="Connect your locations, gear, and measurements to the objective."></textarea></label>
+<label>The strongest part of our design<textarea name="note-strength" rows="3" placeholder="What does your design do well?"></textarea></label>
+<label>Two limitations<textarea name="note-limitations" rows="3" placeholder="What might you miss, underestimate, or interpret cautiously?"></textarea></label>
+<label>If we had $10,000 more<textarea name="note-extra" rows="3" placeholder="What would you improve, and why?"></textarea></label></div><details><summary>Discussion after your presentations</summary><ol><li>Which groups prioritized spatial coverage? Which prioritized repeated sampling?</li><li>How did the research question change the “best” gear choice?</li><li>Where did budget constraints force the biggest scientific compromise?</li><li>Which designs could estimate relative abundance? Which mainly detect presence?</li><li>What would happen if everyone used a different method every year?</li><li>What information would managers still need after these surveys were completed?</li></ol></details></section>
+        </div><aside class="activity-panel survey-budget" aria-labelledby="survey-budget-title"><h2 id="survey-budget-title">Your budget</h2><div id="survey-budget-summary" aria-live="polite" aria-atomic="true"></div><div id="survey-budget-lines"></div><p class="survey-budget-note">Classroom costs from the supplied challenge deck.</p><div class="activity-actions"><button type="button" id="survey-export">Save survey plan</button><button type="button" data-print-activity>Print plan</button><button type="reset" class="activity-button-secondary">Start over</button></div><p id="survey-save-status" role="status"></p></aside></div>
+      </form>
+      <a class="activity-resource-link" href="#education-fish-tales" data-tab-link="education-fish-tales">Use Fish Tales to inform your survey &rarr;</a>
+    </section>
+    <section class="tab-page activity-page" id="activity-match-fish" data-tab-page="activity-match-fish">
+      <header class="activity-page-header"><a href="#education-classroom" data-tab-link="education-classroom">&larr; Classroom Activities</a><h1 tabindex="-1">Match the Young Fish to the Adult</h1><p>Choose the young-fish letter for each adult. Look closely at body shape, fins, eyes, and markings—and explain your evidence.</p></header>
+      <section class="activity-panel young-fish-panel" aria-labelledby="young-fish-title"><h2 id="young-fish-title">Meet the young fish</h2><div class="juvenile-grid"><button type="button" class="juvenile-card" data-enlarge-image="assets/education_activities/juvenile-a.jpg" data-image-label="Young fish A" aria-label="Enlarge young fish A"><span>A</span><img src="assets/education_activities/juvenile-a.jpg" alt="Young fish A, photographed on a measurement grid" loading="lazy" /><small>Enlarge image</small></button>
+<button type="button" class="juvenile-card" data-enlarge-image="assets/education_activities/juvenile-b.jpg" data-image-label="Young fish B" aria-label="Enlarge young fish B"><span>B</span><img src="assets/education_activities/juvenile-b.jpg" alt="Young fish B, photographed on a measurement grid" loading="lazy" /><small>Enlarge image</small></button>
+<button type="button" class="juvenile-card" data-enlarge-image="assets/education_activities/juvenile-c.jpg" data-image-label="Young fish C" aria-label="Enlarge young fish C"><span>C</span><img src="assets/education_activities/juvenile-c.jpg" alt="Young fish C, photographed on a measurement grid" loading="lazy" /><small>Enlarge image</small></button>
+<button type="button" class="juvenile-card" data-enlarge-image="assets/education_activities/juvenile-d.jpg" data-image-label="Young fish D" aria-label="Enlarge young fish D"><span>D</span><img src="assets/education_activities/juvenile-d.jpg" alt="Young fish D, photographed on a measurement grid" loading="lazy" /><small>Enlarge image</small></button>
+<button type="button" class="juvenile-card" data-enlarge-image="assets/education_activities/juvenile-e.jpg" data-image-label="Young fish E" aria-label="Enlarge young fish E"><span>E</span><img src="assets/education_activities/juvenile-e.jpg" alt="Young fish E, photographed on a measurement grid" loading="lazy" /><small>Enlarge image</small></button></div></section>
+      <form id="fish-matching-form"><div class="adult-match-grid"><article class="adult-match-card"><div class="adult-match-photo"><img src="assets/education_activities/adult-bay-anchovy.png" alt="Adult Bay Anchovy" loading="lazy" /></div><div class="adult-match-body"><h2>Bay Anchovy</h2><label for="match-bay-anchovy">Matching young fish</label><select id="match-bay-anchovy" name="bay-anchovy"><option value="">Choose a letter</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option></select><label class="match-reason-label">What features helped you decide?<textarea name="reason-bay-anchovy" rows="2" placeholder="Look at body shape, fins, eyes, and markings."></textarea></label></div></article>
+<article class="adult-match-card"><div class="adult-match-photo"><img src="assets/education_activities/adult-striped-bass.png" alt="Adult Striped Bass" loading="lazy" /></div><div class="adult-match-body"><h2>Striped Bass</h2><label for="match-striped-bass">Matching young fish</label><select id="match-striped-bass" name="striped-bass"><option value="">Choose a letter</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option></select><label class="match-reason-label">What features helped you decide?<textarea name="reason-striped-bass" rows="2" placeholder="Look at body shape, fins, eyes, and markings."></textarea></label></div></article>
+<article class="adult-match-card"><div class="adult-match-photo"><img src="assets/education_activities/adult-windowpane-flounder.png" alt="Adult Windowpane Flounder" loading="lazy" /></div><div class="adult-match-body"><h2>Windowpane Flounder</h2><label for="match-windowpane-flounder">Matching young fish</label><select id="match-windowpane-flounder" name="windowpane-flounder"><option value="">Choose a letter</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option></select><label class="match-reason-label">What features helped you decide?<textarea name="reason-windowpane-flounder" rows="2" placeholder="Look at body shape, fins, eyes, and markings."></textarea></label></div></article>
+<article class="adult-match-card"><div class="adult-match-photo"><img src="assets/education_activities/adult-atlantic-tomcod.png" alt="Adult Atlantic Tomcod" loading="lazy" /></div><div class="adult-match-body"><h2>Atlantic Tomcod</h2><label for="match-atlantic-tomcod">Matching young fish</label><select id="match-atlantic-tomcod" name="atlantic-tomcod"><option value="">Choose a letter</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option></select><label class="match-reason-label">What features helped you decide?<textarea name="reason-atlantic-tomcod" rows="2" placeholder="Look at body shape, fins, eyes, and markings."></textarea></label></div></article>
+<article class="adult-match-card"><div class="adult-match-photo"><img src="assets/education_activities/adult-white-catfish.png" alt="Adult White Catfish" loading="lazy" /></div><div class="adult-match-body"><h2>White Catfish</h2><label for="match-white-catfish">Matching young fish</label><select id="match-white-catfish" name="white-catfish"><option value="">Choose a letter</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option></select><label class="match-reason-label">What features helped you decide?<textarea name="reason-white-catfish" rows="2" placeholder="Look at body shape, fins, eyes, and markings."></textarea></label></div></article></div><div class="activity-actions matching-actions"><button type="submit">Compare my matches</button><button type="button" data-print-activity>Print worksheet</button><button type="reset" class="activity-button-secondary">Start over</button></div><p id="matching-status" role="status"></p></form>
+      <section id="matching-review" class="activity-panel" hidden aria-labelledby="matching-review-title"><h2 id="matching-review-title" tabindex="-1">Your matches, side by side</h2><p>Discuss which features support each match and which features change as fish grow.</p><div id="matching-comparisons"></div></section>
+      <dialog id="activity-image-dialog" class="activity-image-dialog" aria-labelledby="activity-image-title"><button type="button" id="activity-image-close" aria-label="Close enlarged image">Close &times;</button><h2 id="activity-image-title"></h2><img id="activity-image-large" alt="" /></dialog>
+    </section>
+    <section class="tab-page education-supplementary-page" id="education-supplementary" data-tab-page="education-supplementary">
+      <div class="page-header"><p class="eyebrow">Educational Materials</p><h1 tabindex="-1">Supplementary Materials</h1></div>
+      <div class="supplementary-resource-grid">
+        <article class="supplementary-resource">
+          <img src="teaching-materials/survey-design-background.jpg" alt="Cover of Survey Design Background" width="1000" height="563" loading="lazy" />
+          <div class="supplementary-resource-body"><h2>Survey Design Background</h2><p>Sampling schemes, spatial and temporal coverage, biological and environmental measurements, and sampling gear.</p><p class="supplementary-file-details">22 slides &middot; PowerPoint 1.9 MB</p>
+            <div class="activity-actions"><button type="button" data-pdf-preview="teaching-materials/survey-design-background.pdf" data-pdf-title="Survey Design Background" aria-pressed="false">View PDF</button><a href="teaching-materials/survey-design-background.pptx" download>Download PowerPoint</a><a href="teaching-materials/survey-design-background.pdf" download>Download PDF</a></div>
+          </div>
         </article>
-
-        <article class="education-topic-card data-panel" data-classroom-section="student-worksheets">
-          <span class="resource-kicker">Student Packets</span>
-          <h2>Student Worksheets</h2>
-          <p>Printable observation sheets, graphing prompts, vocabulary practice, short readings, and evidence-building activities.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-classroom-section="slide-decks">
-          <span class="resource-kicker">Instruction</span>
-          <h2>Teacher Slide Decks</h2>
-          <p>Presentation slides for introducing HRBMP history, Hudson River regions, key species, and classroom data investigations.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-classroom-section="data-activities">
-          <span class="resource-kicker">Data Skills</span>
-          <h2>Data Activities</h2>
-          <p>Guided activities where students filter records, read maps, compare regions, graph patterns, and explain scientific evidence.</p>
-        </article>
-
-        <article class="education-topic-card data-panel" data-classroom-section="field-lab-activities">
-          <span class="resource-kicker">Hands-on</span>
-          <h2>Field &amp; Lab Activities</h2>
-          <p>Simple protocols and demonstrations for sampling methods, specimen observations, water-quality measurements, and habitat comparisons.</p>
+        <article class="supplementary-resource">
+          <img src="teaching-materials/hudson-river-survey-design-challenge.jpg" alt="Cover of Hudson River Survey Design Challenge" width="1000" height="563" loading="lazy" />
+          <div class="supplementary-resource-body"><h2>Hudson River Survey Design Challenge</h2><p>Five management questions, survey choices, classroom budgets, planning worksheets, and discussion prompts.</p><p class="supplementary-file-details">19 slides &middot; PowerPoint 0.1 MB</p>
+            <div class="activity-actions"><button type="button" data-pdf-preview="teaching-materials/hudson-river-survey-design-challenge.pdf" data-pdf-title="Hudson River Survey Design Challenge" aria-pressed="false">View PDF</button><a href="teaching-materials/hudson-river-survey-design-challenge.pptx" download>Download PowerPoint</a><a href="teaching-materials/hudson-river-survey-design-challenge.pdf" download>Download PDF</a></div>
+          </div>
         </article>
       </div>
+      <section class="supplementary-preview" aria-labelledby="supplementary-preview-title">
+        <div class="supplementary-preview-header"><h2 id="supplementary-preview-title" tabindex="-1">PDF preview</h2><a id="supplementary-open-pdf" href="teaching-materials/survey-design-background.pdf" target="_blank" rel="noopener">Open PDF in a new tab &nearr;</a></div>
+        <p id="supplementary-pdf-status" role="status" hidden>Loading PDF…</p>
+        <iframe id="supplementary-pdf-frame" class="supplementary-pdf-frame" title="Teaching slides PDF preview"></iframe>
+        <p class="supplementary-pdf-help">If your browser does not display the preview, open the PDF in a new tab or download it above.</p>
+      </section>
+      <a class="activity-resource-link" href="#activity-survey-design" data-tab-link="activity-survey-design">Try the interactive Survey Design Challenge &rarr;</a>
     </section>
 
     <section class="tab-page" id="education-outreach" data-tab-page="education-outreach">
@@ -3127,8 +4251,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="config.js"></script>
-  <script src="archive.js?v=1.2.6"></script>
-  <script src="archive-cache.js?v=1.2.6"></script>
-  <script src="app.js?v=1.2.6&amp;build=20261123-cleanup"></script>
+  <script src="archive.js?v=1.2.7"></script>
+  <script src="archive-cache.js?v=1.2.7"></script>
+  <script src="app.js?v=1.2.7"></script>
+  <script src="education-activities.js?v=1.2.7"></script>
 </body>
 </html>

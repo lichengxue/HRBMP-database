@@ -52,6 +52,7 @@ gui/config.js
 supabase/.temp/
 tmp/archive-checks/
 tmp/archive-browser-checks/
+tmp/species_profiles/
 
 # OS/editor clutter
 .DS_Store

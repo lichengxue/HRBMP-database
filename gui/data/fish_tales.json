@@ -1,0 +1,816 @@
+{
+  "source_archive": "Species profiles-20261124T020213Z-1-001.zip",
+  "source_sha256": "c6045ccfaf07d7115e083b71ff588a83e1e1a6b08835dd9084fd5ba5b8ae36db",
+  "profiles": [
+    {
+      "slug": "alewife",
+      "common_name": "Alewife",
+      "scientific_name": "Alosa pseudoharengus",
+      "source_scientific_name": "Alosa pseudoharengus",
+      "sections": {
+        "appearance": [
+          "Large eye and relatively deep body",
+          "Black spot located behind shoulder",
+          "Forked tail"
+        ],
+        "biology": [
+          "Spend most of life in saltwater and reproduce in freshwater",
+          "Reproduction in the Hudson River occurs from late March to early May"
+        ],
+        "diet": [
+          "Fish eggs and larval fish",
+          "Insects",
+          "Zooplankton"
+        ],
+        "ecosystem": [
+          "Component of the forage base for coastal fishes, marine mammals and seabirds, but also terrestrial animals and shorebirds"
+        ],
+        "monitoring": [
+          "Ecologically and economically important species",
+          "Population changes can reveal broader ecosystem level changes"
+        ],
+        "fact": [
+          "It is thought that a fish will return to reproduce in the same river in which they were born"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/alewife.png",
+        "width": 800,
+        "height": 354,
+        "credit": "Photo: Connecticut Department of Energy & Environmental Protection",
+        "source_alt": "",
+        "source_crop": {
+          "l": 0,
+          "t": 0,
+          "r": 0,
+          "b": 0
+        },
+        "sha256": "86c579c5618588b28762c8778f49885e47d0c2d720d4f725ac6f010cae57264e"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_alewife.pptx",
+        "sha256": "0a08158e56e1a9aff72f8f92f2c88e141c80610b5dadd9afb3219498271e040e"
+      }
+    },
+    {
+      "slug": "american-shad",
+      "common_name": "American Shad",
+      "scientific_name": "Alosa sapidissima",
+      "source_scientific_name": "Alosa sapidissima",
+      "sections": {
+        "appearance": [
+          "Thin metallic body varying in color from greenish to dark blue",
+          "Large dark shoulder spot may be followed by several paler spots",
+          "Deeply forked tail"
+        ],
+        "biology": [
+          "Reproduction in the Hudson River occurs on sandy, gravelly shoals and other shallow areas",
+          "A female may release 100,000 to 600,000 eggs"
+        ],
+        "diet": [
+          "Juveniles eat zooplankton and terrestrial insects",
+          "Feed on plankton, crustaceans, and small fish in the ocean"
+        ],
+        "ecosystem": [
+          "Migratory link between the river and open ocean – transporting nutrients between the systems",
+          "Food source to larger fish, birds, and some terrestrial animals"
+        ],
+        "monitoring": [
+          "Historically very abundant and now population reduced to low levels – important to track population recovery"
+        ],
+        "fact": [
+          "The Shadbush tree is named after this fish because the spring bloom aligns with the return of shad for river reproduction"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/american-shad.jpg",
+        "width": 1768,
+        "height": 483,
+        "credit": "Photo: Virginia Institute of Marine Science",
+        "source_alt": "Juvenile American shad",
+        "source_crop": {
+          "l": 0,
+          "t": 0,
+          "r": 0,
+          "b": 0
+        },
+        "sha256": "a1c535dd7ff08820b8822fdcff6ee4275888f949594ec9a8c95ec3abf5db32b4"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_american_shad.pptx",
+        "sha256": "4eb16e2ee8830b33fcaba2a9c45b87452a2c5d9222bbdfe2ae52bcfef8863217"
+      }
+    },
+    {
+      "slug": "atlantic-sturgeon",
+      "common_name": "Atlantic Sturgeon",
+      "scientific_name": "Acipenser oxyrinchus",
+      "source_scientific_name": "Acipenser oxyrinchus",
+      "sections": {
+        "appearance": [
+          "Have a series of bony plates called scutes on their back, sides, and belly",
+          "Can reach 14 feet in length"
+        ],
+        "biology": [
+          "Adults return to the Hudson River to spawn in May and June",
+          "Young fish remain in their natal river for up to 6 years before swimming out to the ocean"
+        ],
+        "diet": [
+          "Bottom-feeders that primarily eat crustaceans, mollusks, insects, and worms"
+        ],
+        "ecosystem": [
+          "Regulate benthic prey populations"
+        ],
+        "monitoring": [
+          "Listed under the Endangered Species Act and population recovery is a key goal"
+        ],
+        "fact": [
+          "This is the largest sturgeon species found in New York"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/atlantic-sturgeon.png",
+        "width": 640,
+        "height": 427,
+        "credit": null,
+        "source_alt": "",
+        "source_crop": {
+          "l": 0.0,
+          "t": 0.25292,
+          "r": 0.0,
+          "b": 0.23403
+        },
+        "sha256": "7fc3550dc49e71aab7e9c54f1c896fe641d6555e9430f24cab8d1e9e1f9d08d0"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_atlantic_sturgeon.pptx",
+        "sha256": "286b8a92dc1110d0ea0ff82875ad185279c2eaf483bcd79287aa975ca626402e"
+      },
+      "references": [
+        {
+          "label": "NYSDEC: Atlantic and Shortnose Sturgeon",
+          "url": "https://dec.ny.gov/nature/animals-fish-plants/hudson-delaware-marine-fisheries/atlantic-and-shortnose-sturgeon"
+        }
+      ]
+    },
+    {
+      "slug": "atlantic-tomcod",
+      "common_name": "Atlantic Tomcod",
+      "scientific_name": "Microgadus tomcod",
+      "source_scientific_name": "Microgadus tomcod",
+      "sections": {
+        "appearance": [
+          "Reach up to 9-12 inches in length",
+          "Three distinct dorsal fins and two anal fins",
+          "Single barbel on chin"
+        ],
+        "biology": [
+          "Rarely live past 1 year old in the Hudson River",
+          "Primarily demersal and reproduce from November to February over gravel and sand"
+        ],
+        "diet": [
+          "Juveniles eat copepods and small amphipods",
+          "Adults eat small crustaceans, shellfish, worms, and other fish"
+        ],
+        "ecosystem": [
+          "Important prey for larger predatory fish"
+        ],
+        "monitoring": [
+          "Can be used for tracing chemical contaminants as they tend to accumulate high concentrations in polluted areas"
+        ],
+        "fact": [
+          "Have developed the ability to produce antifreeze proteins making them very tolerant of cold water temperatures"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/atlantic-tomcod.jpg",
+        "width": 800,
+        "height": 322,
+        "credit": "Photo: Connecticut Department of Energy & Environmental Protection",
+        "source_alt": "20 cm Atlantic tomcod.",
+        "source_crop": {
+          "l": 0,
+          "t": 0,
+          "r": 0,
+          "b": 0
+        },
+        "sha256": "740ce8cb3a2c2c2319d5f572c83efa1c49c27d3e8d63fcd2b34b66f428103443"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_atlantic_tomcod.pptx",
+        "sha256": "8f6992d73977a988334a691dacc28d2597949ec309cf3aee37a41192d2199d5a"
+      }
+    },
+    {
+      "slug": "bay-anchovy",
+      "common_name": "Bay Anchovy",
+      "scientific_name": "Anchoa mitchilli",
+      "source_scientific_name": "Anchoa mitchilli",
+      "sections": {
+        "appearance": [
+          "Slender and grows up to 4 inches in length",
+          "Silvery-green with a translucent body and a silver stripe on its sides"
+        ],
+        "biology": [
+          "Schooling fish",
+          "Can reach maturity at around 2.5 months",
+          "Reproduce in the nighttime between April and September"
+        ],
+        "diet": [
+          "Fish less than 25 mm eat planktonic copepods and larvae",
+          "Larger fish eat amphipods, ostracods, and small mollusks"
+        ],
+        "ecosystem": [
+          "Important forage fish for many other birds and recreationally and commercially important fishes"
+        ],
+        "monitoring": [
+          "Good indicator of estuary pollution stress"
+        ],
+        "fact": [
+          "Adults may live to be slightly older than 3 years old, but few often survive past their first year"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/bay-anchovy.jpg",
+        "width": 1024,
+        "height": 683,
+        "credit": "Photo: Virginia Institute of Marine Science",
+        "source_alt": "",
+        "source_crop": {
+          "l": 0.03202,
+          "t": 0.27685,
+          "r": 0.0025,
+          "b": 0.35456
+        },
+        "sha256": "ed83b7e34555fa1799b1dcae0e9fd41539c4700ba30d282ec4ddaa662539f758"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_bay_anchovy.pptx",
+        "sha256": "cac544116b7252fdf88a0690302315a4af6b6a65c7bdb5af4eb7f5ebef30805a"
+      }
+    },
+    {
+      "slug": "blueback-herring",
+      "common_name": "Blueback Herring",
+      "scientific_name": "Alosa aestivalis",
+      "source_scientific_name": "Alosa aestivalis",
+      "sections": {
+        "appearance": [
+          "Bluish green top coloration and overall silvery color",
+          "Usually have a dark spot located just behind the gill plate on the upper side of the body"
+        ],
+        "biology": [
+          "Schooling species",
+          "Reproduce in the Hudson River during late spring and early summer"
+        ],
+        "diet": [
+          "Planktivore – consumes copepods, pelagic shrimp larvae and larval fishes"
+        ],
+        "ecosystem": [
+          "Important food web link – eat plankton and they themselves are then eaten by larger predatory fish and birds"
+        ],
+        "monitoring": [
+          "Important forage base for larger predators"
+        ],
+        "fact": [
+          "Blueback herring and alewife are collectively termed “river herring”"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/blueback-herring.jpg",
+        "width": 800,
+        "height": 359,
+        "credit": "Photo: Connecticut Department of Energy & Environmental Protection",
+        "source_alt": "Adult blueback herring.",
+        "source_crop": {
+          "l": 0,
+          "t": 0,
+          "r": 0,
+          "b": 0
+        },
+        "sha256": "486e328bafaace6a0f7b922cf6d44dcbc237844eeede7f8a33e5ed832b9b2416"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_blueback_herring.pptx",
+        "sha256": "4af2345eb1b285bf04f4c0f7c730e89aba1bc7f00acae9caaba57103fc995db8"
+      }
+    },
+    {
+      "slug": "bluefish",
+      "common_name": "Bluefish",
+      "scientific_name": "Pomatomus saltatrix",
+      "source_scientific_name": "Pomatomus saltatrix",
+      "sections": {
+        "appearance": [
+          "Steel to greenish blue color on upper parts, fading to silver on lower sides and belly",
+          "Forked tail and streamlined body with sharp teeth"
+        ],
+        "biology": [
+          "Live up to 12 years",
+          "Reproduce multiple times in the spring and summer",
+          "Females can produce over 400,000 eggs or more"
+        ],
+        "diet": [
+          "Fish, including bay anchovy and silversides",
+          "Invertebrates"
+        ],
+        "ecosystem": [
+          "Voracious apex predator fish regulating smaller forage fish populations"
+        ],
+        "monitoring": [
+          "Assess population status",
+          "Track PCB contamination levels"
+        ],
+        "fact": [
+          "Baby bluefish are known as snappers"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/bluefish.jpg",
+        "width": 1024,
+        "height": 683,
+        "credit": "Photo: Virginia Institute of Marine Science",
+        "source_alt": "",
+        "source_crop": {
+          "l": 0.0,
+          "t": 0.16992,
+          "r": 0.0,
+          "b": 0.24091
+        },
+        "sha256": "d9cedc7952e4b6fa2bdba6ad8d43b31bf3e96d439e670611c5bc0861c6288839"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_bluefish.pptx",
+        "sha256": "f6f9ca83cd3d34bb3747c0ae04b9d3dc4dfe030e9ad8df7636fe09a15769651e"
+      }
+    },
+    {
+      "slug": "channel-catfish",
+      "common_name": "Channel Catfish",
+      "scientific_name": "Ictalurus punctatus",
+      "source_scientific_name": "Ictalurus punctatus",
+      "sections": {
+        "appearance": [
+          "Bluish or greenish gray body with a silvery white belly and olive fins",
+          "Four pairs of barbels around mouth"
+        ],
+        "biology": [
+          "Parents build nests like under rocks or in submerged hollow logs and guard young",
+          "Life span varies greatly but some may live for over 25 years"
+        ],
+        "diet": [
+          "Bottom feeders eating aquatic insects, arthropods, and fish"
+        ],
+        "ecosystem": [
+          "Invasive species that could outcompete native catfish species like the white catfish"
+        ],
+        "monitoring": [
+          "Non-native invasive species impacts"
+        ],
+        "fact": [
+          "Have taste receptors all over their body, with the highest concentration located on the four pairs of barbels (“whiskers”)"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/channel-catfish.jpg",
+        "width": 5040,
+        "height": 1680,
+        "credit": "Photo: USFWS Mountain Prairie",
+        "source_alt": "Channel catfish - Wikipedia",
+        "source_crop": {
+          "l": 0,
+          "t": 0,
+          "r": 0,
+          "b": 0
+        },
+        "sha256": "3dae7b627e7e1ed3f8a3cabe81527d25b19642ab3c5ef015388ae14e8bd00223"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_channel_catfish.pptx",
+        "sha256": "f0a966dacc554af64e3396c13ad287113ba065640deef9ef233f9e1f29f5b774"
+      }
+    },
+    {
+      "slug": "gizzard-shad",
+      "common_name": "Gizzard Shad",
+      "scientific_name": "Dorosoma cepedianum",
+      "source_scientific_name": "Dorosoma cepedianum",
+      "sections": {
+        "appearance": [
+          "Small head and mouth with a short and blunt snout",
+          "Greatly elongated last dorsal ray",
+          "Single faint spot on shoulder"
+        ],
+        "biology": [
+          "Reproduce near the surface during mid to late spring",
+          "Occur mainly in freshwater but can be found in brackish or saline waters"
+        ],
+        "diet": [
+          "Newly hatched larvae eat protozoans and other plankton",
+          "Diet later includes detritus, algae, and phytoplankton"
+        ],
+        "ecosystem": [
+          "Forage fish for valued game fishes"
+        ],
+        "monitoring": [
+          "Tracking population changes can reveal information about broader ecosystem changes"
+        ],
+        "fact": [
+          "Named for its unique muscular stomach that functions like a bird’s gizzard – use ingested sand or small stones to grind up food"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/gizzard-shad.jpg",
+        "width": 800,
+        "height": 425,
+        "credit": "Photo: Connecticut Department of Energy & Environmental Protection",
+        "source_alt": "48 cm gizzard shad.",
+        "source_crop": {
+          "l": 0,
+          "t": 0,
+          "r": 0,
+          "b": 0
+        },
+        "sha256": "6cff52bf0cc95ef803e7d6c8a349af55209ca6ed52d5524081d40ffdf64c3d06"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_gizzard_shad.pptx",
+        "sha256": "7ad3c0dbc265c58d57179aa2dcf1eacb3950da982f9102e4ef3604582b6c7f19"
+      }
+    },
+    {
+      "slug": "hogchoker",
+      "common_name": "Hogchoker",
+      "scientific_name": "Trinectes maculatus",
+      "source_scientific_name": "Trinectes maculatus",
+      "sections": {
+        "appearance": [
+          "Right-eyed flatfish",
+          "Brownish-gray body with vertical lines and spots"
+        ],
+        "biology": [
+          "Bottom-dweller preferring sand, silt, or mud",
+          "Peak reproduction in July and early-August",
+          "Can live up to 7 years old"
+        ],
+        "diet": [
+          "Worms",
+          "Amphipods and other small crustaceans",
+          "Small fish"
+        ],
+        "ecosystem": [
+          "Important predators in benthic food web"
+        ],
+        "monitoring": [
+          "Close connection to the bottom can indicate water quality and habitat health"
+        ],
+        "fact": [
+          "It is said that when farmers would feed the fish to pigs, they would choke on them due to the rough scales, hence their name"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/hogchoker.jpg",
+        "width": 800,
+        "height": 485,
+        "credit": "Photo: Connecticut Department of Energy & Environmental Protection",
+        "source_alt": "Hogchoker.",
+        "source_crop": {
+          "l": 0,
+          "t": 0,
+          "r": 0,
+          "b": 0
+        },
+        "sha256": "fc169cbb243c553c5523e170c5502600fc3ac637cf5712757c2b4cd281f79a42"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_hogchoker.pptx",
+        "sha256": "c0260361375446b42736f68ed4932805b0fdf5da04ba1ea5aeafa9dc41bfc456"
+      }
+    },
+    {
+      "slug": "rainbow-smelt",
+      "common_name": "Rainbow Smelt",
+      "scientific_name": "Osmerus mordax",
+      "source_scientific_name": "Osmerus mordax",
+      "sections": {
+        "appearance": [
+          "Elongate and slender",
+          "Pointed head",
+          "Large mouth",
+          "Deeply forked caudal fin",
+          "Bright silvery stripe along body"
+        ],
+        "biology": [
+          "Reproduce in the spring in freshwater at night",
+          "Can produce an antifreeze protein to enable survival at subfreezing temperatures"
+        ],
+        "diet": [
+          "Aquatic insects, worms, small crustaceans, fish"
+        ],
+        "ecosystem": [
+          "Prey for larger predatory fish and birds"
+        ],
+        "monitoring": [
+          "Broader ecosystem level changes can be revealed by tracking population changes"
+        ],
+        "fact": [
+          "When this fish is taken out of the water, it gives off the odor of freshly cut cucumbers"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/rainbow-smelt.jpg",
+        "width": 400,
+        "height": 135,
+        "credit": "Photo: New Hampshire Fish & Game Department",
+        "source_alt": "Rainbow Smelt",
+        "source_crop": {
+          "l": 0,
+          "t": 0,
+          "r": 0,
+          "b": 0
+        },
+        "sha256": "f2d23db2c5675c7628af7279e2b482e2f4743c85383f93c1f5b98db4429f2bf6"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_rainbow_smelt.pptx",
+        "sha256": "26fae3c769be068df6dd31a34c9aa107afe1ebded409c1d079576556f968a158"
+      }
+    },
+    {
+      "slug": "shortnose-sturgeon",
+      "common_name": "Shortnose Sturgeon",
+      "scientific_name": "Acipenser brevirostrum",
+      "source_scientific_name": "Acipenser brevirostrum",
+      "sections": {
+        "appearance": [
+          "Short conical snout with 4 barbels in front of the mouth",
+          "Five rows of scutes: one on the back, two on the belly, and one on each side"
+        ],
+        "biology": [
+          "Reproduction is associated with gravel-dominated bottom-types",
+          "Reproduction in the Hudson River occurs from April to May"
+        ],
+        "diet": [
+          "Worms, insect larvae, plants, snails, shrimp, crayfish"
+        ],
+        "ecosystem": [
+          "Benthic scavenger regulating invertebrate populations"
+        ],
+        "monitoring": [
+          "Listed under the Endangered Species Act",
+          "Maintain recovery of the population in the Hudson River"
+        ],
+        "fact": [
+          "The oldest female ever recorded was 67 years old and the oldest male was 32 years old"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/shortnose-sturgeon.png",
+        "width": 800,
+        "height": 534,
+        "credit": null,
+        "source_alt": "Shortnose Sturgeon | NOAA Fisheries",
+        "source_crop": {
+          "l": 0.0,
+          "t": 0.26964,
+          "r": 0.0,
+          "b": 0.25857
+        },
+        "sha256": "962f2ebd3d777837c01873025af719e5a62b7811803ea8df5de56793857db5f3"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_shortnose_sturgeon.pptx",
+        "sha256": "1eec29d185cccdb5917aeb73acb045124079c80b8e4d8e686e3824f909974a02"
+      }
+    },
+    {
+      "slug": "spottail-shiner",
+      "common_name": "Spottail Shiner",
+      "scientific_name": "Notropis hudsonius hudsonius",
+      "source_scientific_name": "Notropis hudsonius hudsonius",
+      "sections": {
+        "appearance": [
+          "Small, slender, silvery fish",
+          "Distinct black spot at base of tail",
+          "Average size ranges 2-3 inches"
+        ],
+        "biology": [
+          "Small, schooling fish found in freshwater and brackish habitats",
+          "Spawn during warmer months (June-July)"
+        ],
+        "diet": [
+          "Omnivores. Eat small aquatic organisms including insect larvae, crustaceans, and zooplankton"
+        ],
+        "ecosystem": [
+          "Forage fish in the Hudson River food web",
+          "Key food source for larger predatory fish and wading birds"
+        ],
+        "monitoring": [
+          "Important forage fish species",
+          "Tracking changes in the population over time helps reveal broader changes in the Hudson River ecosystem"
+        ],
+        "fact": [
+          "The Spottail Shiner was named after the Hudson River!",
+          "Their scientific name, hudsonius, means “of the Hudson.”"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/spottail-shiner.png",
+        "width": 1920,
+        "height": 505,
+        "credit": "Photo: Robert Aguilar/Smithsonian Environmental Research Center, CC BY 2.0",
+        "source_alt": "",
+        "source_crop": {
+          "l": 0,
+          "t": 0,
+          "r": 0,
+          "b": 0
+        },
+        "sha256": "99de763682370f28145b3c271084dbd58d933ee595f6aa75693936f0cdf895a2"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_spottail_shiner.pptx",
+        "sha256": "a1c3b2e3cb1e221a62e27ba9fb00acbed751807e6888aebcd9105abe9e79443a"
+      }
+    },
+    {
+      "slug": "tessellated-darter",
+      "common_name": "Tessellated Darter",
+      "scientific_name": "Etheostoma olmstedi",
+      "source_scientific_name": "Etheostoma olmstedi",
+      "sections": {
+        "appearance": [
+          "Small fish; slender body",
+          "Brownish-tan with dark, W-shaped markings",
+          "Two fins along back",
+          "Grows 2-4 inches"
+        ],
+        "biology": [
+          "Bottom dwelling; found in shallow, slow-moving waters",
+          "Uses large pectoral fins to help rest and move on bottom",
+          "Spawn in spring"
+        ],
+        "diet": [
+          "Small crustaceans",
+          "Insects and insect larvae",
+          "Snails",
+          "Algae"
+        ],
+        "ecosystem": [
+          "Serve as food source for larger fish and birds",
+          "Help to regulate invertebrate populations"
+        ],
+        "monitoring": [
+          "Their close connection to bottom habitats can help indicate local water quality and habitat health"
+        ],
+        "fact": [
+          "Darters get their name from the way they quickly “dart” along the river bottom!"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/tessellated-darter.png",
+        "width": 1000,
+        "height": 372,
+        "credit": null,
+        "source_alt": "",
+        "source_crop": {
+          "l": 0,
+          "t": 0,
+          "r": 0,
+          "b": 0
+        },
+        "sha256": "5eaae6552397be08b083dc60a678142bba3b9175bafd72365c4fcad0c588a4e1"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_tessellated_darter.pptx",
+        "sha256": "3edb045ca73b5febdbfa0991b39cc84bade2241499f79db18a1ab3a42192ad9f"
+      }
+    },
+    {
+      "slug": "white-catfish",
+      "common_name": "White Catfish",
+      "scientific_name": "Ameiurus catus",
+      "source_scientific_name": "Ameriurus catus",
+      "sections": {
+        "appearance": [
+          "Smooth, scaleless body",
+          "Broad, flattened head",
+          "Bluish-gray back with pale belly",
+          "Four pairs of whisker-like barbels",
+          "Forked tail"
+        ],
+        "biology": [
+          "Bottom dwelling freshwater fish",
+          "Most active evening through nighttime",
+          "Builds nests; guards young"
+        ],
+        "diet": [
+          "Opportunistic feeder",
+          "Aquatic insects, crustaceans, small fish, mollusks"
+        ],
+        "ecosystem": [
+          "Adult fish are important predators",
+          "Young white catfish are an important prey species for larger predatory fish such as the Striped Bass"
+        ],
+        "monitoring": [
+          "As bottom dwellers, they reflect local water and habitat quality.",
+          "Can accumulate pollutants like heavy metals, helping inform safe fish consumption advisories"
+        ],
+        "fact": [
+          "White Catfish can live for more than a decade!"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/white-catfish.png",
+        "width": 1200,
+        "height": 804,
+        "credit": "Illustration: Duane Raver/U.S. Fish & Wildlife Service",
+        "source_alt": "",
+        "source_crop": {
+          "l": 0.0,
+          "t": 0.25531,
+          "r": 0.0,
+          "b": 0.29105
+        },
+        "sha256": "ec76a40a9d873e4b08b37e47810e5f09f419d67b0c7d05ee3138a597ca81c26d"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_white_catfish.pptx",
+        "sha256": "fd650762f21fae3f3730cd73e777c057a3c6f6e49dd22aca911c57d53cbaad86"
+      }
+    },
+    {
+      "slug": "white-perch",
+      "common_name": "White Perch",
+      "scientific_name": "Morone americana",
+      "source_scientific_name": "Morone americana",
+      "sections": {
+        "appearance": [
+          "Deep, laterally compressed body. Can grow up to 22 inches. Silvery-white, with two dorsal fins slightly joined by a membrane."
+        ],
+        "biology": [
+          "Semi-anadromous",
+          "R-selected species",
+          "Reaches maturity at ~ 2-4 years"
+        ],
+        "diet": [
+          "Ranges from fish eggs, invertebrates, to small fish like minnows"
+        ],
+        "ecosystem": [
+          "Prolific mid-trophic level species linking lower and higher trophic level species"
+        ],
+        "monitoring": [
+          "Helps inform ecosystem–based management"
+        ],
+        "fact": [
+          "In the Hudson River, there are both resident and migratory populations"
+        ]
+      },
+      "image": {
+        "src": "assets/fish_tales/white-perch.png",
+        "width": 960,
+        "height": 540,
+        "credit": "Photo: University of Nebraska-Lincoln",
+        "source_alt": "",
+        "source_crop": {
+          "l": 0,
+          "t": 0,
+          "r": 0,
+          "b": 0
+        },
+        "sha256": "418a3a60a26573d5c499d1cdbdb3273bf0162a6b19adf60e50b394352fb1a3f0"
+      },
+      "source": {
+        "file": "HRBMP_species_profile_template_white_perch.pptx",
+        "sha256": "dae24ef5f4cdd653fb645fe950275bc855eac5c29693b6d147a65c4618438d06"
+      }
+    }
+  ],
+  "editorial_repairs": [
+    {
+      "species": "atlantic-sturgeon",
+      "original": "In the Hudson River, can be up to 5-6ft in length",
+      "display": "Can reach 14 feet in length"
+    },
+    {
+      "species": "atlantic-sturgeon",
+      "original": "Reproduce in rivers every 2-5 years during the spring",
+      "display": "Adults return to the Hudson River to spawn in May and June"
+    },
+    {
+      "species": "white-catfish",
+      "original": "Ameriurus catus",
+      "display": "Ameiurus catus"
+    },
+    {
+      "species": "white-perch",
+      "original": "Deep and laterally compressed body. Can grow up to 22 inch Silvery-white with two dorsal fins slightly joined by a membrane",
+      "display": "Deep, laterally compressed body. Can grow up to 22 inches. Silvery-white, with two dorsal fins slightly joined by a membrane."
+    }
+  ],
+  "omitted_template_fields": [
+    "Empty river-range map",
+    "Empty HRBMP data-spotlight graph",
+    "Optional QR-code footer"
+  ]
+}

@@ -1,0 +1,654 @@
+{
+  "sources": [
+    {
+      "filename": "Hudson_River_Survey_Design_Challenge_slide_deck_draft.pptx",
+      "sha256": "8f22269195213f7967a7b2f74555a93daf53981745e2ff8c243b0da50ab62682"
+    },
+    {
+      "filename": "Match Juvenile to Adult Activity.docx",
+      "sha256": "1ed0fa95a5f42a56fab47196668210824a2a29ec56a586badb4e304d6a707a6e"
+    }
+  ],
+  "survey": {
+    "objectives": [
+      {
+        "id": "1",
+        "title": "Where are the blue crabs?",
+        "budget": 100000,
+        "scenario": "Resource managers want to compare blue crab distribution and relative abundance across the Hudson River estuary.",
+        "objective": "Compare blue crab occurrence and relative abundance among regions and habitats.",
+        "clue": "Think about spatial coverage, habitat accessibility, season, gear selectivity, and replication.",
+        "discussion": "If catches differ among regions, how will you know it is not simply because you sampled them differently?"
+      },
+      {
+        "id": "2",
+        "title": "Where are the nursery habitats?",
+        "budget": 1000000,
+        "scenario": "Managers want to identify Hudson River habitats used by juvenile striped bass during early life stages.",
+        "objective": "Compare juvenile striped bass occurrence and relative abundance among habitat types.",
+        "clue": "Life stage matters. Your gear and timing must actually sample juvenile fish.",
+        "discussion": "Does catching more juveniles in one habitat prove that it is a better nursery compared to another?"
+      },
+      {
+        "id": "3",
+        "title": "Can you find a rare species?",
+        "budget": 1000000,
+        "scenario": "Scientists need information about Atlantic sturgeon occurrence and habitat use while minimizing disturbance.",
+        "objective": "Detect Atlantic sturgeon and describe where and when detections occur.",
+        "clue": "Use noninvasive approaches. Rare species may require repeated effort and broad coverage.",
+        "discussion": "If you detect zero sturgeon at a station, does that prove they never use it?"
+      },
+      {
+        "id": "4",
+        "title": "What happens when the river changes?",
+        "budget": 80000,
+        "scenario": "Managers suspect fish distribution is related to temperature, salinity, and dissolved oxygen.",
+        "objective": "Design a survey that links fish occurrence or abundance with environmental conditions.",
+        "clue": "Biological and environmental observations should be collected at comparable places and times.",
+        "discussion": "How could season or habitat create an apparent relationship between fish and temperature?"
+      },
+      {
+        "id": "5",
+        "title": "Did restoration work?",
+        "budget": 100000,
+        "scenario": "A Hudson River shoreline has been restored. Managers want to know whether juvenile fish use increased after restoration.",
+        "objective": "Evaluate whether juvenile fish occurrence changed following restoration.",
+        "clue": "Include at least one unrestored reference site and think about before/after comparisons.",
+        "discussion": "If fish increase at the restored site, what evidence would suggest restoration, not a river-wide change, was responsible?"
+      }
+    ],
+    "areas": [
+      {
+        "id": "marsh",
+        "name": "Marsh / Tributary",
+        "description": "Shallow structured habitat",
+        "cost": 900
+      },
+      {
+        "id": "lower",
+        "name": "Lower Estuary",
+        "description": "More marine influence",
+        "cost": 1200
+      },
+      {
+        "id": "mid",
+        "name": "Mid-Hudson",
+        "description": "Estuarine transition",
+        "cost": 1000
+      },
+      {
+        "id": "upper",
+        "name": "Upper Hudson",
+        "description": "More freshwater influence",
+        "cost": 1100
+      }
+    ],
+    "gear": [
+      {
+        "id": "trawl",
+        "name": "Bottom Trawl",
+        "cost": 1500,
+        "unit": "tow",
+        "description": "Mobile bottom species",
+        "limitation": "Not suitable everywhere"
+      },
+      {
+        "id": "seine",
+        "name": "Beach Seine",
+        "cost": 500,
+        "unit": "haul",
+        "description": "Shallow nearshore fish",
+        "limitation": "Access + depth limited"
+      },
+      {
+        "id": "traps",
+        "name": "Crab Traps",
+        "cost": 250,
+        "unit": "trap set",
+        "description": "Targeted blue crabs",
+        "limitation": "Behavior affects catch"
+      },
+      {
+        "id": "rod",
+        "name": "Rod And Reel",
+        "cost": 200,
+        "unit": "sampling session",
+        "description": "Target fish sampling",
+        "limitation": "Catch depends on fish behavior and angler skill"
+      },
+      {
+        "id": "video",
+        "name": "Baited Remote Underwater Video",
+        "cost": 200,
+        "unit": "station deployment",
+        "description": "Noninvasive fish observations",
+        "limitation": "Water visibility limits detection"
+      },
+      {
+        "id": "edna",
+        "name": "eDNA sample",
+        "cost": 450,
+        "unit": "sample",
+        "description": "Species detection",
+        "limitation": "Presence ≠ abundance"
+      }
+    ],
+    "measurements": [
+      {
+        "id": "size",
+        "name": "Length and weight",
+        "cost": 150,
+        "basis": "station_visit"
+      },
+      {
+        "id": "temperature",
+        "name": "Temperature",
+        "cost": 50,
+        "basis": "station_visit"
+      },
+      {
+        "id": "salinity",
+        "name": "Salinity",
+        "cost": 50,
+        "basis": "station_visit"
+      },
+      {
+        "id": "oxygen",
+        "name": "Dissolved oxygen",
+        "cost": 50,
+        "basis": "station_visit"
+      },
+      {
+        "id": "habitat",
+        "name": "Habitat type",
+        "cost": 150,
+        "basis": "station"
+      },
+      {
+        "id": "maturity",
+        "name": "Sex and maturity",
+        "cost": 150,
+        "basis": "specimen"
+      }
+    ],
+    "schedules": [
+      {
+        "id": "once",
+        "name": "One visit",
+        "visits": 1
+      },
+      {
+        "id": "spring-fall",
+        "name": "Spring + fall",
+        "visits": 2
+      },
+      {
+        "id": "biannual",
+        "name": "Biannually (twice a year)",
+        "visits": 2
+      },
+      {
+        "id": "monthly",
+        "name": "Monthly × 12",
+        "visits": 12
+      }
+    ],
+    "discussion": [
+      "Which groups prioritized spatial coverage? Which prioritized repeated sampling?",
+      "How did the research question change the “best” gear choice?",
+      "Where did budget constraints force the biggest scientific compromise?",
+      "Which designs could estimate relative abundance? Which mainly detect presence?",
+      "What would happen if everyone used a different method every year?",
+      "What information would managers still need after these surveys were completed?"
+    ],
+    "source_slides": [
+      {
+        "slide": 1,
+        "text": [
+          "HUDSON RIVER",
+          "SURVEYDESIGNGAME",
+          "Design a real-world fisheries survey.",
+          "You are the fisheries science team. Your group will receive a research objective and a fixed budget. There is no single “correct” survey.",
+          "1  Read your objective",
+          "What does the manager need to know?",
+          "2  Build your survey",
+          "Choose where, when, how, and what to measure.",
+          "3  Stay on budget",
+          "Every station, sampling trip, and measurement has a cost.",
+          "4  Make trade-offs",
+          "More locations may mean fewer visits. Better gear may mean less replication.",
+          "5  Present & defend",
+          "Explain why your design answers the question—and what it might miss."
+        ]
+      },
+      {
+        "slide": 2,
+        "text": [
+          "How the challenge works",
+          "Move through these five decisions in order. You can go back and revise as your budget changes.",
+          "01",
+          "QUESTION",
+          "What exactly are you trying to learn?",
+          "02",
+          "SPACE",
+          "Where will you sample—and how many stations?",
+          "03",
+          "METHOD",
+          "Which gear can actually answer your question?",
+          "04",
+          "TIME",
+          "When, how often, and how many repeats?",
+          "05",
+          "DATA + MONEY",
+          "What will you measure, and can you afford it?",
+          "Tip: A strong survey is not the one that spends the most money. It is the one whose choices match the research objective."
+        ]
+      },
+      {
+        "slide": 3,
+        "text": [
+          "Use Your Resources!",
+          "Your background information and species profiles are available to help you make informed survey design decisions.",
+          "Ask yourself:",
+          "Does my survey design make sense for the species and the question I am trying to answer?"
+        ]
+      },
+      {
+        "slide": 4,
+        "text": [
+          "Objective 01",
+          "Where are the blue crabs?",
+          "BUDGET",
+          "$100,000",
+          "Scenario: Resource managers want to compare blue crab distribution and relative abundance across the Hudson River estuary.",
+          "PRIMARY OBJECTIVE",
+          "Compare blue crab occurrence and relative abundance among regions and habitats.",
+          "DESIGN CLUES",
+          "Think about spatial coverage, habitat accessibility, season, gear selectivity, and replication.",
+          "DISCUSSION PROMPT",
+          "If catches differ among regions, how will you know it is not simply because you sampled them differently?"
+        ]
+      },
+      {
+        "slide": 5,
+        "text": [
+          "Objective 02",
+          "Where are the nursery habitats?",
+          "BUDGET",
+          "$1,000,000",
+          "Managers want to identify Hudson River habitats used by juvenile striped bass during early life stages.",
+          "PRIMARY OBJECTIVE",
+          "Compare juvenile striped bass occurrence and relative abundance among habitat types.",
+          "DESIGN CLUES",
+          "Life stage matters. Your gear and timing must actually sample juvenile fish.",
+          "DISCUSSION PROMPT",
+          "Does catching more juveniles in one habitat prove that it’s is a better nursery compared to another?"
+        ]
+      },
+      {
+        "slide": 6,
+        "text": [
+          "Objective 03",
+          "Can you find a rare species?",
+          "BUDGET",
+          "$1,000,000",
+          "Scientists need information about Atlantic sturgeon occurrence and habitat use while minimizing disturbance.",
+          "PRIMARY OBJECTIVE",
+          "Detect Atlantic sturgeon and describe where and when detections occur.",
+          "DESIGN CLUES",
+          "Use noninvasive approaches. Rare species may require repeated effort and broad coverage.",
+          "DISCUSSION PROMPT",
+          "If you detect zero sturgeon at a station, does that prove they never use it?"
+        ]
+      },
+      {
+        "slide": 7,
+        "text": [
+          "Objective 04",
+          "What happens when the river changes?",
+          "BUDGET",
+          "$80,000",
+          "Managers suspect fish distribution is related to temperature, salinity, and dissolved oxygen.",
+          "PRIMARY OBJECTIVE",
+          "Design a survey that links fish occurrence or abundance with environmental conditions.",
+          "DESIGN CLUES",
+          "Biological and environmental observations should be collected at comparable places and times.",
+          "DISCUSSION PROMPT",
+          "How could season or habitat create an apparent relationship between fish and temperature?"
+        ]
+      },
+      {
+        "slide": 8,
+        "text": [
+          "Objective 05",
+          "Did restoration work?",
+          "BUDGET",
+          "$100,000",
+          "A Hudson River shoreline has been restored. Managers want to know whether juvenile fish use increased after restoration.",
+          "PRIMARY OBJECTIVE",
+          "Evaluate whether juvenile fish occurrence changed following restoration.",
+          "DESIGN CLUES",
+          "Include at least one unrestored reference site and think about before/after comparisons.",
+          "DISCUSSION PROMPT",
+          "If fish increase at the restored site, what evidence would suggest restoration, not a river-wide change, was responsible?"
+        ]
+      },
+      {
+        "slide": 9,
+        "text": [
+          "DECISION 1",
+          "Where will you sample?- survey area",
+          "Choose enough spatial coverage to answer your objective…but remember that every station creates repeated costs. You are able to choose more than one sampling location.",
+          "LOWER ESTUARY",
+          "More marine influence",
+          "$1,200 / station / visit",
+          "MID-HUDSON",
+          "Estuarine transition",
+          "$1,000 / station / visit",
+          "UPPER HUDSON",
+          "More freshwater influence",
+          "$1,100 / station / visit",
+          "MARSH / TRIBUTARY",
+          "Shallow structured habitat",
+          "$900 / station / visit",
+          "Ask yourself: Do you need broad river-wide coverage, habitat contrasts, or repeated observations at fewer places?"
+        ]
+      },
+      {
+        "slide": 10,
+        "text": [
+          "DECISION 2",
+          "When will you sample?",
+          "× 1",
+          "ONE VISIT",
+          "Snapshot",
+          "× 2",
+          "SPRING + FALL",
+          "Seasonal comparison",
+          "× 12",
+          "MONTHLY × 12",
+          "More temporal detail",
+          "× 2",
+          "BIANNUALLY"
+        ]
+      },
+      {
+        "slide": 11,
+        "text": [
+          "DECISION 3",
+          "How Many Stations?",
+          "Number of Stations in your chosen survey area(s)",
+          "× 1",
+          "ONE",
+          "Limited spatial coverage",
+          "× 5",
+          "FIVE",
+          "More locations",
+          "× 10",
+          "TEN",
+          "Strong spatial coverage",
+          "× 20",
+          "TWENTY",
+          "Extensive spatial coverage"
+        ]
+      },
+      {
+        "slide": 12,
+        "text": [
+          "DECISION 4",
+          "How will you sample?",
+          "Use your separate information packet for detailed gear descriptions. This slide is your quick decision menu.",
+          "BOTTOM TRAWL",
+          "$1,500 / tow",
+          "Mobile bottom species",
+          "Not suitable everywhere",
+          "BEACH SEINE",
+          "$500 / haul",
+          "Shallow nearshore fish",
+          "Access + depth limited",
+          "CRAB TRAPS",
+          "$250 / trap set",
+          "Targeted blue crabs",
+          "Behavior affects catch",
+          "ROD AND REEL",
+          "$200 / sampling session",
+          "Target fish sampling",
+          "Catch depends on fish behavior and angler skill",
+          "BAITED REMOTE UNDERWATER VIDEO",
+          "$200 / station deployment",
+          "Noninvasive fish observations",
+          "Water visibility limits detection",
+          "eDNA SAMPLE",
+          "$450 / sample",
+          "Species detection",
+          "Presence ≠ abundance",
+          "Important: different gear samples different parts of the ecosystem. A cheaper method is not automatically a worse method."
+        ]
+      },
+      {
+        "slide": 13,
+        "text": [
+          "DECISION 5",
+          "What additional information will you collect?",
+          "Core catch/detection data come from your sampling method. Add measurements only when they help answer your objective.",
+          "LENGTH  + WEIGHT",
+          "$150 / station-visit",
+          "_________",
+          "TEMPERATURE",
+          "$50 / station-visit",
+          "Local environmental conditions",
+          "HABITAT TYPE",
+          "$150 / station",
+          "Compare habitats….bottom type",
+          "SEX AND MATURITY",
+          "$150 / sample",
+          "_______",
+          "Question to defend: What will each extra variable allow you to explain that catch or detection data alone cannot?",
+          "SALINITY",
+          "DISSOLVED OXYGEN",
+          "$50 / station-visit",
+          "$50 / station-visit"
+        ]
+      },
+      {
+        "slide": 14,
+        "text": [
+          "DECISION 6",
+          "Build the budget",
+          "You do not need to spend every dollar—but you cannot exceed your objective budget",
+          "STATIONS  ×  VISITS  ×  FIELD COSTS   +   GEAR   +   MEASUREMENTS   =   TOTAL",
+          "1",
+          "Count station-visits",
+          "Example: 6 stations × 2 visits = 12 station-visits.",
+          "2",
+          "Add gear effort",
+          "12 station-visits × 1 trawl each = 12 trawls.",
+          "3",
+          "Add measurements",
+          "Environmental measurements are charged at each station-visit.",
+          "Budget too high? Change the design, not just the math. Reduce locations, visits, replicates, or optional measurements and explain the trade-off."
+        ]
+      },
+      {
+        "slide": 15,
+        "text": [
+          "Plan Your Survey",
+          "RESEARCH QUESTION",
+          "We are trying to determine…",
+          "WHERE",
+          "Regions / habitats / # stations",
+          "HOW",
+          "Gear + replicates",
+          "WHEN",
+          "Season / frequency / years",
+          "MEASUREMENTS",
+          "What else will you collect?",
+          "WHY THIS WORKS",
+          "Connect choices to objective"
+        ]
+      },
+      {
+        "slide": 16,
+        "text": [
+          "Build your budget",
+          "Make sure quantities match your actual survey design.",
+          "ITEM",
+          "UNIT COST",
+          "QUANTITY",
+          "VISITS / REPEATS",
+          "SUBTOTAL",
+          "TOTAL SPENT:  $____________",
+          "Objective budget: $____________"
+        ]
+      },
+      {
+        "slide": 17,
+        "text": [
+          "Stress-test your design",
+          "A good proposal acknowledges what its survey can (and cannot) tell managers.",
+          "STRENGTH",
+          "The strongest part of our design is…",
+          "LIMITATION 1",
+          "Our survey may miss or underestimate…",
+          "LIMITATION 2",
+          "A result we should interpret cautiously is…",
+          "IF WE HAD $10,000 MORE",
+          "We would improve the survey by…"
+        ]
+      },
+      {
+        "slide": 18,
+        "text": [
+          "Pitch Your Survey",
+          "You have about _____ minutes. The class is your management panel.",
+          "1",
+          "What is your objective?",
+          "State the management question.",
+          "2",
+          "What did you design?",
+          "Show where, when, and how you will sample.",
+          "3",
+          "What did it cost?",
+          "Explain your biggest budget choices.",
+          "4",
+          "Why should it work?",
+          "Connect the design to the research objective.",
+          "5",
+          "What might it miss?",
+          "Name at least two limitations.",
+          "There is no single correct answer. Be ready to explain your trade-offs."
+        ]
+      },
+      {
+        "slide": 19,
+        "text": [
+          "Discussion prompts after presentations",
+          "01",
+          "Which groups prioritized spatial coverage? Which prioritized repeated sampling?",
+          "02",
+          "How did the research question change the “best” gear choice?",
+          "03",
+          "Where did budget constraints force the biggest scientific compromise?",
+          "04",
+          "Which designs could estimate relative abundance? Which mainly detect presence?",
+          "05",
+          "What would happen if everyone used a different method every year?",
+          "06",
+          "What information would managers still need after these surveys were completed?"
+        ]
+      }
+    ]
+  },
+  "matching": {
+    "answer_key": null,
+    "adults": [
+      {
+        "id": "bay-anchovy",
+        "name": "Bay Anchovy",
+        "image": {
+          "path": "assets/education_activities/adult-bay-anchovy.png",
+          "source_part": "word/media/image4.png",
+          "sha256": "40516f0d06761b9ad2bc65495e55b9b6d0d5ae29bee14a3e6db59af100778201"
+        }
+      },
+      {
+        "id": "striped-bass",
+        "name": "Striped Bass",
+        "image": {
+          "path": "assets/education_activities/adult-striped-bass.png",
+          "source_part": "word/media/image8.png",
+          "sha256": "9f224bc8c33066582854d15323fa66ff6b832dbfa90083011b741a003d339562"
+        }
+      },
+      {
+        "id": "windowpane-flounder",
+        "name": "Windowpane Flounder",
+        "image": {
+          "path": "assets/education_activities/adult-windowpane-flounder.png",
+          "source_part": "word/media/image2.png",
+          "sha256": "ad491d4073c4fe49364956ffe37532bfa4ab35cea5ad7fbdde85ef3ccf6a8ee9"
+        }
+      },
+      {
+        "id": "atlantic-tomcod",
+        "name": "Atlantic Tomcod",
+        "image": {
+          "path": "assets/education_activities/adult-atlantic-tomcod.png",
+          "source_part": "word/media/image1.png",
+          "sha256": "c8e44a95a0c1d01409b9b4547bf7d2e543f406a9bc2cb1711dd71f7065f39d2e"
+        }
+      },
+      {
+        "id": "white-catfish",
+        "name": "White Catfish",
+        "image": {
+          "path": "assets/education_activities/adult-white-catfish.png",
+          "source_part": "word/media/image3.png",
+          "sha256": "ec76a40a9d873e4b08b37e47810e5f09f419d67b0c7d05ee3138a597ca81c26d"
+        }
+      }
+    ],
+    "juveniles": [
+      {
+        "letter": "A",
+        "image": {
+          "path": "assets/education_activities/juvenile-a.jpg",
+          "source_part": "word/media/image5.jpg",
+          "sha256": "39c606f16f65f229455b56b270ec0c21450c856be55147cf14cc58cb597c3ae7"
+        }
+      },
+      {
+        "letter": "B",
+        "image": {
+          "path": "assets/education_activities/juvenile-b.jpg",
+          "source_part": "word/media/image10.jpg",
+          "sha256": "1fe584b0bee51c4f40ee1004dfc881ed1764cb99ef1df539bd4bb7d4ac3c9c9d"
+        }
+      },
+      {
+        "letter": "C",
+        "image": {
+          "path": "assets/education_activities/juvenile-c.jpg",
+          "source_part": "word/media/image6.jpg",
+          "sha256": "04be227c23dd85811f166961495761dfe831faad569e71495c85b97f561818c3"
+        }
+      },
+      {
+        "letter": "D",
+        "image": {
+          "path": "assets/education_activities/juvenile-d.jpg",
+          "source_part": "word/media/image7.jpg",
+          "sha256": "e89982aa7c6aba7cadf8f6a11e65d99922049c65493674f79be3eba475eaf89a"
+        }
+      },
+      {
+        "letter": "E",
+        "image": {
+          "path": "assets/education_activities/juvenile-e.jpg",
+          "source_part": "word/media/image9.jpg",
+          "sha256": "253494839c3b076d0b8003081f1afab34dd1337c5793042ee32b5160546da076"
+        }
+      }
+    ]
+  }
+}

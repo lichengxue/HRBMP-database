@@ -1,0 +1,38 @@
+[
+  {
+    "id": "survey-design-background",
+    "description": "Sampling schemes, spatial and temporal coverage, biological and environmental measurements, and sampling gear.",
+    "pptx": {
+      "bytes": 2032154,
+      "sha256": "4121efc48de789c04cdabd759c319ae4835938a1216aa27fdcfbe452d584b86b",
+      "path": "teaching-materials/survey-design-background.pptx"
+    },
+    "thumbnail": "teaching-materials/survey-design-background.jpg",
+    "title": "Survey Design Background",
+    "pdf": {
+      "bytes": 727625,
+      "sha256": "1b907d8a6b30907ace054402197e6187898f1f67d76c15a7e28a9f1b0574f3fd",
+      "path": "teaching-materials/survey-design-background.pdf"
+    },
+    "source_filename": "Survey_Design_Background_slide_deck.pptx",
+    "slides": 22
+  },
+  {
+    "id": "hudson-river-survey-design-challenge",
+    "description": "Five management questions, survey choices, classroom budgets, planning worksheets, and discussion prompts.",
+    "pptx": {
+      "bytes": 156178,
+      "sha256": "8f22269195213f7967a7b2f74555a93daf53981745e2ff8c243b0da50ab62682",
+      "path": "teaching-materials/hudson-river-survey-design-challenge.pptx"
+    },
+    "thumbnail": "teaching-materials/hudson-river-survey-design-challenge.jpg",
+    "title": "Hudson River Survey Design Challenge",
+    "pdf": {
+      "bytes": 347792,
+      "sha256": "63233b395e6e214d386c7817f988aeed90d8773affd489b97a3c53563f46c887",
+      "path": "teaching-materials/hudson-river-survey-design-challenge.pdf"
+    },
+    "source_filename": "Hudson_River_Survey_Design_Challenge_slide_deck_draft.pptx",
+    "slides": 19
+  }
+]

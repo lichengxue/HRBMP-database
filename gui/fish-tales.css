@@ -1,0 +1,395 @@
+.fish-tales-page-header {
+  align-items: end;
+  display: flex;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 26px;
+}
+
+.fish-tales-page-header h1 {
+  margin-bottom: 0;
+}
+
+.fish-tales-search {
+  width: min(420px, 100%);
+}
+
+.fish-tales-search label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.fish-tales-search-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.fish-tales-search-controls input {
+  min-width: 0;
+  width: 100%;
+  padding: 12px 14px;
+}
+
+.fish-tales-search-controls [hidden],
+.fish-tales-empty[hidden],
+.fish-tale-card[hidden] {
+  display: none;
+}
+
+.fish-tales-empty {
+  padding: 24px 0;
+  color: var(--muted);
+}
+
+.fish-tales-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.fish-tale-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--ink);
+  background: var(--surface);
+  text-decoration: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.fish-tale-card:hover,
+.fish-tale-card:focus-visible {
+  border-color: var(--teal);
+  box-shadow: 0 10px 26px rgba(18, 32, 29, 0.08);
+  transform: translateY(-3px);
+}
+
+.fish-photo-frame {
+  height: 198px;
+  padding: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  border-bottom: 1px solid #edf1ef;
+}
+
+.fish-photo-window {
+  position: relative;
+  overflow: hidden;
+  width: min(100%, calc(160px * var(--fish-aspect)));
+  aspect-ratio: var(--fish-aspect);
+  flex-shrink: 0;
+}
+
+.fish-photo-window img {
+  position: absolute;
+  left: var(--fish-image-left);
+  top: var(--fish-image-top);
+  width: var(--fish-image-width);
+  height: var(--fish-image-height);
+  max-width: none;
+  max-height: none;
+  display: block;
+}
+
+.fish-tale-card-body {
+  padding: 21px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.fish-tale-card h2 {
+  margin: 0 0 4px;
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+.fish-tale-scientific {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.96rem;
+  line-height: 1.5;
+}
+
+.fish-tale-card-summary {
+  margin: 17px 0 22px;
+  line-height: 1.6;
+  color: #425a52;
+}
+
+.fish-tale-read {
+  margin-top: auto;
+  color: #12695e;
+  font-weight: 750;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.fish-profile {
+  max-width: 1120px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 36px 44px 26px;
+}
+
+.fish-profile-back {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: #12695e;
+  text-decoration: none;
+  margin-bottom: 22px;
+}
+
+.fish-profile-back:hover {
+  text-decoration: underline;
+}
+
+.fish-profile-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+.fish-profile-header h1:focus,
+.fish-tales-page-header h1:focus {
+  outline: none;
+}
+
+.fish-profile-scientific {
+  margin: 10px 0 0;
+  color: #577369;
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.fish-profile-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(230px, 1fr);
+  align-items: center;
+  gap: 34px;
+  margin: 25px 0 34px;
+}
+
+.fish-profile-figure {
+  min-width: 0;
+  margin: 0;
+}
+
+.fish-photo-frame-hero {
+  min-height: 285px;
+  height: auto;
+  padding: 12px 0;
+  border: 0;
+}
+
+.fish-photo-frame-hero .fish-photo-window {
+  width: min(100%, calc(260px * var(--fish-aspect)));
+}
+
+.fish-profile-figure figcaption {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.fish-profile-fact {
+  padding: 26px 0 26px 28px;
+  border-left: 3px solid #95c8b7;
+}
+
+.fish-profile-fact h2 {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+  color: #12695e;
+}
+
+.fish-profile-fact p {
+  margin: 0 0 12px;
+  font-size: 1.16rem;
+  line-height: 1.65;
+}
+
+.fish-profile-fact p:last-child {
+  margin-bottom: 0;
+}
+
+.fish-profile-content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 46px;
+}
+
+.fish-profile-section {
+  padding-top: 21px;
+  border-top: 1px solid var(--line);
+  min-width: 0;
+}
+
+.fish-profile-section h2 {
+  margin: 0 0 14px;
+  font-size: 1.22rem;
+  line-height: 1.3;
+}
+
+.fish-profile-section ul {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.75;
+  color: #354e45;
+}
+
+.fish-profile-section li + li {
+  margin-top: 8px;
+}
+
+.fish-profile-section li::marker {
+  color: #4d9f8a;
+}
+
+.fish-profile-monitoring {
+  grid-column: 1 / -1;
+}
+
+.fish-profile-data-link {
+  display: inline-block;
+  margin-top: 18px;
+  color: #12695e;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.fish-profile-references { margin-top: 26px; font-size: .82rem; line-height: 1.5; color: #577369; }
+.fish-profile-references a { text-underline-offset: 3px; }
+
+.fish-profile-pagination {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  border-top: 1px solid var(--line);
+  margin-top: 34px;
+  padding-top: 22px;
+}
+
+.fish-profile-adjacent {
+  text-decoration: none;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.fish-profile-adjacent span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-bottom: 4px;
+}
+
+.fish-profile-adjacent strong {
+  font-size: 1rem;
+  color: #12695e;
+}
+
+.fish-profile-next {
+  grid-column: 2;
+  text-align: right;
+}
+
+.nav-nested-submenu[aria-label="Fish Tales species"] {
+  max-height: min(70vh, 640px);
+  overflow-y: auto;
+}
+
+@media (max-width: 1000px) {
+  .fish-tales-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fish-profile {
+    padding: 30px;
+  }
+
+  .fish-profile-hero {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 700px) {
+  .fish-tales-page-header {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .fish-tales-search {
+    width: 100%;
+  }
+
+  .fish-profile {
+    border-radius: 12px;
+    padding: 22px;
+  }
+
+  .fish-profile-hero {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+
+  .fish-photo-frame-hero {
+    min-height: 190px;
+  }
+
+  .fish-profile-fact {
+    padding: 4px 0 4px 20px;
+  }
+
+  .fish-profile-fact p {
+    font-size: 1.05rem;
+  }
+
+  .fish-profile-content {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .fish-tales-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .fish-profile {
+    padding: 20px 18px;
+  }
+
+  .fish-profile-scientific {
+    font-size: 1.04rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fish-tale-card {
+    transition: none;
+  }
+
+  .fish-tale-card:hover {
+    transform: none;
+  }
+}
