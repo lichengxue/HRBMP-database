@@ -84,6 +84,22 @@ generating the file, or save a publishable key in **User Login** for that browse
 
 ## Requests And Delivery
 
+### Removing requests
+
+After signing in as an authorized request-review admin, each request has a
+**Delete** button. Confirming removes that request from the database and the
+review list; it stays removed after refresh. Cancellation and failed deletion
+keep the row. Requests currently being packaged or emailed cannot be deleted.
+This removes only request history, not scientific data, archive files, or users.
+
+The permission is defined by
+`supabase/migrations/20261123210000_allow_admin_request_deletion.sql`.
+Row-level security permits deletion only for accounts approved by
+`is_hrbmp_request_admin()`; anonymous and ordinary signed-in users cannot delete.
+The rolled-back integration checks are in
+`supabase/tests/admin_request_deletion.sql`.
+
+
 The **Biological Database** filters count records, images, supporting documents,
 and other uploads by species, recorded life-stage coverage, program, location,
 date, type, and availability. **Environmental Database** filters actual samples

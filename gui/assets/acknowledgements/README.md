@@ -15,8 +15,8 @@ All marks remain the property of their respective organizations.
 - Funding and Support shows clickable logos without captions. It recognizes
   funding and collaboration; these credits do not imply that every organization
   provided a grant. Normandeau is a supporting survey collaborator, and Hudson
-  River Park, Billion Oyster Project, and Riverkeeper are supporting organizations
-  added at the user's request.
+  River Park, Billion Oyster Project, Riverkeeper, and Hudson River Fishermen’s
+  Association are supporting organizations added at the user's request.
 - The Stony Brook University and President's Fast Impact Fund logos are omitted
   from Funding and Support at the user's request. Research funding details remain
   on the project pages; these acknowledgements do not imply that every
@@ -61,6 +61,7 @@ funded-project CV.
 | hudson-river-park.png | Hudson River Park | supporting_organization | [Official sponsorship deck, page 1](https://hudsonriverpark.org/app/uploads/2022/02/HRPK_Sponsorship_Deck_2022.pdf) |
 | billion-oyster-project.svg | Billion Oyster Project | supporting_organization | [Official website asset](https://cdn.prod.website-files.com/69ba366661973603c064ba8f/69e29b3d0024d90f8524bedd_bop-logo-shield.svg) |
 | riverkeeper.svg | Riverkeeper | supporting_organization | [Official website header](https://www.riverkeeper.org/) |
+| hudson-river-fishermens-association.png | Hudson River Fishermen’s Association | supporting_organization | [Official website logo](https://thehrfa.org/wp-content/uploads/2019/06/newlogo.png) |
 
 ## SHA-256 integrity hashes
 
@@ -68,6 +69,7 @@ Hashes describe the committed assets. Git may use different SVG line endings in
 a Windows working copy.
 
 ```text
+11c2337c33bbb9009e1c487df0f9248c67aa281ae69b8094246b4d97b64916d1  hudson-river-fishermens-association.png
 5f53606e9d6970c2f714b5bb38bce06632bc5a99221dc907627b4a20b0ffdd34  billion-oyster-project.svg
 eb3a835040104fcd44956381eba60e45b0a08112491f313b386ce41157a92a53  entergy.png
 c67b9474dcfae3e026f9912d9ab9e67fbd02800982e716a11bf1c71db1027f54  hudson-river-foundation-color.svg

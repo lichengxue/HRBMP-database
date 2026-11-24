@@ -178,7 +178,7 @@ function guiHelpers(client) {
   const panel = { hidden: true };
   const context = vm.createContext({
     console: { error: () => {} }, Set, Map, Date, URL, setTimeout, clearTimeout,
-    window: { HRBMP_CONFIG: { publishableKey: publicTestKey }, HRBMPArchive: archive,
+    window: { confirm: () => true, HRBMP_CONFIG: { publishableKey: publicTestKey }, HRBMPArchive: archive,
       supabase: { createClient: () => client } },
     document: { addEventListener: () => {}, getElementById: (id) => id === 'admin-request-panel' ? panel : null }
   });
@@ -186,7 +186,7 @@ function guiHelpers(client) {
     renderAdminRequestRows = () => {};
     resetAdminRequestReport = () => {};
     setLoginStatus = (message) => { globalThis.loginStatus = message; };
-    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, variablesForSource, emptyLiveData, sumRecordCounts, MAP_BASEMAPS, DEFAULT_BASEMAP, mainRequestItems, databasePageItems, renderRiverRegionReferences, riverRegionHeatLevels, riverRegionReferenceSvg };
+    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, deleteAdminRequest, adminDeleteButton, getLoginStatus: () => globalThis.loginStatus, variablesForSource, emptyLiveData, sumRecordCounts, MAP_BASEMAPS, DEFAULT_BASEMAP, mainRequestItems, databasePageItems, renderRiverRegionReferences, riverRegionHeatLevels, riverRegionReferenceSvg };
   `, context);
   return { ...context, panel };
 }
@@ -262,6 +262,114 @@ test('GUI clears private request state on a failed refresh or sign-out, includin
   assert.equal(context.panel.hidden, true);
   assert.equal(context.helpers.state.adminRequests.length, 0);
   assert.equal(context.helpers.state.adminAuthorized, false);
+});
+
+function deletableAdminClient({ error = null, empty = false, pending = null, status = 'submitted' } = {}) {
+  const rows = [
+    { request_id: 'TEST_REQUEST', requester_email: 'requester@example.invalid', request_status: status },
+    { request_id: 'KEEP_REQUEST', requester_email: 'other@example.invalid', request_status: 'submitted' }
+  ];
+  const client = adminClient({ rows });
+  const readFrom = client.from;
+  client.deletions = [];
+  client.from = (table) => {
+    const query = readFrom(table);
+    query.delete = () => ({
+      eq: (column, requestId) => {
+        assert.equal(column, 'request_id');
+        return { select: async (columns) => {
+          assert.equal(columns, 'request_id');
+          client.deletions.push(requestId);
+          if (pending) await pending;
+          if (error) return { data: null, error };
+          if (empty) return { data: [], error: null };
+          const index = rows.findIndex(row => row.request_id === requestId);
+          if (index < 0) return { data: [], error: null };
+          rows.splice(index, 1);
+          return { data: [{ request_id: requestId }], error: null };
+        } };
+      }
+    });
+    return query;
+  };
+  return client;
+}
+
+test('request deletion requires admin access and confirmation, and blocks in-flight delivery', async () => {
+  const client = deletableAdminClient();
+  const context = guiHelpers(client);
+  let confirmations = 0;
+  context.window.confirm = () => { confirmations++; return true; };
+  await context.helpers.deleteAdminRequest('TEST_REQUEST');
+  assert.equal(confirmations, 0);
+  assert.equal(client.deletions.length, 0);
+  await context.helpers.loadAdminRequests();
+  context.window.confirm = (message) => {
+    confirmations++;
+    assert.match(message, /requester@example.invalid/);
+    assert.ok(message.includes('\n\n'));
+    return false;
+  };
+  await context.helpers.deleteAdminRequest('TEST_REQUEST');
+  assert.equal(confirmations, 1);
+  assert.equal(client.deletions.length, 0);
+  context.window.confirm = () => { confirmations++; return true; };
+  context.helpers.state.adminDeliveryInFlight.add('TEST_REQUEST');
+  await context.helpers.deleteAdminRequest('TEST_REQUEST');
+  assert.equal(confirmations, 1);
+  assert.equal(client.deletions.length, 0);
+  const packagingClient = deletableAdminClient({ status: 'packaging' });
+  const packaging = guiHelpers(packagingClient);
+  await packaging.helpers.loadAdminRequests();
+  await packaging.helpers.deleteAdminRequest('TEST_REQUEST');
+  assert.equal(packagingClient.deletions.length, 0);
+});
+
+test('confirmed deletion removes only its request and stays removed after refresh', async () => {
+  const client = deletableAdminClient();
+  const context = guiHelpers(client);
+  await context.helpers.loadAdminRequests();
+  await context.helpers.deleteAdminRequest('TEST_REQUEST');
+  assert.deepEqual(client.deletions, ['TEST_REQUEST']);
+  assert.equal(context.helpers.state.adminRequests.length, 1);
+  assert.equal(context.helpers.state.adminRequests[0].request_id, 'KEEP_REQUEST');
+  assert.equal(context.helpers.state.adminDeletionInFlight.size, 0);
+  assert.equal(context.helpers.getLoginStatus(), 'Request deleted.');
+  await context.helpers.loadAdminRequests();
+  assert.equal(context.helpers.state.adminRequests.length, 1);
+  assert.equal(context.helpers.state.adminRequests[0].request_id, 'KEEP_REQUEST');
+});
+
+test('failed or denied deletion retains the request and never reports success', async () => {
+  for (const options of [{ error: new Error('Permission denied') }, { empty: true }]) {
+    const client = deletableAdminClient(options);
+    const context = guiHelpers(client);
+    await context.helpers.loadAdminRequests();
+    await context.helpers.deleteAdminRequest('TEST_REQUEST');
+    assert.equal(context.helpers.state.adminRequests.length, 2);
+    assert.equal(context.helpers.state.adminDeletionInFlight.size, 0);
+    assert.match(context.helpers.getLoginStatus(), /Could not delete request:/);
+  }
+});
+
+test('duplicate clicks cannot delete twice and a late response cannot reopen a signed-out request list', async () => {
+  let resolveDelete;
+  const pending = new Promise(resolve => { resolveDelete = resolve; });
+  const client = deletableAdminClient({ pending });
+  const context = guiHelpers(client);
+  await context.helpers.loadAdminRequests();
+  const deleting = context.helpers.deleteAdminRequest('TEST_REQUEST');
+  await context.helpers.deleteAdminRequest('TEST_REQUEST');
+  assert.equal(client.deletions.length, 1);
+  assert.equal(context.helpers.state.adminDeletionInFlight.has('TEST_REQUEST'), true);
+  await context.helpers.signOutAdminUser();
+  resolveDelete();
+  await deleting;
+  assert.equal(context.panel.hidden, true);
+  assert.equal(context.helpers.state.adminAuthorized, false);
+  assert.equal(context.helpers.state.adminRequests.length, 0);
+  assert.equal(context.helpers.state.adminDeletionInFlight.size, 0);
+  assert.match(context.helpers.getLoginStatus(), /Signed out/);
 });
 
 test('GUI starts empty and offers only actually recorded HRBMP variables, without example-data fetches', () => {

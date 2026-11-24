@@ -908,6 +908,7 @@ const state = {
   adminRequests: [],
   adminRequestView: 'submitted',
   adminDeliveryInFlight: new Set(),
+  adminDeletionInFlight: new Set(),
   adminReviewedRequestIds: new Set(),
   adminSessionEmail: ''
 };
@@ -2076,7 +2077,8 @@ function renderAdminRequestRows(rows) {
       adminStatusButton(row, 'reviewing', 'Reviewing'),
       adminStatusButton(row, 'approved', 'Approve & Email'),
       adminStatusButton(row, 'declined', 'Decline'),
-      adminEmailButton(row)
+      adminEmailButton(row),
+      adminDeleteButton(row)
     ].filter(Boolean).forEach((button) => actions.appendChild(button));
     tr.appendChild(actions);
     body.appendChild(tr);
@@ -2165,6 +2167,8 @@ function adminStatusButton(row, status, label) {
   button.disabled = adminRequestActionsLocked(row) || row.request_status === status || needsReportReview;
   if (needsReportReview) {
     button.title = 'Open and review the request report first.';
+  } else if (state.adminDeletionInFlight.has(row.request_id)) {
+    button.title = 'This request is being deleted.';
   } else if (button.disabled && adminRequestActionsLocked(row)) {
     button.title = 'This request has already been completed.';
   }
@@ -2177,6 +2181,7 @@ function adminReviewReportButton(row) {
   button.type = 'button';
   button.className = 'secondary-button compact-button';
   button.textContent = state.adminReviewedRequestIds.has(row.request_id) ? 'Report Reviewed' : 'Review Report';
+  button.disabled = state.adminDeletionInFlight.has(row.request_id);
   button.addEventListener('click', () => showAdminRequestReport(row.request_id));
   return button;
 }
@@ -2189,13 +2194,30 @@ function adminEmailButton(row) {
   button.className = 'primary-button compact-button';
   const isSending = state.adminDeliveryInFlight.has(row.request_id);
   button.textContent = isSending ? 'Sending...' : adminRequestDeliveryError(row) ? 'Retry Email' : 'Send Email';
-  button.disabled = isSending;
+  button.disabled = isSending || state.adminDeletionInFlight.has(row.request_id);
   button.addEventListener('click', () => deliverApprovedAdminRequest(row.request_id));
   return button;
 }
 
+function adminDeleteButton(row) {
+  const button = document.createElement('button');
+  const deleting = state.adminDeletionInFlight.has(row.request_id);
+  button.type = 'button';
+  button.className = 'secondary-button compact-button delete-request-button';
+  button.textContent = deleting ? 'Deleting...' : 'Delete';
+  button.disabled = !state.adminAuthorized || deleting
+    || state.adminDeliveryInFlight.has(row.request_id) || row.request_status === 'packaging';
+  button.setAttribute('aria-label', `Delete request from ${row.requester_name || row.requester_email || 'this requester'}`);
+  if (row.request_status === 'packaging' || state.adminDeliveryInFlight.has(row.request_id)) {
+    button.title = 'Wait for email delivery to finish before deleting this request.';
+  }
+  button.addEventListener('click', () => deleteAdminRequest(row.request_id));
+  return button;
+}
+
 function adminRequestActionsLocked(row) {
-  return ['approved', 'delivered', 'declined', 'packaging'].includes(row.request_status);
+  return state.adminDeletionInFlight.has(row.request_id)
+    || ['approved', 'delivered', 'declined', 'packaging'].includes(row.request_status);
 }
 
 function adminRequestDeliveryStatus(row) {
@@ -2326,6 +2348,62 @@ function resetAdminRequestReport() {
       Open a request report to review the full requester form and selected filters before approval.
     </div>
   `;
+}
+
+async function deleteAdminRequest(requestId) {
+  if (!state.adminAuthorized) {
+    setLoginStatus('Sign in with a request-review admin account to delete requests.', 'warning');
+    return;
+  }
+  const row = state.adminRequests.find(request => request.request_id === requestId);
+  if (!row || state.adminDeletionInFlight.has(requestId)) return;
+  if (row.request_status === 'packaging' || state.adminDeliveryInFlight.has(requestId)) {
+    setLoginStatus('Wait for email delivery to finish before deleting this request.', 'warning');
+    return;
+  }
+  const requester = row.requester_email || row.requester_name || 'this requester';
+  if (!window.confirm(`Delete the request from ${requester}?\n\nThis permanently removes the request from the list. Archived data and files are kept.`)) return;
+  const client = createHrbmpSupabaseClient();
+  if (!client) {
+    setLoginStatus('The request service is unavailable. Refresh and sign in again.', 'warning');
+    return;
+  }
+  const sessionEmail = state.adminSessionEmail;
+  state.adminDeletionInFlight.add(requestId);
+  renderAdminRequestRows(state.adminRequests);
+  setLoginStatus('Deleting request...', 'warning');
+  try {
+    const { data, error } = await client
+      .from('hrbmp_data_requests')
+      .delete()
+      .eq('request_id', requestId)
+      .select('request_id');
+    if (error) throw error;
+    if (!Array.isArray(data) || data.length !== 1 || data[0].request_id !== requestId) {
+      throw new Error('No request was deleted. Refresh the list and check your access.');
+    }
+    if (state.adminSessionEmail !== sessionEmail) return;
+    if (state.adminAuthorized) {
+      state.adminRequests = state.adminRequests.filter(request => request.request_id !== requestId);
+      state.adminReviewedRequestIds.delete(requestId);
+      resetAdminRequestReport();
+      renderAdminRequestRows(state.adminRequests);
+    }
+    await loadAdminRequests();
+    if (state.adminAuthorized && state.adminSessionEmail === sessionEmail) {
+      setLoginStatus('Request deleted.', 'success');
+    }
+  } catch (error) {
+    if (state.adminAuthorized && state.adminSessionEmail === sessionEmail) {
+      console.error(error);
+      setLoginStatus(`Could not delete request: ${error.message}`, 'error');
+    }
+  } finally {
+    state.adminDeletionInFlight.delete(requestId);
+    if (state.adminAuthorized && state.adminSessionEmail === sessionEmail) {
+      renderAdminRequestRows(state.adminRequests);
+    }
+  }
 }
 
 async function updateAdminRequestStatus(requestId, status) {

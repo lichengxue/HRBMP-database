@@ -1055,6 +1055,18 @@ textarea {
   gap: 8px;
 }
 
+.admin-request-actions .delete-request-button {
+  color: #a32d25;
+  border-color: #d6aaa5;
+  background: #ffffff;
+}
+
+.admin-request-actions .delete-request-button:hover:not(:disabled) {
+  color: #8c211b;
+  border-color: #a32d25;
+  background: #fff2f0;
+}
+
 .compact-button {
   min-height: 34px;
   padding: 7px 10px;
