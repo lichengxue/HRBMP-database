@@ -7,9 +7,11 @@ All marks remain the property of their respective organizations.
 
 ## Display and attribution
 
-- Institutional Partners contains Stony Brook University and SoMAS. SoMAS uses
-  the official university mark with the school's current name as separate text,
-  following [Stony Brook department logo guidance](https://www.stonybrook.edu/marcom/design-visual-identity/logos.php).
+- Institutional Partners contains separate Stony Brook University and SoMAS
+  logos. The SoMAS departmental lockup is the user's supplied 1184 × 360 PNG,
+  copied unchanged. It matches the artwork displayed in the
+  [official SoMAS website footer](https://you.stonybrook.edu/somas/), which serves
+  a smaller 217 × 66 copy. The caption retains the school's current full name.
 - Funding and Support shows clickable logos without captions. Normandeau is
   included here as a supporting survey collaborator, not as an original funder.
 - The Stony Brook University and President's Fast Impact Fund logos are omitted
@@ -32,7 +34,8 @@ funded-project CV.
 
 | File | Organization / program | Category | Original image or document |
 | --- | --- | --- | --- |
-| stony-brook-university.jpg | Stony Brook University / SoMAS | institutional_partner | [Source](https://www.stonybrook.edu/marcom/_images/SBU%20Main%20Logo_Horizontal.jpg) |
+| stony-brook-university.jpg | Stony Brook University | institutional_partner | [Source](https://www.stonybrook.edu/marcom/_images/SBU%20Main%20Logo_Horizontal.jpg) |
+| somas.png | SoMAS | institutional_partner | User-supplied high-resolution copy; [official website artwork](https://you.stonybrook.edu/somas/files/2015/12/SBUSoMAS-oi80w7.png) |
 | hudson-river-foundation-color.svg | Hudson River Foundation | funding_or_support | [Source](https://hudsonriver.org/wp-content/uploads/2017/04/logo-hrf.svg) |
 | nysdec.png | NYSDEC | funding_or_support | [Source](https://neiwpcc.org/wp-content/uploads/2020/07/NYSDEC.png) |
 | noaa.svg | NOAA | funding_or_support | [Source](https://oceanservice.noaa.gov/bootstrap/img/noaa-logo-rgb-2022.svg) |
@@ -44,6 +47,7 @@ funded-project CV.
 ## SHA-256 integrity hashes
 
 ```text
+1222aae054e6b1bd29f705aa47869e64f6fbab8d7076a6917afbd9e4869cec3a  somas.png
 c90873be93ba72b93c561b40110ac77c8fe93a7fcba8a8ad49a627ff5209bf30  stony-brook-university.jpg
 c67b9474dcfae3e026f9912d9ab9e67fbd02800982e716a11bf1c71db1027f54  hudson-river-foundation-color.svg
 3075d18731ffd721bcd21712ad93423e42b43ed5d4553738c86635780fe24485  nysdec.png
