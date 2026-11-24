@@ -1,0 +1,529 @@
+[
+  {
+    "taxon_code": 1,
+    "common_name": "Alewife",
+    "file": "alewife.jpg",
+    "source_file_name": "98_20180718_0330_01_001_04_01_01_00.jpg",
+    "catalog_id": "upload:4819b011-40ab-4159-8774-32b3ece7acbc",
+    "sample_id": "98_20180718_0330",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "a1331a7183012dddd4bb059d2b9b1eabae0b21d0533400c47151a74b6254732b",
+    "gallery_sha256": "5e99882954509116bdd57b7a7b88d51c807e7be2505a2ff3ec59d5f814e08fd4",
+    "scientific_name": "Alosa pseudoharengus",
+    "biology_description": "A schooling river herring that migrates into fresh water to spawn in spring. It feeds on zooplankton and small aquatic animals and provides prey for larger fish and birds.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/alewife"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 3,
+    "common_name": "American Shad",
+    "file": "american-shad.jpg",
+    "source_file_name": "98_20180706_0092_01_003_04_01_01_00.jpg",
+    "catalog_id": "upload:702e4202-16aa-4299-ab74-9af455923589",
+    "sample_id": "98_20180706_0092",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "7b4eca200ab150af02f747ec02633f4b1f1ab768b5fabb7841fca40fdc04fca5",
+    "gallery_sha256": "82c89774216f282a20355169c82bea18623bf62372d2014964a0906887b13230",
+    "scientific_name": "Alosa sapidissima",
+    "biology_description": "A migratory herring that spends much of its life at sea and enters freshwater rivers to spawn. Juveniles grow in river nurseries before moving toward coastal waters.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/american-shad"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 180,
+    "common_name": "Atlantic Cutlassfish",
+    "file": "atlantic-cutlassfish.jpg",
+    "source_file_name": "98_20181022_1713_01_180_04_01_01_00.jpg",
+    "catalog_id": "upload:7bd2a308-3534-41b0-860d-402e7e42263a",
+    "sample_id": "98_20181022_1713",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "user supplied for requested catalog entry",
+    "source_exif_orientation": 1,
+    "source_sha256": "9d88fbe5b57de01e2780dee7f8eaf197932b42e581b13bf627ff8f29640893bf",
+    "gallery_sha256": "ff1acbccf899a2d435dbd22c30d2711856657b49ae50182312b8a53b76093179",
+    "scientific_name": "Trichiurus lepturus",
+    "biology_description": "A marine predator with a long, ribbon-like body and a tapering tail. Also called ribbonfish, it feeds mainly on smaller fish and shrimp in coastal waters.",
+    "biology_references": [
+      {
+        "label": "Texas Parks and Wildlife",
+        "url": "https://tpwd.texas.gov/huntwild/wild/species/cutlassfish/"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 19,
+    "common_name": "Atlantic Menhaden",
+    "file": "atlantic-menhaden.jpg",
+    "source_file_name": "98_20180718_0326_01_019_04_01_01_00.jpg",
+    "catalog_id": "upload:a51a6d92-2501-47cb-835a-fbe431151ed5",
+    "sample_id": "98_20180718_0326",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "82278c7fb7a19f280f948091fe08cc572d96ff88fc98fee354b52e87fc8bb1cc",
+    "gallery_sha256": "cbae9c8ac65c84d3ae338c183a7423340bcf8b1b983a8f8a8986670e7e46ce11",
+    "scientific_name": "Brevoortia tyrannus",
+    "biology_description": "A schooling coastal herring that filters plankton from the water. Its young use estuaries as nursery habitat, and it is important prey for many larger fishes and seabirds.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/atlantic-menhaden"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 24,
+    "common_name": "Atlantic Silverside",
+    "file": "atlantic-silverside.jpg",
+    "source_file_name": "98_20180719_0371_01_024_04_01_01_00.jpg",
+    "catalog_id": "upload:b345f278-72e0-4851-a305-da2bcec80f48",
+    "sample_id": "98_20180719_0371",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "f92938b5ec127d510d97042ef33c0b4e268934913d96f059c2e90f7729df4581",
+    "gallery_sha256": "9a4371cf0f5dc62724382bbeab5b58b456cf2c7c89bb63780902bdb9fbf35d99",
+    "scientific_name": "Menidia menidia",
+    "biology_description": "A small schooling fish recognized by the bright silver stripe along its side. It occupies shallow coastal waters and feeds on zooplankton and other small invertebrates.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/atlantic-silverside"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 32,
+    "common_name": "Atlantic Tomcod",
+    "file": "atlantic-tomcod.jpg",
+    "source_file_name": "98_20180719_0271_01_032_04_01_01_00.JPG",
+    "catalog_id": "upload:b754acf7-8176-40a2-b74e-28cb95c9a74d",
+    "sample_id": "98_20180719_0271",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "6b686906e0d9a5bc964a7cb8b4d67755b80711a40271bc6bb1fb21e6bedc92b0",
+    "gallery_sha256": "674701bf0b3d9cd1c97aca0e54ccda46c111a54334ab24da7ce8943c71eb7e94",
+    "scientific_name": "Microgadus tomcod",
+    "biology_description": "A small bottom-dwelling member of the cod family found in cool coastal waters, estuaries, and tidal rivers. It moves into upper tidal reaches to spawn in autumn and winter.",
+    "biology_references": [
+      {
+        "label": "Connecticut DEEP",
+        "url": "https://portal.ct.gov/deep/fishing/freshwater/freshwater-fishes-of-connecticut/atlantic-tomcod"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 2,
+    "common_name": "Bay Anchovy",
+    "file": "bay-anchovy.jpg",
+    "source_file_name": "98_20180830_1026_01_002_04_01_01_00.jpg",
+    "catalog_id": "upload:86debfb2-43bb-419d-897e-14d73f02551b",
+    "sample_id": "98_20180830_1026",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "7e98c224ef029ae700f241df1c3260824122884fe698435ecc7cefe0d1712ca4",
+    "gallery_sha256": "c955a517a5e4e51f251dc2c0aba4f229616ed33a9a91181a742d387898aa5f31",
+    "scientific_name": "Anchoa mitchilli",
+    "biology_description": "A small schooling fish with a translucent body and a large mouth. It feeds primarily on zooplankton and links plankton production to larger estuarine predators.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/bay-anchovy"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 22,
+    "common_name": "Blueback Herring",
+    "file": "blueback-herring.jpg",
+    "source_file_name": "98_20180719_0397_01_022_04_01_01_00.jpg",
+    "catalog_id": "upload:54f49fd3-88a8-48ef-bd28-a16a90105278",
+    "sample_id": "98_20180719_0397",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "1d5ec7cd042ef36e5f4df9136056e0552c368fd1169cf8b8e282c752ed406053",
+    "gallery_sha256": "177ba9f278e0955ac1473a81f62f566d10af019ae7a344226efd045319b68aa3",
+    "scientific_name": "Alosa aestivalis",
+    "biology_description": "A river herring that moves between coastal waters and freshwater spawning grounds. Schools feed on plankton and small crustaceans and support many predatory fish and birds.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/blueback-herring"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 4,
+    "common_name": "Bluefish",
+    "file": "bluefish.jpg",
+    "source_file_name": "98_20180719_0364_01_004_04_01_01_00.jpg",
+    "catalog_id": "upload:ee0dee49-96e7-4a92-87dd-03d46db0a499",
+    "sample_id": "98_20180719_0364",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "77c400d639a379898e20ba26c8c6180225574e7ab4725d9da66c33f34db61763",
+    "gallery_sha256": "b97f0d6c7bdb2532e8ed8218933f4172a106dfc2e681954ecca83e55877f7fcc",
+    "scientific_name": "Pomatomus saltatrix",
+    "biology_description": "An active coastal predator with strong jaws and sharp teeth. It feeds on schooling fishes and squid, and its young use estuarine waters during the warmer months.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/bluefish"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 80,
+    "common_name": "Butterfish",
+    "file": "butterfish.jpg",
+    "source_file_name": "98_20180719_0364_01_080_04_01_01_00.jpg",
+    "catalog_id": "upload:8e076a05-e8b9-4867-814a-37f66ade16fd",
+    "sample_id": "98_20180719_0364",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "7933e9b3b1226415ce95d023a60054a0d1370aad220ee46809a9cd836e8ee915",
+    "gallery_sha256": "b0787b6e7560211755f7b9f0464753b924faf7b393587bafb303f6edfb52abc9",
+    "scientific_name": "Peprilus triacanthus",
+    "biology_description": "A small, deep-bodied marine fish that forms loose schools and feeds on small invertebrates. It grows quickly and shifts between inshore and offshore waters with seasonal temperature changes.",
+    "biology_references": [
+      {
+        "label": "NOAA Fisheries",
+        "url": "https://www.fisheries.noaa.gov/species/butterfish"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 127,
+    "common_name": "Channel Catfish",
+    "file": "channel-catfish.jpg",
+    "source_file_name": "98_20180717_0180_01_127_04_01_01_00.jpg",
+    "catalog_id": "upload:c724a17b-7357-4d6d-86f3-004ca1558991",
+    "sample_id": "98_20180717_0180",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "9fc6c2d0719a9400b5d4e3587a60804e9117bc682702e3f0aa28cf71e61d175b",
+    "gallery_sha256": "87a827ca36714b32e1495f717962cc769462039ba1f55288a33949503fdd2738",
+    "scientific_name": "Ictalurus punctatus",
+    "biology_description": "A bottom-feeding catfish with a deeply forked tail and sensory barbels around its mouth. It inhabits rivers and brackish waters and eats a wide variety of aquatic animals.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/channel-catfish"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 205,
+    "common_name": "Freshwater Drum",
+    "file": "freshwater-drum.jpg",
+    "source_file_name": "98_20180717_0197_01_205_04_01_01_00.JPG",
+    "catalog_id": "upload:9f98706e-7793-4921-a82a-ab0d50dd31ae",
+    "sample_id": "98_20180717_0197",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "7f6e4b8ba702c3b7ba9e648672758d542514cec6b9c3c18d70f6fd33a0f13816",
+    "gallery_sha256": "cd42a790950ca34fa7f1aa8d5c3e546ff6a5d02d6a9178abc5ebb7d9b0320d0e",
+    "scientific_name": "Aplodinotus grunniens",
+    "biology_description": "A bottom-dwelling fish of rivers and lakes, noted for its drumming or grunting sounds. Strong throat teeth help it consume mollusks; it also eats insects, crustaceans, and fish.",
+    "biology_references": [
+      {
+        "label": "Texas Parks and Wildlife",
+        "url": "https://tpwd.texas.gov/huntwild/wild/species/fwd/"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 144,
+    "common_name": "Inshore Lizardfish",
+    "file": "inshore-lizardfish.jpg",
+    "source_file_name": "98_20180719_0374_01_144_04_01_01_00.jpg",
+    "catalog_id": "upload:b0566dac-a679-4ec5-9f8f-f6d23460dccc",
+    "sample_id": "98_20180719_0374",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "f655f3b22694a355759e22d379e7897a45e136ab95d0ff5863c8ad92377f11e0",
+    "gallery_sha256": "5e3673a9ff86cacc9158e3e192aa37c18b981047a3cfdd38639267b6b02702ec",
+    "scientific_name": "Synodus foetens",
+    "biology_description": "A coastal bottom predator with a long body, broad mouth, and sharp teeth. It can bury itself in sand or mud and ambush small fishes and invertebrates.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/inshore-lizardfish"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 28,
+    "common_name": "Spottail Shiner",
+    "file": "spottail-shiner.jpg",
+    "source_file_name": "98_20180717_0181_01_028_04_01_01_00.jpg",
+    "catalog_id": "upload:83c82b7b-8a1e-48bb-8357-78c5704de16b",
+    "sample_id": "98_20180717_0181",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "9edf049b60cec3851cb700e9830744c44e5593d353e684ac779661aa70d4ceda",
+    "gallery_sha256": "57f61aded70518428accfffddbb8ecc03129220ee43ab784d4dc3f475d1ccfb7",
+    "scientific_name": "Hudsonius hudsonius",
+    "scientific_name_aliases": [
+      "Notropis hudsonius"
+    ],
+    "biology_description": "A small schooling minnow with a dark spot at the base of its tail. It inhabits rivers and lake shores, often over sand, and eats insects, crustaceans, and plant material.",
+    "biology_references": [
+      {
+        "label": "FishBase",
+        "url": "https://www.fishbase.se/summary/2867"
+      },
+      {
+        "label": "Connecticut DEEP",
+        "url": "https://portal.ct.gov/DEEP/Fishing/Freshwater/Freshwater-Fishes-of-Connecticut/Spottail-Shiner"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 133,
+    "common_name": "Spotted Hake",
+    "file": "spotted-hake.jpg",
+    "source_file_name": "98_20180705_0082_01_133_04_01_01_00.jpg",
+    "catalog_id": "upload:b2a8da74-5654-441f-b28d-74894a864550",
+    "sample_id": "98_20180705_0082",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "209f9ccab61863f6c125620f0482c21f548b94d785f6d50537289c071b9e3441",
+    "gallery_sha256": "c8eac983f420729a10bde72f81e8e7217cd169240d4ee7766a370b5132502c2b",
+    "scientific_name": "Urophycis regia",
+    "biology_description": "A bottom-dwelling hake found along the northwestern Atlantic coast. Juveniles spend time in estuaries, and the species feeds mainly on crustaceans, with fish and squid also reported.",
+    "biology_references": [
+      {
+        "label": "FishBase",
+        "url": "https://www.fishbase.se/FieldGuide/FieldGuideSummary.php?c_code=840&genusname=Urophycis&speciesname=regia"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 30,
+    "common_name": "Striped Bass",
+    "file": "striped-bass.jpg",
+    "source_file_name": "98_20180717_0180_01_030_04_01_01_00.jpg",
+    "catalog_id": "upload:553d1dcb-a3e5-45f8-a9fc-810dd85475f7",
+    "sample_id": "98_20180717_0180",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "e8868adb17a2c00d55a4049148af23f748a0b97911b979a41be7fb16febfa587",
+    "gallery_sha256": "1ef28d531dd2eab66cb7172328e11bbba941b04e98ed9fcb5fd15a3d9b7f056e",
+    "scientific_name": "Morone saxatilis",
+    "biology_description": "A coastal predator identified by dark horizontal stripes along its sides. It moves upstream to spawn in fresh or brackish water, and young fish develop in estuarine nursery areas.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/striped-bass"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 14,
+    "common_name": "Tessellated Darter",
+    "file": "tessellated-darter.jpg",
+    "source_file_name": "98_20180717_0199_01_014_04_01_01_00.jpg",
+    "catalog_id": "upload:90dc9a2a-1953-4cc3-b327-e24070ff8472",
+    "sample_id": "98_20180717_0199",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "a9a993320b836d588608c0a2ca7b326ede24d4d72180a88bef32aafa96ed5f48",
+    "gallery_sha256": "339e6e0e6a4c3c3f85cde9bef62d73071f624a7caf1146cef5d545ba5fe3def6",
+    "scientific_name": "Etheostoma olmstedi",
+    "biology_description": "A small bottom-dwelling fish found in streams, rivers, and lake margins. It makes short darting movements while feeding on tiny aquatic animals; males guard eggs laid beneath stones.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/tessellated-darter"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 45,
+    "common_name": "Weakfish",
+    "file": "weakfish.jpg",
+    "source_file_name": "98_20180830_1035_01_045_04_01_01_00.jpg",
+    "catalog_id": "upload:8be04433-2a87-4008-9f62-ba73628420d7",
+    "sample_id": "98_20180830_1035",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "1616774a3f24c804bba8c14f9317292f57b44947ca3e537ae7045983f007b7f1",
+    "gallery_sha256": "54a97385c2cd86a7767bdbfbdcd5f66d241142757d954803c50cf6c46eff803e",
+    "scientific_name": "Cynoscion regalis",
+    "biology_description": "A coastal predator that feeds on small fishes, shrimp, and other invertebrates. Young weakfish use low-salinity estuarine nursery areas before moving into saltier waters as they grow.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/weakfish"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 34,
+    "common_name": "White Catfish",
+    "file": "white-catfish.jpg",
+    "source_file_name": "98_20180910_1075_01_034_04_01_01_00.jpg",
+    "catalog_id": "upload:8aa7a078-2be5-42b1-8612-ce3a6df4e29f",
+    "sample_id": "98_20180910_1075",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "fc6ca8b0fbeecbf4d75f16afa9e8284bcbefeeb220532ce5a71a77fe3b4d7f18",
+    "gallery_sha256": "4827f1a9c6a3304a78d3b0887a2a67e1939a812c03f9410f3f69060a70adc8a7",
+    "scientific_name": "Ameiurus catus",
+    "biology_description": "A catfish native to Atlantic coastal drainages that inhabits slow-flowing rivers, lakes, and brackish waters. It has a broad head and moderately forked tail and eats fishes, invertebrates, and plant material.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/white-catfish"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  },
+  {
+    "taxon_code": 35,
+    "common_name": "White Perch",
+    "file": "white-perch.jpg",
+    "source_file_name": "98_20180816_0552_01_035_04_01_01_00.JPG",
+    "catalog_id": "upload:cc5d3a50-3a68-43ba-8ecb-088368250738",
+    "sample_id": "98_20180816_0552",
+    "archive_view_code": "01",
+    "archive_view": "left_side",
+    "exif_orientation": 1,
+    "width": 1600,
+    "height": 1067,
+    "source_type": "local archive",
+    "source_exif_orientation": 1,
+    "source_sha256": "f40890766196eb31f6ebc9a17daa8faebf25f6344c7caaac0cee44f3dd764655",
+    "gallery_sha256": "0f7b711b1ee854e59ef46b2983198b9ab4784ed2e6dede8e7800da5c1442aa89",
+    "scientific_name": "Morone americana",
+    "biology_description": "A small, silvery fish that lives in fresh and brackish waters. It moves upstream to spawn in spring and feeds on small fishes, aquatic insects, and fish eggs.",
+    "biology_references": [
+      {
+        "label": "Chesapeake Bay Program",
+        "url": "https://www.chesapeakebay.net/discover/field-guide/entry/white-perch"
+      }
+    ],
+    "biology_checked_on": "2026-11-23"
+  }
+]

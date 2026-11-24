@@ -186,7 +186,7 @@ function guiHelpers(client) {
     renderAdminRequestRows = () => {};
     resetAdminRequestReport = () => {};
     setLoginStatus = (message) => { globalThis.loginStatus = message; };
-    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, variablesForSource, emptyLiveData, sumRecordCounts, MAP_BASEMAPS, DEFAULT_BASEMAP, mainRequestItems, databasePageItems, renderRiverRegionReferences };
+    globalThis.helpers = { state, loadAdminRequests, signOutAdminUser, variablesForSource, emptyLiveData, sumRecordCounts, MAP_BASEMAPS, DEFAULT_BASEMAP, mainRequestItems, databasePageItems, renderRiverRegionReferences, riverRegionHeatLevels, riverRegionReferenceSvg };
   `, context);
   return { ...context, panel };
 }
@@ -275,7 +275,14 @@ test('GUI starts empty and offers only actually recorded HRBMP variables, withou
   for (const source of ['usgs', 'epa', 'noaa']) assert.equal(context.helpers.variablesForSource(source).length, 0);
   const html = fs.readFileSync('gui/index.html', 'utf8');
   assert.match(html, /id="admin-request-panel"[^>]* hidden/);
-  assert.doesNotMatch(html, /Hudson River Biological Availability Layers|Biological record totals are summarized|USGS|EPA|NOAA/);
+  assert.doesNotMatch(html, /Hudson River Biological Availability Layers|Biological record totals are summarized/);
+  // Research funding can name NOAA; database pages must still offer only HRBMP data.
+  for (const pageId of ['biological-database', 'environmental-database']) {
+    const start = html.indexOf(`<section class="tab-page" id="${pageId}"`);
+    assert.ok(start >= 0);
+    const end = html.indexOf('<section class="tab-page"', start + 1);
+    assert.doesNotMatch(html.slice(start, end), /USGS|EPA|NOAA/);
+  }
   assert.doesNotMatch(fs.readFileSync('gui/app.js', 'utf8'), /example_summary\.json|deriveEnvironmentalCovariates|FALLBACK_DATA|FALLBACK_METADATA/);
 });
 
@@ -324,21 +331,21 @@ test('image map groups actual files per sample and does not fabricate coordinate
 test('beta version, asset references and dated major-change News release agree', () => {
   const html = fs.readFileSync('gui/index.html', 'utf8');
   const app = fs.readFileSync('gui/app.js', 'utf8');
-  assert.match(html, /class="portal-version">Beta Version 1\.2\.4</);
-  assert.match(app, /const DATA_VERSION = '1\.2\.4';/);
-  for (const file of ['style.css', 'archive.js', 'archive-cache.js', 'app.js']) assert.ok(html.includes(`${file}?v=1.2.4`));
+  assert.match(html, /class="portal-version">Beta Version 1\.2\.5</);
+  assert.match(app, /const DATA_VERSION = '1\.2\.5';/);
+  for (const file of ['style.css', 'archive.js', 'archive-cache.js', 'app.js']) assert.ok(html.includes(`${file}?v=1.2.5`));
   const start = html.indexOf('id="news"');
   const news = html.slice(start, html.indexOf('</section>', start));
   const release = news.slice(news.indexOf('<article'), news.indexOf('</article>'));
-  assert.match(release, /Beta Version 1\.2\.4/);
+  assert.match(release, /Beta Version 1\.2\.5/);
   assert.match(release, /datetime="2026-11-23"/);
   const changes = [...release.matchAll(/<li>(.*?)<\/li>/g)].map(match => match[1].replace(/<[^>]*>/g, ''));
   assert.equal(changes.length, 3);
   assert.ok(changes.every(change => change.split(/\s+/).length <= 26));
   const history = news.slice(news.indexOf('<details'));
   const older = [...history.matchAll(/<li>(.*?)<\/li>/g)].map(match => match[1].replace(/<[^>]*>/g, ''));
-  assert.equal(older.length, 7);
-  for (const [index, version] of ['1.2.3', '1.2.2', '1.2.1', '1.2.0', '1.1.4', '1.1.3', '1.1.2'].entries()) {
+  assert.equal(older.length, 8);
+  for (const [index, version] of ['1.2.4', '1.2.3', '1.2.2', '1.2.1', '1.2.0', '1.1.4', '1.1.3', '1.1.2'].entries()) {
     assert.ok(older[index].startsWith(`Beta ${version}:`));
     assert.ok(older[index].split(/\s+/).length <= 16);
   }
@@ -381,7 +388,7 @@ test('availability pages each retain one semantic heading in the shared green up
   const css = fs.readFileSync('gui/style.css', 'utf8');
   assert.match(css, /\.eyebrow\s*\{[^}]*color: var\(--teal\);[^}]*text-transform: uppercase;/);
   assert.match(css, /#sampling-image-catalog \.page-header h1\.eyebrow\s*\{[^}]*color: var\(--teal\);[^}]*font-size: 0\.82rem;/);
-  assert.ok(html.includes('style.css?v=1.2.4'));
+  assert.ok(html.includes('style.css?v=1.2.5'));
 });
 
 test('data-type groups contain only real records and distinguish available items from missing uploads', () => {
@@ -664,4 +671,43 @@ test('river region totals use the corresponding catalog and count available phot
     assert.match(panel.innerHTML, /count not yet loaded/);
     assert.doesNotMatch(panel.innerHTML, />0<tspan/);
   }
+});
+
+
+test('regional availability heatmap ranges cover every count without gaps, including small catalogs', () => {
+  const { riverRegionHeatLevels } = guiHelpers(adminClient()).helpers;
+  for (const maximum of [0, 1, 2, 3, 4, 5, 7, 17, 774, 1000]) {
+    const levels = riverRegionHeatLevels(maximum);
+    assert.equal(levels.length, Math.min(5, maximum));
+    let next = 1;
+    for (const level of levels) {
+      assert.equal(level.min, next);
+      assert.ok(level.max >= level.min);
+      next = level.max + 1;
+    }
+    assert.equal(next, maximum + 1);
+    assert.equal(new Set(levels.map(level => level.fill)).size, levels.length);
+  }
+});
+
+test('regional heatmaps color equal counts alike and distinguish zero from pending data', () => {
+  const { riverRegionReferenceSvg } = guiHelpers(adminClient()).helpers;
+  const rows = [
+    { region_code: 'BT', biological_records: 1 },
+    { region_code: 'YK', biological_records: 100 },
+    { region_code: 'TZ', biological_records: 1 }
+  ];
+  const svg = riverRegionReferenceSvg(rows, 'biological', true);
+  const fills = [...svg.matchAll(/<g class="river-region-segment">[\s\S]*?<rect[^>]* fill="([^"]+)"/g)].map(match => match[1]);
+  assert.equal(fills.length, 13);
+  assert.equal(fills[0], fills[2]);
+  assert.notEqual(fills[0], fills[1]);
+  assert.notEqual(fills[0], fills[3]);
+  assert.match(svg, /class="river-region-legend"/);
+  assert.match(svg, /1–20/);
+  assert.match(svg, /81–100/);
+  const pending = riverRegionReferenceSvg(rows, 'biological', false);
+  assert.match(pending, /count not yet loaded/);
+  assert.doesNotMatch(pending, /class="river-region-legend"/);
+  assert.doesNotMatch(pending, />0<tspan/);
 });
