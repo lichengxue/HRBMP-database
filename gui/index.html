@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="style.css?v=1.2.4" />
+  <link rel="stylesheet" href="style.css?v=1.2.5" />
 </head>
 <body>
   <header class="site-nav">
@@ -51,6 +51,14 @@
           </div>
         </div>
         <a href="#sampling-image-catalog" data-tab-link="sampling-image-catalog">Sampling Image Catalog</a>
+        <div class="nav-dropdown">
+          <a href="#education-current-research" data-tab-link="education-current-research">Research</a>
+          <div class="nav-submenu" aria-label="Research subsections">
+            <a href="#education-current-research" data-tab-link="education-current-research">Current Research</a>
+            <a href="#research-previous" data-tab-link="research-previous">Previous Research</a>
+            <a href="#research-publications" data-tab-link="research-publications">Publications</a>
+          </div>
+        </div>
         <div class="nav-dropdown">
           <a href="#educational-materials" data-tab-link="educational-materials">Educational Materials</a>
           <div class="nav-submenu" aria-label="Educational Materials subsections">
@@ -109,13 +117,6 @@
               </div>
             </div>
             <div class="nav-subitem">
-              <a href="#education-current-research" data-tab-link="education-current-research">Current Research</a>
-              <div class="nav-nested-submenu" aria-label="Current Research subsections">
-                <a href="#research-ongoing-projects" data-tab-link="research-ongoing-projects">Ongoing Projects</a>
-                <a href="#research-publications" data-tab-link="research-publications">Publications</a>
-              </div>
-            </div>
-            <div class="nav-subitem">
               <a href="#education-classroom" data-tab-link="education-classroom">Classroom Materials</a>
               <div class="nav-nested-submenu" aria-label="Classroom Materials subsections">
                 <a href="#education-classroom" data-classroom-focus="lesson-plans">Lesson Plans</a>
@@ -141,6 +142,7 @@
         <div class="nav-dropdown">
           <a href="#photo-gallery" data-tab-link="photo-gallery">Photo Gallery</a>
           <div class="nav-submenu" aria-label="Photo Gallery subsections">
+            <a href="#photo-gallery" data-tab-link="photo-gallery">Fish Species</a>
             <a href="#gallery-hudson-river" data-tab-link="gallery-hudson-river">Hudson River</a>
             <a href="#gallery-field-sampling" data-tab-link="gallery-field-sampling">Field Sampling Photos</a>
             <a href="#gallery-sample-warehouse" data-tab-link="gallery-sample-warehouse">Sample Warehouse</a>
@@ -169,7 +171,7 @@
             <div class="intro-block">
               <p class="eyebrow">Hudson River Biological Monitoring Program</p>
               <h1>HRBMP Data Portal</h1>
-              <p class="portal-version">Beta Version 1.2.4</p>
+              <p class="portal-version">Beta Version 1.2.5</p>
               <p class="lead">
                 Browse HRBMP program information, biological observations,
                 environmental measurements, and sampling image records.
@@ -184,7 +186,7 @@
               <div class="panel-heading">
                 <p class="eyebrow">Current Snapshot</p>
                 <p id="snapshot-date">Loading archive totals…</p>
-                <p id="snapshot-status" role="status"></p>
+                <p id="snapshot-status" role="status" hidden></p>
                 <button type="button" class="secondary-button snapshot-refresh" data-refresh-archive>Update totals</button>
               </div>
               <div class="metric-grid compact">
@@ -213,26 +215,21 @@
               <h2>Institutional Partners</h2>
               <div class="logo-grid">
                 <a class="logo-card" href="https://www.stonybrook.edu/" target="_blank" rel="noopener">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Stony_Brook_U_logo_horizontal.svg" alt="Stony Brook University Logo" />
+                  <img src="assets/acknowledgements/stony-brook-university.jpg" alt="Stony Brook University" width="415" height="79" loading="lazy" decoding="async" />
                   <span>Stony Brook University</span>
                 </a>
                 <a class="logo-card dark-logo" href="https://www.stonybrook.edu/somas/" target="_blank" rel="noopener">
-                  <img src="https://www.stonybrook.edu/_resources/images/sb-logo-footer-dept-sm-rev-11.22.25-01.svg" alt="School Of Marine And Atmospheric Sciences Logo" />
-                  <span>School Of Marine And Atmospheric Sciences</span>
+                  <img src="assets/acknowledgements/somas.svg" alt="School of Marine, Atmospheric, and Sustainability Sciences (SoMAS)" width="284" height="59" loading="lazy" decoding="async" />
+                  <span>School of Marine, Atmospheric, and Sustainability Sciences (SoMAS)</span>
                 </a>
               </div>
             </div>
-
             <div class="partner-group">
               <h2>Collaborators</h2>
-              <div class="logo-grid">
-                <a class="logo-card" href="https://dec.ny.gov/" target="_blank" rel="noopener">
-                  <img src="https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/s3fs-public/media/images/DEC.png" alt="NYSDEC Logo" />
-                  <span>NYSDEC</span>
-                </a>
-                <a class="logo-card dark-logo" href="https://hudsonriver.org/" target="_blank" rel="noopener">
-                  <img src="https://hudsonriver.org/wp-content/uploads/2017/04/logo-hrf-white.svg" alt="Hudson River Foundation Logo" />
-                  <span>Hudson River Foundation</span>
+              <div class="logo-grid collaborator-logo-grid">
+                <a class="logo-card dark-logo" href="https://www.normandeau.com/" target="_blank" rel="noopener">
+                  <img src="assets/acknowledgements/normandeau-associates.png" alt="Normandeau Associates" width="339" height="42" loading="lazy" decoding="async" />
+                  <span>Normandeau Associates</span>
                 </a>
               </div>
             </div>
@@ -246,6 +243,52 @@
           <img src="assets/fig1a_hudson_map.png" alt="Hudson River map with HRBMP region abbreviations and inset location map" />
         </aside>
       </div>
+
+      <section class="partner-panel data-panel home-funding-panel" aria-labelledby="home-funding-title">
+        <h2 id="home-funding-title">Funding and Support</h2>
+        <div class="logo-grid">
+          <a class="logo-card" href="https://www.stonybrook.edu/pres/vision/fast-impact.html" target="_blank" rel="noopener">
+            <img src="assets/acknowledgements/presidents-fast-impact-fund.jpg" alt="President’s Fast Impact Fund" width="1600" height="447" loading="lazy" decoding="async" />
+            <span>President’s Fast Impact Fund</span>
+            <small>Digital archive development</small>
+          </a>
+          <a class="logo-card dark-logo" href="https://hudsonriver.org/" target="_blank" rel="noopener">
+            <img src="assets/acknowledgements/hudson-river-foundation.svg" alt="Hudson River Foundation" width="96" height="45" loading="lazy" decoding="async" />
+            <span>Hudson River Foundation</span>
+            <small>Monitoring and research</small>
+          </a>
+          <a class="logo-card" href="https://dec.ny.gov/" target="_blank" rel="noopener">
+            <img src="assets/acknowledgements/nysdec.png" alt="NYSDEC" width="900" height="281" loading="lazy" decoding="async" />
+            <span>NYSDEC</span>
+            <small>Fish survey support</small>
+          </a>
+          <a class="logo-card" href="https://www.noaa.gov/" target="_blank" rel="noopener">
+            <img src="assets/acknowledgements/noaa.svg" alt="NOAA" width="360" height="360" loading="lazy" decoding="async" />
+            <span>NOAA</span>
+            <small>Sea Grant research funding</small>
+          </a>
+          <a class="logo-card dark-logo" href="https://nyseagrant.org/" target="_blank" rel="noopener">
+            <img src="assets/acknowledgements/new-york-sea-grant.png" alt="New York Sea Grant" width="152" height="75" loading="lazy" decoding="async" />
+            <span>New York Sea Grant</span>
+            <small>Research program administration</small>
+          </a>
+          <a class="logo-card" href="https://www.stonybrook.edu/proposal-development/funding-opportunities/ori-seed-grant-program/index.html" target="_blank" rel="noopener">
+            <img src="assets/acknowledgements/stony-brook-university.jpg" alt="Stony Brook Seed Grants" width="415" height="79" loading="lazy" decoding="async" />
+            <span>Stony Brook Seed Grants</span>
+            <small>OVPR / OR&amp;I research awards</small>
+          </a>
+          <a class="logo-card" href="https://www.stonybrookmedicine.edu/" target="_blank" rel="noopener">
+            <img src="assets/acknowledgements/stony-brook-medicine.png" alt="Stony Brook Medicine" width="1130" height="246" loading="lazy" decoding="async" />
+            <span>Stony Brook Medicine</span>
+            <small>Seed research support</small>
+          </a>
+          <a class="logo-card" href="https://www.entergy.com/" target="_blank" rel="noopener">
+            <img src="assets/acknowledgements/entergy.png" alt="Entergy" width="340" height="156" loading="lazy" decoding="async" />
+            <span>Entergy</span>
+            <small>Collection gift and foundational support</small>
+          </a>
+        </div>
+      </section>
 
       <section class="homepage-disclaimer data-panel" aria-label="Development disclaimer">
         <h2>Development Disclaimer</h2>
@@ -351,50 +394,6 @@
         </div>
       </section>
 
-      <section class="data-panel metadata-panel">
-        <div class="metadata-panel-header">
-          <div>
-            <h2>SQLite Metadata Catalog</h2>
-            <p id="metadata-status">Metadata are loaded from the local API when the server is running.</p>
-          </div>
-          <a id="metadata-api-json" class="secondary-button link-button" href="#" target="_blank" rel="noopener">Open Metadata JSON</a>
-        </div>
-        <div class="summary-strip metadata-overview" id="metadata-overview"></div>
-        <div class="metadata-tables">
-          <article>
-            <h3>Datasets</h3>
-            <div class="table-scroll">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Dataset</th>
-                    <th>Source</th>
-                    <th>Access</th>
-                    <th>API</th>
-                  </tr>
-                </thead>
-                <tbody id="metadata-datasets"></tbody>
-              </table>
-            </div>
-          </article>
-          <article>
-            <h3>Variables</h3>
-            <div class="table-scroll">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Variable</th>
-                    <th>Database</th>
-                    <th>Unit</th>
-                    <th>Type</th>
-                  </tr>
-                </thead>
-                <tbody id="metadata-variables"></tbody>
-              </table>
-            </div>
-          </article>
-        </div>
-      </section>
     </section>
 
     <section class="tab-page" id="survey-fall-juvenile" data-tab-page="survey-fall-juvenile">
@@ -502,19 +501,20 @@
     <section class="tab-page" id="news" data-tab-page="news">
       <div class="page-header"><h1>Version Updates</h1></div>
       <div class="news-list">
-        <article id="release-1-2-4" aria-labelledby="release-1-2-4-title">
+        <article id="release-1-2-5" aria-labelledby="release-1-2-5-title">
           <div class="news-meta"><time datetime="2026-11-23">November 23, 2026</time></div>
-          <h2 id="release-1-2-4-title">Beta Version 1.2.4</h2>
+          <h2 id="release-1-2-5-title">Beta Version 1.2.5</h2>
           <ul class="version-updates">
-            <li><strong>Consistent river regions:</strong> biological, environmental, and sampling-image pages each show the horizontal Battery-to-Albany bar with all 13 regions and river-mile ranges.</li>
-            <li><strong>Relevant totals:</strong> regional counts show biological records, environmental samples with data, or available public fish photos for the corresponding catalog.</li>
-            <li><strong>Complete regional coverage:</strong> image totals include photos with a known region even when map coordinates are missing; internal and mismatched uploads stay hidden.</li>
+            <li><strong>Research and support:</strong> separate research tabs, official titles and objectives, homepage funding logos and collaborator credits, and publications grouped by year.</li>
+            <li><strong>Availability and layout:</strong> regional heatmaps show exact counts and legends; removed unused panels, captions, and counters.</li>
+            <li><strong>Gallery and contacts:</strong> species cards pair a single specimen photo with scientific names and biology; added Ethan's photo and database Contact button.</li>
           </ul>
         </article>
       </div>
       <details class="release-history">
         <summary>Earlier version updates</summary>
         <ul class="version-updates">
+          <li>Beta 1.2.4: River-region diagrams show catalog-specific totals across biological, environmental, and image pages.</li>
           <li>Beta 1.2.3: Hide mismatched uploads throughout public results, filters, maps, requests, and caches.</li>
           <li>Beta 1.2.2: Horizontal Hudson River regions show names, river miles, and biological record counts.</li>
           <li>Beta 1.2.1: Curated public results, hidden internal files, and simpler availability headings and selection controls.</li>
@@ -564,7 +564,7 @@
           <label>Region<select id="bio-region"></select></label>
           <label>Sample<select id="bio-sample"></select></label>
           <label>Data Type<select id="bio-data-type"></select></label>
-          <label>Availability<select id="bio-availability"><option value="all">All Statuses</option><option value="available">Available on request</option><option value="awaiting_upload">Awaiting upload</option></select></label>
+          <label>Availability<select id="bio-availability"><option value="all">All Statuses</option><option value="available">Available on request</option></select></label>
           <label>
             Year From
             <select id="bio-year-start"></select>
@@ -664,7 +664,7 @@
 
       <section class="data-panel river-region-panel" aria-labelledby="bio-regions-heading">
         <h2 id="bio-regions-heading">HRBMP River Regions</h2>
-        <p>Battery (downstream) to Albany (upstream). Equal-width regions; biological record counts cover the full catalog.</p>
+        <p>Battery (downstream) to Albany (upstream). Shade shows biological record counts across the full catalog; regions have equal widths.</p>
         <div class="river-region-diagram" id="bio-region-reference" tabindex="0" role="region" aria-label="Horizontal Hudson River region diagram; scroll horizontally to see all regions on smaller screens"></div>
       </section>
     </section>
@@ -830,12 +830,10 @@
           </label>
 
           <div class="layer-stats" id="env-map-stats"></div>
-          <p class="map-help">Environmental record totals are summarized by HRBMP region for the selected database, covariate, and date filters.</p>
         </aside>
 
-        <section class="map-panel" aria-label="Hudson River environmental availability map">
+        <section class="map-panel map-only" aria-label="Hudson River environmental availability map">
           <div id="env-map" class="gis-map"></div>
-          <div class="selected-feature" id="env-selected">No map feature selected.</div>
         </section>
       </div>
 
@@ -869,7 +867,7 @@
 
       <section class="data-panel river-region-panel" aria-labelledby="env-regions-heading">
         <h2 id="env-regions-heading">HRBMP River Regions</h2>
-        <p>Battery (downstream) to Albany (upstream). Equal-width regions; environmental record counts cover the full catalog.</p>
+        <p>Battery (downstream) to Albany (upstream). Shade shows environmental record counts across the full catalog; regions have equal widths.</p>
         <div class="river-region-diagram" id="env-region-reference" tabindex="0" role="region" aria-label="Horizontal Hudson River region diagram; scroll horizontally to see all regions on smaller screens"></div>
       </section>
     </section>
@@ -978,7 +976,7 @@
           <label>Monitoring Program<select id="catalog-program"></select></label>
           <label>Region<select id="catalog-region"></select></label>
           <label>Sample<select id="catalog-sample"></select></label>
-          <label>Availability<select id="catalog-availability"><option value="all">All Statuses</option><option value="available">Available on request</option><option value="awaiting_upload">Awaiting upload</option></select></label>
+          <label>Availability<select id="catalog-availability"><option value="all">All Statuses</option><option value="available">Available on request</option></select></label>
           <label>Year From<select id="catalog-year-start"></select></label>
           <label>Year To<select id="catalog-year-end"></select></label>
           <button type="button" class="secondary-button filter-action" data-clear-database="catalog" title="Clear filters" aria-label="Clear image catalog filters"><i data-lucide="rotate-ccw" aria-hidden="true"></i><span>Clear filters</span></button>
@@ -1041,7 +1039,7 @@
 
       <section class="data-panel river-region-panel" aria-labelledby="catalog-regions-heading">
         <h2 id="catalog-regions-heading">HRBMP River Regions</h2>
-        <p>Battery (downstream) to Albany (upstream). Equal-width regions; available public fish-photo counts cover the full catalog.</p>
+        <p>Battery (downstream) to Albany (upstream). Shade shows available public image counts across the full catalog; regions have equal widths.</p>
         <div class="river-region-diagram" id="catalog-region-reference" tabindex="0" role="region" aria-label="Horizontal Hudson River region diagram; scroll horizontally to see all regions on smaller screens"></div>
       </section>
     </section>
@@ -1603,154 +1601,661 @@
     </section>
 
     <section class="tab-page" id="education-current-research" data-tab-page="education-current-research">
-      <div class="page-header">
-        <p class="eyebrow">Educational Materials</p>
-        <h1>Current Research</h1>
-        <p class="page-note">
-          Research pathways connected to HRBMP monitoring records, environmental change, fish communities, and data access.
-        </p>
-      </div>
-
-      <div class="research-link-grid">
-        <article class="resource-card data-panel">
-          <span class="resource-kicker">Research Portfolio</span>
-          <h2>Ongoing Projects</h2>
-          <p>Active research themes using HRBMP data, environmental covariates, and long-term Hudson River monitoring records.</p>
+      <div class="page-header"><h1>Current Research</h1></div>
+      <div class="research-project-grid" id="current-projects">
+        <article class="data-panel research-project-card" id="project-historical-pfas" data-project-date="2026-06-01">
+          <header class="research-project-heading">
+            <p class="research-period">June 2026–2028</p>
+            <h2>Tracking Forty Years of PFAS Prevalence in The Hudson River Estuary</h2>
+          </header>
+          <p class="research-agency"><strong>Funding agency:</strong> National Oceanic and Atmospheric Administration (NOAA), through New York Sea Grant.</p>
+          <p class="research-team"><strong>PI:</strong> Oliver Shipley <span aria-hidden="true">·</span> <strong>Co-PIs:</strong> Lokesh Padhye and Yong Chen</p>
+          <div class="research-objectives">
+            <p><strong>Objectives</strong></p>
+            <ul>
+            <li>Reconstruct four decades of PFAS exposure using archived striped bass scales.</li>
+            <li>Identify historical and emerging contaminant patterns to inform fisheries and consumption-advisory research.</li>
+            </ul>
+          </div>
           <div class="history-source-links">
-            <a href="#research-ongoing-projects" data-tab-link="research-ongoing-projects">Open Ongoing Projects</a>
+            <a href="https://nyseagrant.org/articles/23910/nysg-research-pr-1-5-m-awarded-for-sg-research-on-ny-s-coastal-environment-economies-and-communities-june-26" target="_blank" rel="noopener">Project and funding</a>
           </div>
         </article>
-        <article class="resource-card data-panel">
-          <span class="resource-kicker">Peer-reviewed Work</span>
-          <h2>Publications</h2>
-          <p>Recent publications connected to Hudson River fish populations, spawning ecology, habitat, and monitoring data methods.</p>
+        <article class="data-panel research-project-card" id="project-native-invasive-habitats" data-project-date="2026-06-01">
+          <header class="research-project-heading">
+            <p class="research-period">June 2026–2028</p>
+            <h2>Quantifying Spatial-Temporal Dynamics of Suitable Habitats for Key Native and Invasive Fish Species in A Changing Hudson River Estuary to Inform Management</h2>
+          </header>
+          <p class="research-agency"><strong>Funding agency:</strong> National Oceanic and Atmospheric Administration (NOAA), through New York Sea Grant.</p>
+          <p class="research-team"><strong>PI:</strong> Yunzhou Li <span aria-hidden="true">·</span> <strong>Co-PI:</strong> Yong Chen</p>
+          <div class="research-objectives">
+            <p><strong>Objectives</strong></p>
+            <ul>
+            <li>Quantify habitat use and interactions among native and invasive fish species.</li>
+            <li>Identify environmental drivers and model changes in habitat suitability across the estuary.</li>
+            </ul>
+          </div>
           <div class="history-source-links">
-            <a href="#research-publications" data-tab-link="research-publications">Open Publications</a>
+            <a href="https://nyseagrant.org/articles/23910/nysg-research-pr-1-5-m-awarded-for-sg-research-on-ny-s-coastal-environment-economies-and-communities-june-26" target="_blank" rel="noopener">Project and funding</a>
+          </div>
+        </article>
+        <article class="data-panel research-project-card" id="project-fish-digital-archive" data-project-date="2026-05-01">
+          <header class="research-project-heading">
+            <p class="research-period">2026–2027</p>
+            <h2>Developing the Hudson River Fish Digital Archive: A 50-Million-Specimen Legacy for the Anthropocene</h2>
+          </header>
+          <p class="research-agency"><strong>Funding agency:</strong> Stony Brook University, President’s Fast Impact Fund.</p>
+          <p class="research-team"><strong>PI:</strong> Yong Chen <span aria-hidden="true">·</span> <strong>Co-PI:</strong> Oliver Shipley</p>
+          <div class="research-objectives">
+            <p><strong>Objectives</strong></p>
+            <ul>
+            <li>Establish specimen-imaging and metadata workflows for a searchable digital archive.</li>
+            <li>Pilot access to archived fish material and establish a foundation for expanded digitization.</li>
+            </ul>
+          </div>
+          <div class="history-source-links">
+            <a href="https://you.stonybrook.edu/somas/2026/05/01/april-2026-news-and-press-from-somas/" target="_blank" rel="noopener">Award announcement</a>
+          </div>
+        </article>
+        <article class="data-panel research-project-card" id="project-fjs-calibration" data-project-date="2026-02-01">
+          <header class="research-project-heading">
+            <p class="research-period">February–December 2026</p>
+            <h2>Evaluating and calibrating Fall Juvenile Survey data for spatiotemporal consistency and data sharing</h2>
+          </header>
+          <p class="research-agency"><strong>Funding agency:</strong> Hudson River Foundation.</p>
+          <p class="research-team"><strong>PI:</strong> Yong Chen</p>
+          <div class="research-objectives">
+            <p><strong>Objectives</strong></p>
+            <ul>
+            <li>Identify sampling-protocol changes and barriers to interpreting and sharing FJS records.</li>
+            <li>Standardize abundance indices across sampling periods and produce calibrated datasets for reuse.</li>
+            </ul>
+          </div>
+          <div class="history-source-links">
+            <a href="https://you.stonybrook.edu/somas/2026/04/01/march-2026-news-and-press-from-somas/" target="_blank" rel="noopener">Award announcement</a>
+          </div>
+        </article>
+        <article class="data-panel research-project-card" id="project-microplastics-seed" data-project-date="2025-08-01">
+          <header class="research-project-heading">
+            <p class="research-period">2025 seed award</p>
+            <h2>Micro and nanoplastics entry into the Hudson River planktonic food web: Historical revelations from a long-term environmental monitoring program</h2>
+          </header>
+          <p class="research-agency"><strong>Funding agency:</strong> Stony Brook University, Office for Research and Innovation Seed Grant Program.</p>
+          <p class="research-team"><strong>PI:</strong> Luis Medina</p>
+          <div class="research-objectives">
+            <p><strong>Objectives</strong></p>
+            <ul>
+            <li>Evaluate microplastic and nanoplastic contamination in archived fish across species and trophic levels.</li>
+            <li>Assess spatial and temporal variation to establish a basis for expanded monitoring.</li>
+            </ul>
+          </div>
+          <div class="history-source-links">
+            <a href="https://you.stonybrook.edu/somas/2025/08/01/august-2025-news-and-press-from-somas/" target="_blank" rel="noopener">Award announcement</a>
+            <a href="https://www.stonybrook.edu/proposal-development/funding-opportunities/ori-seed-grant-program/ori-seed-grant-awardees.html" target="_blank" rel="noopener">Seed award record</a>
+          </div>
+        </article>
+        <article class="data-panel research-project-card" id="project-isotope-archive" data-project-date="2025-01-01">
+          <header class="research-project-heading">
+            <p class="research-period">January 2025–December 2026</p>
+            <h2>Assessing ecosystem responses of the Hudson River Estuary, New York, to historical climate change through compound-specific isotope analysis and archival collections accessibility</h2>
+          </header>
+          <p class="research-agency"><strong>Funding agency:</strong> Stony Brook University, OVPR Seed Grant Program.</p>
+          <p class="research-team"><strong>PI:</strong> Oliver Shipley <span aria-hidden="true">·</span> <strong>Co-PIs:</strong> Yong Chen and Greg Henkes</p>
+          <div class="research-objectives">
+            <p><strong>Objectives</strong></p>
+            <ul>
+            <li>Reconstruct historical biogeochemical and food-web conditions using isotope measurements from archived specimens.</li>
+            <li>Relate ecological changes to environmental records and improve access to the collections.</li>
+            </ul>
+          </div>
+          <div class="history-source-links">
+            <a href="https://you.stonybrook.edu/somas/2025/01/31/january-2025-news-and-press-from-somas/" target="_blank" rel="noopener">Award announcement</a>
+          </div>
+        </article>
+        <article class="data-panel research-project-card" id="project-heavy-metal-seed" data-project-date="2025">
+          <header class="research-project-heading">
+            <p class="research-period">2025–2026</p>
+            <h2>Heavy Metal Monitoring and Contaminant Mapping in Long Island and the Lower Hudson Valley</h2>
+          </header>
+          <p class="research-agency"><strong>Funding agency:</strong> Stony Brook Medicine Seed Funding.</p>
+          <p class="research-team"><strong>PI:</strong> Yong Chen</p>
+          <div class="research-objectives">
+            <p><strong>Objectives</strong></p>
+            <ul>
+            <li>Characterize trace-metal contamination across Long Island and the Lower Hudson Valley.</li>
+            <li>Develop spatial contaminant maps to guide subsequent monitoring and environmental-health research.</li>
+            </ul>
+          </div>
+        </article>
+        <article class="data-panel research-project-card" id="project-renewed-fjs" data-project-date="2023-06">
+          <header class="research-project-heading">
+            <p class="research-period">Resumed June 2023</p>
+            <h2>Hudson River Fall Juvenile Survey</h2>
+          </header>
+          <p class="research-agency"><strong>Funding agency:</strong> 2023–2024: NYS Department of Environmental Conservation (NYSDEC). 2025: Hudson River Foundation / HREMP.</p>
+          <p class="research-team"><strong>PI:</strong> Yong Chen</p>
+          <div class="research-objectives">
+            <p><strong>Objectives</strong></p>
+            <ul>
+            <li>Collect fish and water-quality samples across the 13 longitudinal river regions.</li>
+            <li>Estimate seasonal occurrence, relative abundance, and distribution of juvenile and older fishes.</li>
+            </ul>
+          </div>
+          <div class="history-source-links">
+            <a href="https://www.normandeau.com/legacy-project-leads-to-continued-surveying-on-the-hudson-river/" target="_blank" rel="noopener">Funding history</a>
+            <a href="https://dec.ny.gov/nature/animals-fish-plants/hudson-delaware-marine-fisheries/hudson-river-fish-community-and-ecosystem-monitoring" target="_blank" rel="noopener">Survey restart</a>
           </div>
         </article>
       </div>
     </section>
 
-    <section class="tab-page" id="research-ongoing-projects" data-tab-page="research-ongoing-projects">
-      <div class="page-header">
-        <p class="eyebrow">Current Research</p>
-        <h1>Ongoing Projects</h1>
+    <section class="tab-page" id="research-previous" data-tab-page="research-previous">
+      <div class="page-header"><h1>Previous Research</h1></div>
+      <div class="research-project-grid" id="previous-projects">
+        <article class="data-panel research-project-card" id="project-ecosystem-model" data-project-date="2024-06-01">
+          <header class="research-project-heading">
+            <p class="research-period">June 2024–May 2026</p>
+            <h2>Developing an End-To-End Ecosystem Model to Inform Management of the Hudson River and New York Bight Ecosystem</h2>
+          </header>
+          <p class="research-agency"><strong>Funding agency:</strong> National Oceanic and Atmospheric Administration (NOAA), through New York Sea Grant.</p>
+          <p class="research-team"><strong>PI:</strong> Yong Chen</p>
+          <div class="research-objectives">
+            <p><strong>Objectives</strong></p>
+            <ul>
+            <li>Integrate physical, plankton, and fish dynamics in an end-to-end ecosystem model.</li>
+            <li>Validate historical simulations, identify environmental drivers, and evaluate applications to fisheries management.</li>
+            </ul>
+          </div>
+          <div class="history-source-links">
+            <a href="https://www.nyseagrant.org/articles/23761/nysg-research-pr-2-15m-for-sea-grant-research-on-ny-s-coastal-environment-economies-and-communities-jan-25" target="_blank" rel="noopener">Project and funding</a>
+            <a href="https://you.stonybrook.edu/somas/2024/08/30/august-2024-news-and-press-from-somas/" target="_blank" rel="noopener">Award dates</a>
+          </div>
+        </article>
+        <article class="data-panel research-project-card" id="project-american-shad" data-project-date="2022-02-02">
+          <header class="research-project-heading">
+            <p class="research-period">2022 award</p>
+            <h2>Evaluating the Changing Biogeography of American Shad in a Changing Hudson River Ecosystem</h2>
+          </header>
+          <p class="research-agency"><strong>Funding agency:</strong> National Oceanic and Atmospheric Administration (NOAA), through New York Sea Grant.</p>
+          <p class="research-team"><strong>PI:</strong> Yong Chen</p>
+          <div class="research-objectives">
+            <p><strong>Objectives</strong></p>
+            <ul>
+            <li>Evaluate changes in shad abundance, distribution, and environmental habitat conditions.</li>
+            <li>Assess factors limiting recovery, including fishing pressure outside the Hudson River.</li>
+            </ul>
+          </div>
+          <div class="history-source-links">
+            <a href="https://news.stonybrook.edu/homespotlight/four-somas-research-projects-receive-funding-from-new-york-sea-grant/" target="_blank" rel="noopener">Award announcement</a>
+            <a href="https://nyseagrant.org/articles/r/23608" target="_blank" rel="noopener">Project record</a>
+          </div>
+        </article>
+        <article class="data-panel research-project-card" id="project-hrbmp-metadata">
+          <header class="research-project-heading">
+            <p class="research-period">Earlier HREMP project</p>
+            <h2>Development of comprehensive metadata records to facilitate historical HRBMP data sharing and collaborative research</h2>
+          </header>
+          <p class="research-agency"><strong>Funding agency:</strong> Hudson River Foundation.</p>
+          <p class="research-team"><strong>PI:</strong> Yong Chen</p>
+          <div class="research-objectives">
+            <p><strong>Objectives</strong></p>
+            <ul>
+            <li>Document survey designs, variable definitions, and changes in sampling protocols.</li>
+            <li>Publish consistent metadata to support interpretation, data access, and collaborative research.</li>
+            </ul>
+          </div>
+          <div class="history-source-links">
+            <a href="https://hudsonriver.org/article/hudson-river-ecosystem-monitoring-project-hremp/" target="_blank" rel="noopener">Foundation project record</a>
+          </div>
+        </article>
+        <article class="data-panel research-project-card" id="project-lrs-calibration">
+          <header class="research-project-heading">
+            <p class="research-period">Earlier HREMP project</p>
+            <h2>Evaluating and calibrating Long River Survey data for spatio-temporal consistency and data sharing</h2>
+          </header>
+          <p class="research-agency"><strong>Funding agency:</strong> Hudson River Foundation.</p>
+          <p class="research-team"><strong>PI:</strong> Yong Chen</p>
+          <div class="research-objectives">
+            <p><strong>Objectives</strong></p>
+            <ul>
+            <li>Quantify effects of historical sampling-protocol changes on ichthyoplankton indices.</li>
+            <li>Calibrate survey records to improve comparisons across years and river regions.</li>
+            </ul>
+          </div>
+          <div class="history-source-links">
+            <a href="https://hudsonriver.org/article/hudson-river-ecosystem-monitoring-project-hremp/" target="_blank" rel="noopener">Foundation project record</a>
+            <a href="https://doi.org/10.3389/fmars.2023.1237549" target="_blank" rel="noopener">Published method</a>
+          </div>
+        </article>
       </div>
     </section>
 
     <section class="tab-page" id="research-publications" data-tab-page="research-publications">
       <div class="page-header">
-        <p class="eyebrow">Current Research</p>
+        <p class="eyebrow">Research</p>
         <h1>Publications</h1>
-        <p class="page-note">
-          Recent peer-reviewed publications connected to HRBMP datasets, Hudson River fish ecology, and related modeling work.
-        </p>
+        <p class="page-note">Chen Lab publications using HRBMP data and collections, grouped by year from newest to oldest. Updated November 23, 2026.</p>
       </div>
+      <section class="publication-year-section" aria-labelledby="publications-2026-title">
+        <h2 class="publication-year-heading" id="publications-2026-title">2026</h2>
+        <div class="publication-list">
+          <article class="publication-card data-panel" data-publication-date="2026-11-03">
+            <div class="publication-body">
+              <p class="publication-context">Related monitoring framework</p>
+              <h3>Environmental Monitoring as Intelligent Infrastructure: An Engineering Framework for Adaptive Environmental Management</h3>
+              <p class="publication-authors">Chen, Y., Arsenault, S., Rokosz, K., &amp; Costigan, A.</p>
+              <p class="publication-journal"><em>Engineering</em>, advance online publication.</p>
+              <a href="https://doi.org/10.1016/j.eng.2026.09.007" target="_blank" rel="noopener">https://doi.org/10.1016/j.eng.2026.09.007</a>
+            </div>
+          </article>
 
-      <div class="publication-list">
-        <article class="publication-card data-panel">
-          <span class="publication-year">2025</span>
-          <div class="publication-body">
-            <h2>Spatiotemporal shifts in American Eel population in a changing Hudson River estuary</h2>
-            <p class="publication-authors">Lowe, E., Rokosz, K., Hodgdon, C., Chang, H.-Y., &amp; Chen, Y.</p>
-            <p class="publication-journal"><em>Transactions of the American Fisheries Society</em>, vnaf015.</p>
-            <a href="https://doi.org/10.1093/tafafs/vnaf015" target="_blank" rel="noopener">https://doi.org/10.1093/tafafs/vnaf015</a>
-          </div>
-        </article>
+          <article class="publication-card data-panel" data-publication-date="2026-10-16">
+            <div class="publication-body">
+              <h3>Understanding bay anchovy Anchoa mitchilli spawning phenology in a changing Hudson River Estuary using long-term ichthyoplankton monitoring data</h3>
+              <p class="publication-authors">Arsenault, S., Maniscalco, J., Li, C., &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Marine Ecology Progress Series</em>, in press.</p>
+              <a href="https://doi.org/10.3354/meps15347" target="_blank" rel="noopener">https://doi.org/10.3354/meps15347</a>
+            </div>
+          </article>
 
-        <article class="publication-card data-panel">
-          <span class="publication-year">2025</span>
-          <div class="publication-body">
-            <h2>Decadal-scale changes in fish spawning strategies: A case study of striped bass in the Hudson River</h2>
-            <p class="publication-authors">Pan, X., Zhang, W., Liu, W., Nguyen, A., Best, J., Pendleton, R., Huang, L., &amp; Chen, Y.</p>
-            <p class="publication-journal"><em>Ecological Indicators</em>, 173, 113410.</p>
-            <a href="https://doi.org/10.1016/j.ecolind.2025.113410" target="_blank" rel="noopener">https://doi.org/10.1016/j.ecolind.2025.113410</a>
-          </div>
-        </article>
+          <article class="publication-card data-panel" data-publication-date="2026-06">
+            <div class="publication-body">
+              <h3>Spatio-temporal shifts in the habitat suitability of Atlantic tomcod in its southernmost extent of distribution</h3>
+              <p class="publication-authors">Nguyen, T. A. &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Global Ecology and Conservation</em>, 67, e04187.</p>
+              <a href="https://doi.org/10.1016/j.gecco.2026.e04187" target="_blank" rel="noopener">https://doi.org/10.1016/j.gecco.2026.e04187</a>
+            </div>
+          </article>
 
-        <article class="publication-card data-panel">
-          <span class="publication-year">2025</span>
-          <div class="publication-body">
-            <h2>Unraveling drivers and patterns of species richness in coastal marine ecosystem under global warming: Insights from ecosystem connectivity</h2>
-            <p class="publication-authors">Yang, X., Wo, J., Keiling, T., &amp; Chen, Y.</p>
-            <p class="publication-journal"><em>Ecological Indicators</em>, 170, 113093.</p>
-            <a href="https://doi.org/10.1016/j.ecolind.2025.113093" target="_blank" rel="noopener">https://doi.org/10.1016/j.ecolind.2025.113093</a>
-          </div>
-        </article>
+          <article class="publication-card data-panel" data-publication-date="2026-03">
+            <div class="publication-body">
+              <h3>Cumulative temperature exposure as a driver of striped bass early growth in a changing thermal habitat</h3>
+              <p class="publication-authors">Praisner, S. E. &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Environmental Biology of Fishes</em>, 109(1), 14.</p>
+              <a href="https://doi.org/10.1007/s10641-025-01766-9" target="_blank" rel="noopener">https://doi.org/10.1007/s10641-025-01766-9</a>
+            </div>
+          </article>
 
-        <article class="publication-card data-panel">
-          <span class="publication-year">2025</span>
-          <div class="publication-body">
-            <h2>Evaluating effects of data quality and variable weighting on habitat suitability modelling</h2>
-            <p class="publication-authors">Arsenault, S., Linner, R., &amp; Chen, Y.</p>
-            <p class="publication-journal"><em>Ecological Informatics</em>, 87, 103086.</p>
-            <a href="https://doi.org/10.1016/j.ecoinf.2025.103086" target="_blank" rel="noopener">https://doi.org/10.1016/j.ecoinf.2025.103086</a>
-          </div>
-        </article>
+          <article class="publication-card data-panel" data-publication-date="2026-01-01">
+            <div class="publication-body">
+              <h3>Assessing striped bass scale metal accumulation as an indicator of Hudson River water quality</h3>
+              <p class="publication-authors">Nguyen, T. A., Arsenault, S., Praisner, S., Jackson, B. P., Fisher, N. S., &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Canadian Journal of Fisheries and Aquatic Sciences</em>, 83, 1–11.</p>
+              <a href="https://doi.org/10.1139/cjfas-2025-0318" target="_blank" rel="noopener">https://doi.org/10.1139/cjfas-2025-0318</a>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="publication-year-section" aria-labelledby="publications-2025-title">
+        <h2 class="publication-year-heading" id="publications-2025-title">2025</h2>
+        <div class="publication-list">
+          <article class="publication-card data-panel" data-publication-date="2025-07">
+            <div class="publication-body">
+              <h3>Evaluating effects of data quality and variable weighting on habitat suitability modelling</h3>
+              <p class="publication-authors">Arsenault, S., Linner, R., &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Ecological Informatics</em>, 87, 103086.</p>
+              <a href="https://doi.org/10.1016/j.ecoinf.2025.103086" target="_blank" rel="noopener">https://doi.org/10.1016/j.ecoinf.2025.103086</a>
+            </div>
+          </article>
 
-        <article class="publication-card data-panel">
-          <span class="publication-year">2024</span>
-          <div class="publication-body">
-            <h2>Shifting spawning phenology in Hudson River American Shad</h2>
-            <p class="publication-authors">Chang, H.-Y., &amp; Chen, Y.</p>
-            <p class="publication-journal"><em>Marine and Coastal Fisheries</em>, 16(5), e10312.</p>
-            <a href="https://doi.org/10.1002/mcf2.10312" target="_blank" rel="noopener">https://doi.org/10.1002/mcf2.10312</a>
-          </div>
-        </article>
+          <article class="publication-card data-panel" data-publication-date="2025-06-04">
+            <div class="publication-body">
+              <h3>Spatiotemporal shifts in American Eel population in a changing Hudson River estuary</h3>
+              <p class="publication-authors">Lowe, E., Rokosz, K., Hodgdon, C., Chang, H.-Y., &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Transactions of the American Fisheries Society</em>, 154(3), 312–321.</p>
+              <a href="https://doi.org/10.1093/tafafs/vnaf015" target="_blank" rel="noopener">https://doi.org/10.1093/tafafs/vnaf015</a>
+            </div>
+          </article>
 
-        <article class="publication-card data-panel">
-          <span class="publication-year">2024</span>
-          <div class="publication-body">
-            <h2>Understanding the dynamics of fish spawning phenology and habitat in a changing ecosystem using a long-term ichthyoplankton monitoring dataset</h2>
-            <p class="publication-authors">Hunt, N., Rokosz, K., &amp; Chen, Y.</p>
-            <p class="publication-journal"><em>Canadian Journal of Fisheries and Aquatic Sciences</em>.</p>
-            <a href="https://doi.org/10.1139/cjfas-2023-0361" target="_blank" rel="noopener">https://doi.org/10.1139/cjfas-2023-0361</a>
-          </div>
-        </article>
+          <article class="publication-card data-panel" data-publication-date="2025-04">
+            <div class="publication-body">
+              <h3>Decadal-scale changes in fish spawning strategies: A case study of striped bass in the Hudson River</h3>
+              <p class="publication-authors">Pan, X., Zhang, W., Liu, W., Nguyen, A., Best, J., Pendleton, R., Huang, L., &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Ecological Indicators</em>, 173, 113410.</p>
+              <a href="https://doi.org/10.1016/j.ecolind.2025.113410" target="_blank" rel="noopener">https://doi.org/10.1016/j.ecolind.2025.113410</a>
+            </div>
+          </article>
 
-        <article class="publication-card data-panel">
-          <span class="publication-year">2024</span>
-          <div class="publication-body">
-            <h2>Spatiotemporal dynamics of spawning habitat distribution of American shad (Alosa sapidissima) in the Hudson River Estuary under multi stressors</h2>
-            <p class="publication-authors">Chang, H.-Y., Pendleton, R., Kenney, G., McKown, K., Eakin, W., Maniscalco, J., &amp; Chen, Y.</p>
-            <p class="publication-journal"><em>Canadian Journal of Fisheries and Aquatic Sciences</em>, 81(5), 559-572.</p>
-            <a href="https://doi.org/10.1139/cjfas-2023-0241" target="_blank" rel="noopener">https://doi.org/10.1139/cjfas-2023-0241</a>
-          </div>
-        </article>
+          <article class="publication-card data-panel" data-publication-date="2025-01">
+            <div class="publication-body">
+              <h3>Unraveling drivers and patterns of species richness in coastal marine ecosystem under global warming: Insights from ecosystem connectivity</h3>
+              <p class="publication-authors">Yang, X., Wo, J., Keiling, T., &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Ecological Indicators</em>, 170, 113093.</p>
+              <a href="https://doi.org/10.1016/j.ecolind.2025.113093" target="_blank" rel="noopener">https://doi.org/10.1016/j.ecolind.2025.113093</a>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="publication-year-section" aria-labelledby="publications-2024-title">
+        <h2 class="publication-year-heading" id="publications-2024-title">2024</h2>
+        <div class="publication-list">
+          <article class="publication-card data-panel" data-publication-date="2024-12-01">
+            <div class="publication-body">
+              <h3>Understanding the dynamics of fish spawning phenology and habitat in a changing ecosystem using a long-term ichthyoplankton monitoring dataset</h3>
+              <p class="publication-authors">Hunt, N., Rokosz, K., &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Canadian Journal of Fisheries and Aquatic Sciences</em>, 81(12), 1728–1739.</p>
+              <a href="https://doi.org/10.1139/cjfas-2023-0361" target="_blank" rel="noopener">https://doi.org/10.1139/cjfas-2023-0361</a>
+            </div>
+          </article>
 
-        <article class="publication-card data-panel">
-          <span class="publication-year">2023</span>
-          <div class="publication-body">
-            <h2>Evaluating effects of changing sampling protocol for a long-term ichthyoplankton monitoring program</h2>
-            <p class="publication-authors">Chang, H.-Y., Sun, M., Rokosz, K., &amp; Chen, Y.</p>
-            <p class="publication-journal"><em>Frontiers in Marine Science</em>, 10, 1237549.</p>
-            <a href="https://doi.org/10.3389/fmars.2023.1237549" target="_blank" rel="noopener">https://doi.org/10.3389/fmars.2023.1237549</a>
-          </div>
-        </article>
+          <article class="publication-card data-panel" data-publication-date="2024-10-01">
+            <div class="publication-body">
+              <h3>Shifting spawning phenology in Hudson River American Shad</h3>
+              <p class="publication-authors">Chang, H.-Y. &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Marine and Coastal Fisheries</em>, 16(5), e10312.</p>
+              <a href="https://doi.org/10.1002/mcf2.10312" target="_blank" rel="noopener">https://doi.org/10.1002/mcf2.10312</a>
+            </div>
+          </article>
 
-        <article class="publication-card data-panel">
-          <span class="publication-year">2023</span>
-          <div class="publication-body">
-            <h2>Spatial variability of striped bass spawning responses to climate change</h2>
-            <p class="publication-authors">Pan, X., Arsenault, S., Rokosz, K., &amp; Chen, Y.</p>
-            <p class="publication-journal"><em>Global Ecology and Conservation</em>, 42, e02405.</p>
-            <a href="https://doi.org/10.1016/j.gecco.2023.e02405" target="_blank" rel="noopener">https://doi.org/10.1016/j.gecco.2023.e02405</a>
-          </div>
-        </article>
+          <article class="publication-card data-panel" data-publication-date="2024-05-01">
+            <div class="publication-body">
+              <h3>Spatiotemporal dynamics of spawning habitat distribution of American shad (Alosa sapidissima) in the Hudson River Estuary under multi stressors</h3>
+              <p class="publication-authors">Chang, H.-Y., Pendleton, R., Kenney, G., McKown, K., Eakin, W., Maniscalco, J., &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Canadian Journal of Fisheries and Aquatic Sciences</em>, 81(5), 559–572.</p>
+              <a href="https://doi.org/10.1139/cjfas-2023-0241" target="_blank" rel="noopener">https://doi.org/10.1139/cjfas-2023-0241</a>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="publication-year-section" aria-labelledby="publications-2023-title">
+        <h2 class="publication-year-heading" id="publications-2023-title">2023</h2>
+        <div class="publication-list">
+          <article class="publication-card data-panel" data-publication-date="2023-08-18">
+            <div class="publication-body">
+              <h3>Evaluating effects of changing sampling protocol for a long-term ichthyoplankton monitoring program</h3>
+              <p class="publication-authors">Chang, H.-Y., Sun, M., Rokosz, K., &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Frontiers in Marine Science</em>, 10, 1237549.</p>
+              <a href="https://doi.org/10.3389/fmars.2023.1237549" target="_blank" rel="noopener">https://doi.org/10.3389/fmars.2023.1237549</a>
+            </div>
+          </article>
 
-        <article class="publication-card data-panel">
-          <span class="publication-year">2023</span>
-          <div class="publication-body">
-            <h2>A long-term ichthyoplankton monitoring program suggests climate-induced environmental variabilities changed fish communities in the Hudson River estuary</h2>
-            <p class="publication-authors">Chang, H.-Y., McKown, K., &amp; Chen, Y.</p>
-            <p class="publication-journal"><em>Frontiers in Marine Science</em>, 9.</p>
-            <a href="https://doi.org/10.3389/fmars.2022.1077997" target="_blank" rel="noopener">https://doi.org/10.3389/fmars.2022.1077997</a>
-          </div>
-        </article>
-      </div>
+          <article class="publication-card data-panel" data-publication-date="2023-04">
+            <div class="publication-body">
+              <h3>Spatial variability of striped bass spawning responses to climate change</h3>
+              <p class="publication-authors">Pan, X., Arsenault, S., Rokosz, K., &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Global Ecology and Conservation</em>, 42, e02405.</p>
+              <a href="https://doi.org/10.1016/j.gecco.2023.e02405" target="_blank" rel="noopener">https://doi.org/10.1016/j.gecco.2023.e02405</a>
+            </div>
+          </article>
+
+          <article class="publication-card data-panel" data-publication-date="2023-01-04">
+            <div class="publication-body">
+              <h3>A long-term ichthyoplankton monitoring program suggests climate-induced environmental variabilities changed fish communities in the Hudson River estuary</h3>
+              <p class="publication-authors">Chang, H.-Y., McKown, K., &amp; Chen, Y.</p>
+              <p class="publication-journal"><em>Frontiers in Marine Science</em>, 9, 1077997.</p>
+              <a href="https://doi.org/10.3389/fmars.2022.1077997" target="_blank" rel="noopener">https://doi.org/10.3389/fmars.2022.1077997</a>
+            </div>
+          </article>
+        </div>
+      </section>
     </section>
 
     <section class="tab-page" id="photo-gallery" data-tab-page="photo-gallery">
+      <div class="page-header">
+        <h1>Fish Species</h1>
+      </div>
+      <div class="species-gallery-grid">
+        <article class="gallery-card" data-species-taxon="1">
+          <figure>
+            <a href="assets/photo_gallery/species/alewife.jpg" target="_blank" rel="noopener" aria-label="View larger Alewife photograph">
+              <img src="assets/photo_gallery/species/alewife.jpg" alt="Alewife, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Alewife</h2>
+            <p class="species-scientific-name"><em>Alosa pseudoharengus</em></p>
+            <p class="species-description">A schooling river herring that migrates into fresh water to spawn in spring. It feeds on zooplankton and small aquatic animals and provides prey for larger fish and birds.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/alewife" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="3">
+          <figure>
+            <a href="assets/photo_gallery/species/american-shad.jpg" target="_blank" rel="noopener" aria-label="View larger American Shad photograph">
+              <img src="assets/photo_gallery/species/american-shad.jpg" alt="American Shad, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>American Shad</h2>
+            <p class="species-scientific-name"><em>Alosa sapidissima</em></p>
+            <p class="species-description">A migratory herring that spends much of its life at sea and enters freshwater rivers to spawn. Juveniles grow in river nurseries before moving toward coastal waters.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/american-shad" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="180">
+          <figure>
+            <a href="assets/photo_gallery/species/atlantic-cutlassfish.jpg" target="_blank" rel="noopener" aria-label="View larger Atlantic Cutlassfish photograph">
+              <img src="assets/photo_gallery/species/atlantic-cutlassfish.jpg" alt="Atlantic Cutlassfish, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Atlantic Cutlassfish</h2>
+            <p class="species-scientific-name"><em>Trichiurus lepturus</em></p>
+            <p class="species-description">A marine predator with a long, ribbon-like body and a tapering tail. Also called ribbonfish, it feeds mainly on smaller fish and shrimp in coastal waters.</p>
+            <p class="species-reference"><a href="https://tpwd.texas.gov/huntwild/wild/species/cutlassfish/" target="_blank" rel="noopener">Texas Parks and Wildlife</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="19">
+          <figure>
+            <a href="assets/photo_gallery/species/atlantic-menhaden.jpg" target="_blank" rel="noopener" aria-label="View larger Atlantic Menhaden photograph">
+              <img src="assets/photo_gallery/species/atlantic-menhaden.jpg" alt="Atlantic Menhaden, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Atlantic Menhaden</h2>
+            <p class="species-scientific-name"><em>Brevoortia tyrannus</em></p>
+            <p class="species-description">A schooling coastal herring that filters plankton from the water. Its young use estuaries as nursery habitat, and it is important prey for many larger fishes and seabirds.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/atlantic-menhaden" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="24">
+          <figure>
+            <a href="assets/photo_gallery/species/atlantic-silverside.jpg" target="_blank" rel="noopener" aria-label="View larger Atlantic Silverside photograph">
+              <img src="assets/photo_gallery/species/atlantic-silverside.jpg" alt="Atlantic Silverside, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Atlantic Silverside</h2>
+            <p class="species-scientific-name"><em>Menidia menidia</em></p>
+            <p class="species-description">A small schooling fish recognized by the bright silver stripe along its side. It occupies shallow coastal waters and feeds on zooplankton and other small invertebrates.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/atlantic-silverside" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="32">
+          <figure>
+            <a href="assets/photo_gallery/species/atlantic-tomcod.jpg" target="_blank" rel="noopener" aria-label="View larger Atlantic Tomcod photograph">
+              <img src="assets/photo_gallery/species/atlantic-tomcod.jpg" alt="Atlantic Tomcod, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Atlantic Tomcod</h2>
+            <p class="species-scientific-name"><em>Microgadus tomcod</em></p>
+            <p class="species-description">A small bottom-dwelling member of the cod family found in cool coastal waters, estuaries, and tidal rivers. It moves into upper tidal reaches to spawn in autumn and winter.</p>
+            <p class="species-reference"><a href="https://portal.ct.gov/deep/fishing/freshwater/freshwater-fishes-of-connecticut/atlantic-tomcod" target="_blank" rel="noopener">Connecticut DEEP</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="2">
+          <figure>
+            <a href="assets/photo_gallery/species/bay-anchovy.jpg" target="_blank" rel="noopener" aria-label="View larger Bay Anchovy photograph">
+              <img src="assets/photo_gallery/species/bay-anchovy.jpg" alt="Bay Anchovy, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Bay Anchovy</h2>
+            <p class="species-scientific-name"><em>Anchoa mitchilli</em></p>
+            <p class="species-description">A small schooling fish with a translucent body and a large mouth. It feeds primarily on zooplankton and links plankton production to larger estuarine predators.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/bay-anchovy" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="22">
+          <figure>
+            <a href="assets/photo_gallery/species/blueback-herring.jpg" target="_blank" rel="noopener" aria-label="View larger Blueback Herring photograph">
+              <img src="assets/photo_gallery/species/blueback-herring.jpg" alt="Blueback Herring, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Blueback Herring</h2>
+            <p class="species-scientific-name"><em>Alosa aestivalis</em></p>
+            <p class="species-description">A river herring that moves between coastal waters and freshwater spawning grounds. Schools feed on plankton and small crustaceans and support many predatory fish and birds.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/blueback-herring" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="4">
+          <figure>
+            <a href="assets/photo_gallery/species/bluefish.jpg" target="_blank" rel="noopener" aria-label="View larger Bluefish photograph">
+              <img src="assets/photo_gallery/species/bluefish.jpg" alt="Bluefish, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Bluefish</h2>
+            <p class="species-scientific-name"><em>Pomatomus saltatrix</em></p>
+            <p class="species-description">An active coastal predator with strong jaws and sharp teeth. It feeds on schooling fishes and squid, and its young use estuarine waters during the warmer months.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/bluefish" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="80">
+          <figure>
+            <a href="assets/photo_gallery/species/butterfish.jpg" target="_blank" rel="noopener" aria-label="View larger Butterfish photograph">
+              <img src="assets/photo_gallery/species/butterfish.jpg" alt="Butterfish, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Butterfish</h2>
+            <p class="species-scientific-name"><em>Peprilus triacanthus</em></p>
+            <p class="species-description">A small, deep-bodied marine fish that forms loose schools and feeds on small invertebrates. It grows quickly and shifts between inshore and offshore waters with seasonal temperature changes.</p>
+            <p class="species-reference"><a href="https://www.fisheries.noaa.gov/species/butterfish" target="_blank" rel="noopener">NOAA Fisheries</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="127">
+          <figure>
+            <a href="assets/photo_gallery/species/channel-catfish.jpg" target="_blank" rel="noopener" aria-label="View larger Channel Catfish photograph">
+              <img src="assets/photo_gallery/species/channel-catfish.jpg" alt="Channel Catfish, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Channel Catfish</h2>
+            <p class="species-scientific-name"><em>Ictalurus punctatus</em></p>
+            <p class="species-description">A bottom-feeding catfish with a deeply forked tail and sensory barbels around its mouth. It inhabits rivers and brackish waters and eats a wide variety of aquatic animals.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/channel-catfish" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="205">
+          <figure>
+            <a href="assets/photo_gallery/species/freshwater-drum.jpg" target="_blank" rel="noopener" aria-label="View larger Freshwater Drum photograph">
+              <img src="assets/photo_gallery/species/freshwater-drum.jpg" alt="Freshwater Drum, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Freshwater Drum</h2>
+            <p class="species-scientific-name"><em>Aplodinotus grunniens</em></p>
+            <p class="species-description">A bottom-dwelling fish of rivers and lakes, noted for its drumming or grunting sounds. Strong throat teeth help it consume mollusks; it also eats insects, crustaceans, and fish.</p>
+            <p class="species-reference"><a href="https://tpwd.texas.gov/huntwild/wild/species/fwd/" target="_blank" rel="noopener">Texas Parks and Wildlife</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="144">
+          <figure>
+            <a href="assets/photo_gallery/species/inshore-lizardfish.jpg" target="_blank" rel="noopener" aria-label="View larger Inshore Lizardfish photograph">
+              <img src="assets/photo_gallery/species/inshore-lizardfish.jpg" alt="Inshore Lizardfish, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Inshore Lizardfish</h2>
+            <p class="species-scientific-name"><em>Synodus foetens</em></p>
+            <p class="species-description">A coastal bottom predator with a long body, broad mouth, and sharp teeth. It can bury itself in sand or mud and ambush small fishes and invertebrates.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/inshore-lizardfish" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="28">
+          <figure>
+            <a href="assets/photo_gallery/species/spottail-shiner.jpg" target="_blank" rel="noopener" aria-label="View larger Spottail Shiner photograph">
+              <img src="assets/photo_gallery/species/spottail-shiner.jpg" alt="Spottail Shiner, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Spottail Shiner</h2>
+            <p class="species-scientific-name"><em>Hudsonius hudsonius</em></p>
+            <p class="species-description">A small schooling minnow with a dark spot at the base of its tail. It inhabits rivers and lake shores, often over sand, and eats insects, crustaceans, and plant material.</p>
+            <p class="species-reference"><a href="https://www.fishbase.se/summary/2867" target="_blank" rel="noopener">FishBase</a> · <a href="https://portal.ct.gov/DEEP/Fishing/Freshwater/Freshwater-Fishes-of-Connecticut/Spottail-Shiner" target="_blank" rel="noopener">Connecticut DEEP</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="133">
+          <figure>
+            <a href="assets/photo_gallery/species/spotted-hake.jpg" target="_blank" rel="noopener" aria-label="View larger Spotted Hake photograph">
+              <img src="assets/photo_gallery/species/spotted-hake.jpg" alt="Spotted Hake, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Spotted Hake</h2>
+            <p class="species-scientific-name"><em>Urophycis regia</em></p>
+            <p class="species-description">A bottom-dwelling hake found along the northwestern Atlantic coast. Juveniles spend time in estuaries, and the species feeds mainly on crustaceans, with fish and squid also reported.</p>
+            <p class="species-reference"><a href="https://www.fishbase.se/FieldGuide/FieldGuideSummary.php?c_code=840&amp;genusname=Urophycis&amp;speciesname=regia" target="_blank" rel="noopener">FishBase</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="30">
+          <figure>
+            <a href="assets/photo_gallery/species/striped-bass.jpg" target="_blank" rel="noopener" aria-label="View larger Striped Bass photograph">
+              <img src="assets/photo_gallery/species/striped-bass.jpg" alt="Striped Bass, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Striped Bass</h2>
+            <p class="species-scientific-name"><em>Morone saxatilis</em></p>
+            <p class="species-description">A coastal predator identified by dark horizontal stripes along its sides. It moves upstream to spawn in fresh or brackish water, and young fish develop in estuarine nursery areas.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/striped-bass" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="14">
+          <figure>
+            <a href="assets/photo_gallery/species/tessellated-darter.jpg" target="_blank" rel="noopener" aria-label="View larger Tessellated Darter photograph">
+              <img src="assets/photo_gallery/species/tessellated-darter.jpg" alt="Tessellated Darter, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Tessellated Darter</h2>
+            <p class="species-scientific-name"><em>Etheostoma olmstedi</em></p>
+            <p class="species-description">A small bottom-dwelling fish found in streams, rivers, and lake margins. It makes short darting movements while feeding on tiny aquatic animals; males guard eggs laid beneath stones.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/tessellated-darter" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="45">
+          <figure>
+            <a href="assets/photo_gallery/species/weakfish.jpg" target="_blank" rel="noopener" aria-label="View larger Weakfish photograph">
+              <img src="assets/photo_gallery/species/weakfish.jpg" alt="Weakfish, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>Weakfish</h2>
+            <p class="species-scientific-name"><em>Cynoscion regalis</em></p>
+            <p class="species-description">A coastal predator that feeds on small fishes, shrimp, and other invertebrates. Young weakfish use low-salinity estuarine nursery areas before moving into saltier waters as they grow.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/weakfish" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="34">
+          <figure>
+            <a href="assets/photo_gallery/species/white-catfish.jpg" target="_blank" rel="noopener" aria-label="View larger White Catfish photograph">
+              <img src="assets/photo_gallery/species/white-catfish.jpg" alt="White Catfish, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>White Catfish</h2>
+            <p class="species-scientific-name"><em>Ameiurus catus</em></p>
+            <p class="species-description">A catfish native to Atlantic coastal drainages that inhabits slow-flowing rivers, lakes, and brackish waters. It has a broad head and moderately forked tail and eats fishes, invertebrates, and plant material.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/white-catfish" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+        <article class="gallery-card" data-species-taxon="35">
+          <figure>
+            <a href="assets/photo_gallery/species/white-perch.jpg" target="_blank" rel="noopener" aria-label="View larger White Perch photograph">
+              <img src="assets/photo_gallery/species/white-perch.jpg" alt="White Perch, preserved specimen photographed from the left side" width="1600" height="1067" loading="lazy" decoding="async" />
+            </a>
+          </figure>
+          <div class="gallery-copy">
+            <h2>White Perch</h2>
+            <p class="species-scientific-name"><em>Morone americana</em></p>
+            <p class="species-description">A small, silvery fish that lives in fresh and brackish waters. It moves upstream to spawn in spring and feeds on small fishes, aquatic insects, and fish eggs.</p>
+            <p class="species-reference"><a href="https://www.chesapeakebay.net/discover/field-guide/entry/white-perch" target="_blank" rel="noopener">Chesapeake Bay Program</a></p>
+          </div>
+        </article>
+      </div>
     </section>
 
     <section class="tab-page" id="gallery-hudson-river" data-tab-page="gallery-hudson-river">
@@ -2309,9 +2814,11 @@
                 <option>Environmental Data Request</option>
                 <option>Sampling Image Catalog</option>
                 <option>Educational Materials</option>
-                <option>Current Research - Ongoing Projects</option>
-                <option>Current Research - Publications</option>
+                <option>Research - Current Research</option>
+                <option>Research - Previous Research</option>
+                <option>Research - Publications</option>
                 <option>Photo Gallery</option>
+                <option>Photo Gallery - Fish Species</option>
                 <option>User Login</option>
                 <option>Team / Contact</option>
               </select>
@@ -2437,6 +2944,8 @@
             <div>
               <span>Database Development Lead</span>
               <h2><strong>Dr. Chengxue Li</strong></h2>
+              <p>Database point of contact</p>
+              <a class="secondary-button link-button team-contact-button" href="mailto:chengxue.li@stonybrook.edu?subject=HRBMP%20Data%20Portal%20enquiry" aria-label="Email Dr. Chengxue Li about the HRBMP database"><i data-lucide="mail" aria-hidden="true"></i>Contact</a>
             </div>
           </article>
 
@@ -2568,7 +3077,7 @@
                 <div><strong>Catherine Dau</strong><span>Core TEAM MEMBER</span></div>
               </div>
               <div class="tree-person">
-                <div class="person-photo-placeholder" role="img" aria-label="Photo placeholder for Ethan Li"></div>
+                <img class="ethan-team-photo" src="assets/team/ethan-li-lab.png" alt="Ethan Li working in the laboratory" width="58" height="58" loading="lazy" decoding="async" />
                 <div><strong>Ethan Li</strong><span>Core TEAM MEMBER</span></div>
               </div>
             </div>
@@ -2608,8 +3117,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="config.js"></script>
-  <script src="archive.js?v=1.2.4"></script>
-  <script src="archive-cache.js?v=1.2.4"></script>
-  <script src="app.js?v=1.2.4"></script>
+  <script src="archive.js?v=1.2.5"></script>
+  <script src="archive-cache.js?v=1.2.5"></script>
+  <script src="app.js?v=1.2.5"></script>
 </body>
 </html>

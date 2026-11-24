@@ -14,9 +14,8 @@ const MONTH_NAMES = [
   'December'
 ];
 
-const DATA_VERSION = '1.2.4';
+const DATA_VERSION = '1.2.5';
 const DATA_REQUEST_VERSION = `${DATA_VERSION}-${Date.now()}`;
-const API_PORT = '8010';
 const DEMO_SUPABASE_URL = window.HRBMP_CONFIG?.supabaseUrl || 'https://vnqulddrlhkftcqpekpl.supabase.co';
 const DEMO_SUPABASE_KEY_STORAGE = 'hrbmp_demo_supabase_publishable_key';
 const DEMO_ADMIN_EMAIL = 'chengxue.li@stonybrook.edu';
@@ -941,6 +940,10 @@ function initTabs() {
   });
 
   function showTab(tabId, updateHash = true) {
+    if (tabId === 'research-ongoing-projects' || tabId === 'current-projects' || tabId === 'previous-projects') {
+      tabId = tabId === 'previous-projects' ? 'research-previous' : 'education-current-research';
+      window.history.replaceState(null, '', `#${tabId}`);
+    }
     if (tabId === 'demo' || tabId === 'data-archive') {
       tabId = 'biological-database';
       window.history.replaceState(null, '', `#${tabId}`);
@@ -953,7 +956,8 @@ function initTabs() {
     });
 
     links.forEach((link) => {
-      link.classList.toggle('active', link.dataset.tabLink === nextId || link.dataset.tabLink === parentId);
+      const isMenuParent = link.parentElement?.classList.contains('nav-dropdown');
+      link.classList.toggle('active', link.dataset.tabLink === nextId || (isMenuParent && link.dataset.tabLink === parentId));
     });
 
     if (updateHash && window.location.hash !== `#${nextId}`) {
@@ -1340,7 +1344,6 @@ function emptyLiveData() {
 
 function renderAll() {
   fillCounts();
-  renderMetadata();
   populateFilters();
   renderRiverRegionReferences();
   renderBiologicalMap();
@@ -1349,7 +1352,6 @@ function renderAll() {
   renderEnvironmental();
   renderCatalog();
   renderAccessControl();
-  updateMetadataApiLinks();
 }
 
 function bindControls() {
@@ -1646,9 +1648,12 @@ function fillCounts() {
   }
   const checkedAt = state.data.generated_at_utc || state.savedSnapshot?.fetchedAt;
   setText('snapshot-date', checkedAt ? `Last checked ${formatTimestamp(checkedAt)}` : 'Loading archive totals…');
-  setText('snapshot-status', state.archiveLoading ? 'Checking for updates. Saved totals remain visible.'
-    : state.archiveError ? 'Update unavailable. Showing the last saved totals.'
-    : counts ? 'Saved for quick loading. Use Update totals for the latest counts.' : 'The first visit loads the live archive.');
+  const snapshotStatus = document.getElementById('snapshot-status');
+  if (snapshotStatus) {
+    snapshotStatus.textContent = state.archiveLoading ? 'Updating totals…'
+      : state.archiveError ? 'Update unavailable. Showing the last saved totals.' : '';
+    snapshotStatus.hidden = !snapshotStatus.textContent;
+  }
   updateRefreshControls();
 }
 
@@ -2838,8 +2843,7 @@ function renderDatabaseAvailability(scope) {
     ['Uploaded Files', rows.filter((row) => row.available && row.catalog_id.startsWith('upload:')).length]
   ] : scope === 'catalog' ? [
     ['Available Images', available.length], ['Samples', new Set(rows.map((row) => row.sample_id).filter(Boolean)).size],
-    ['Species', new Set(rows.map((row) => row.taxon_code).filter((code) => code !== null && code !== undefined)).size],
-    ['Unmapped Images', rows.length - window.HRBMPArchive.buildImageMapRows(rows).reduce((count, sample) => count + sample.image_items.length, 0)]
+    ['Species', new Set(rows.map((row) => row.taxon_code).filter((code) => code !== null && code !== undefined)).size]
   ] : [
     ['Matching Samples', rows.length], ['Available Variables', new Set(rows.flatMap((row) => row.available_variables)).size],
     ['Selected Samples', selected.length], ['Source', 'HRBMP']
@@ -3317,87 +3321,6 @@ function updateEnvironmentalDataRequestSummary(rows = null) {
   window.dispatchEvent(new Event('hrbmp-archive-state'));
 }
 
-function updateMetadataApiLinks() {
-  setLinkHref('metadata-api-json', apiUrl('/metadata'));
-}
-
-function apiUrl(endpoint, params = {}) {
-  const url = new URL(`${apiBaseUrl()}${endpoint}`);
-  Object.entries(params).forEach(([key, value]) => {
-    if (value === undefined || value === null || value === '' || value === 'all') return;
-    url.searchParams.set(key, value);
-  });
-  return url.toString();
-}
-
-function apiBaseUrl() {
-  if (window.location.protocol === 'file:') return `http://127.0.0.1:${API_PORT}/api`;
-  const isLocal = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
-  if (isLocal && window.location.port !== API_PORT) return `http://127.0.0.1:${API_PORT}/api`;
-  return `${window.location.origin}/api`;
-}
-
-function setLinkHref(id, href) {
-  const link = document.getElementById(id);
-  if (link) link.href = href;
-}
-
-function renderMetadata() {
-  const metadata = state.metadata || EMPTY_METADATA;
-  const status = document.getElementById('metadata-status');
-  if (status) {
-    status.textContent = 'Database availability is loaded from the live Supabase archive.';
-  }
-
-  renderSummaryStrip('metadata-overview', [
-    ['Datasets', metadata.datasets.length],
-    ['Variables', metadata.variables.length],
-    ['Programs', metadata.programs.length],
-    ['HRBMP Regions', metadata.regions.length]
-  ]);
-
-  renderMetadataDatasets(metadata.datasets);
-  renderMetadataVariables(metadata.variables);
-}
-
-function renderMetadataDatasets(rows) {
-  const body = document.getElementById('metadata-datasets');
-  if (!body) return;
-  body.replaceChildren();
-  if (!rows.length) {
-    appendEmptyRow(body, 4, 'No dataset metadata available.');
-    return;
-  }
-
-  rows.forEach((row) => {
-    const tr = document.createElement('tr');
-    appendCell(tr, row.dataset_name);
-    appendCell(tr, row.source_database);
-    appendCell(tr, formatAccessLevel(row.default_access_level));
-    appendCell(tr, row.api_endpoint || 'Metadata only');
-    body.appendChild(tr);
-  });
-}
-
-function renderMetadataVariables(rows) {
-  const body = document.getElementById('metadata-variables');
-  if (!body) return;
-  body.replaceChildren();
-  if (!rows.length) {
-    appendEmptyRow(body, 4, 'No variable metadata available.');
-    return;
-  }
-
-  rows.slice(0, 12).forEach((row) => {
-    const tr = document.createElement('tr');
-    appendCell(tr, row.display_name || row.variable_name);
-    appendCell(tr, row.source_database);
-    appendCell(tr, row.unit || 'NA');
-    appendCell(tr, row.value_type);
-    body.appendChild(tr);
-  });
-}
-
 function renderAccessControl() {
   const metadata = state.metadata || EMPTY_METADATA;
   renderAccessTierCards(metadata.access_levels || []);
@@ -3488,9 +3411,31 @@ const RIVER_REGION_METRICS = {
     description: 'Counts cover available public fish photos in the full loaded image catalog, including photos with a known region but no map coordinates. Files awaiting upload and internal or mismatched uploads are excluded.' }
 };
 
+const RIVER_REGION_HEAT_COLORS = [
+  { fill: '#d9eee9', text: '#153d35' },
+  { fill: '#a7d5ca', text: '#153d35' },
+  { fill: '#6eb4a5', text: '#153d35' },
+  { fill: '#277c6a', text: '#ffffff' },
+  { fill: '#0b5148', text: '#ffffff' }
+];
+const RIVER_REGION_EMPTY_COLOR = { fill: '#edf1f3', text: '#526b75' };
+
+function riverRegionHeatLevels(maxCount) {
+  const maximum = Number.isFinite(maxCount) ? Math.max(0, Math.floor(maxCount)) : 0;
+  const levelCount = Math.min(RIVER_REGION_HEAT_COLORS.length, maximum);
+  return Array.from({ length: levelCount }, (_, index) => {
+    const paletteIndex = levelCount === 1 ? RIVER_REGION_HEAT_COLORS.length - 1
+      : Math.round(index * (RIVER_REGION_HEAT_COLORS.length - 1) / (levelCount - 1));
+    return { min: Math.floor(index * maximum / levelCount) + 1,
+      max: Math.floor((index + 1) * maximum / levelCount), ...RIVER_REGION_HEAT_COLORS[paletteIndex] };
+  });
+}
+
 function riverRegionReferenceSvg(rows, scope, countsReady) {
   const metric = RIVER_REGION_METRICS[scope];
   const counts = summarizeRowsByRegionCode(rows, scope);
+  const maximum = Math.max(0, ...HRBMP_REGIONS.map((region) => counts.get(region.code) || 0));
+  const levels = countsReady ? riverRegionHeatLevels(maximum) : [];
   const segmentWidth = 1200 / HRBMP_REGIONS.length;
   const details = HRBMP_REGIONS.map((region) => {
     const count = counts.get(region.code) || 0;
@@ -3502,10 +3447,12 @@ function riverRegionReferenceSvg(rows, scope, countsReady) {
     const above = index % 2 === 0;
     const labelY = above ? 28 : 232;
     const count = counts.get(region.code) || 0;
+    const shade = countsReady && count > 0 ? levels.find((level) => count <= level.max) : RIVER_REGION_EMPTY_COLOR;
     return `
       <g class="river-region-segment">
-        <rect x="${x}" y="142" width="${segmentWidth}" height="46" fill="${above ? '#176b78' : '#477f97'}" />
-        <text class="river-region-number" x="${center}" y="172">${region.number}</text>
+        <title>Region ${region.number} · ${escapeHtml(region.name)}: ${countsReady ? `${formatNumber(count)} ${count === 1 ? metric.singularLabel : metric.label}` : 'count not yet loaded'}</title>
+        <rect x="${x}" y="142" width="${segmentWidth}" height="46" fill="${shade.fill}" />
+        <text class="river-region-number" x="${center}" y="172" fill="${shade.text}">${region.number}</text>
         <path class="river-region-connector" d="M ${center} ${above ? 142 : 188} V ${above ? 118 : 208}" />
         <circle class="river-region-dot" cx="${center}" cy="${above ? 118 : 208}" r="3" />
         <text class="river-region-code" x="${center}" y="${labelY}">REGION ${region.number} · ${escapeHtml(region.code)}</text>
@@ -3514,10 +3461,21 @@ function riverRegionReferenceSvg(rows, scope, countsReady) {
         <text class="river-region-count" x="${center}" y="${labelY + 77}">${countsReady ? formatNumber(count) : '—'}<tspan class="river-region-count-unit"> ${count === 1 && countsReady ? metric.unit : metric.units}</tspan></text>
       </g>`;
   }).join('');
-  return `<svg class="river-region-svg" viewBox="0 0 1320 338" role="img" aria-labelledby="${metric.prefix}-river-regions-title ${metric.prefix}-river-regions-description" xmlns="http://www.w3.org/2000/svg">
+  const legendItems = [{ min: 0, max: 0, ...RIVER_REGION_EMPTY_COLOR }, ...levels];
+  const legend = countsReady ? `<g class="river-region-legend">
+    <text class="river-region-legend-title" x="60" y="366" text-anchor="start">${escapeHtml(metric.label.charAt(0).toUpperCase() + metric.label.slice(1))}</text>
+    ${legendItems.map((level, index) => {
+      const x = 310 + index * 140;
+      const label = level.min === level.max ? formatNumber(level.min) : `${formatNumber(level.min)}–${formatNumber(level.max)}`;
+      return `<rect class="river-region-legend-swatch" x="${x}" y="352" width="112" height="18" fill="${level.fill}" />
+        <text class="river-region-legend-label" x="${x + 56}" y="393">${label}</text>`;
+    }).join('')}
+  </g>` : '';
+  return `<svg class="river-region-svg" viewBox="0 0 1320 414" role="img" aria-labelledby="${metric.prefix}-river-regions-title ${metric.prefix}-river-regions-description" xmlns="http://www.w3.org/2000/svg">
     <title id="${metric.prefix}-river-regions-title">Hudson River regions from Battery to Albany: ${metric.label}</title>
-    <desc id="${metric.prefix}-river-regions-description">Equal-width schematic, not a distance scale. ${escapeHtml(metric.description)} ${escapeHtml(details)}</desc>
+    <desc id="${metric.prefix}-river-regions-description">Equal-width schematic, not a distance scale. Darker teal means more ${escapeHtml(metric.label)}; gray means zero when counts are loaded. Each page uses its own count ranges, shown in the legend. ${escapeHtml(metric.description)} ${escapeHtml(details)}</desc>
     ${regions}
+    ${legend}
   </svg>`;
 }
 
@@ -3634,7 +3592,6 @@ function renderEnvironmentalMap() {
     addRegionTotalCircleLayer(map, 'environmental', rows);
   }
 
-  setText('env-selected', rows.length ? `Environmental records with ${variableMeta.label.toLowerCase()} context from ${sourceMeta.label}.` : 'No environmental records match the selected filters.');
   updateLegend('environmental', legendHtml('Environmental Map', [
     checked('env-layer-values') && { color: '#2f6f9f', label: 'Environmental Records' },
     checked('env-layer-regional-totals') && { color: '#1b8d86', label: 'Regional Totals' },
@@ -3650,9 +3607,7 @@ function renderImageCatalogMap() {
   const mappedImages = samples.reduce((total, sample) => total + sample.image_items.length, 0);
   renderMapStats('catalog-map-stats', [
     ['Available Images', images.filter((image) => image.available).length],
-    ['Mapped Samples', samples.length],
-    ['Awaiting Upload', images.filter((image) => !image.available).length],
-    ['Unmapped Images', images.length - mappedImages]
+    ['Mapped Samples', samples.length]
   ]);
   if (!isActiveTab('sampling-image-catalog')) return;
   const map = ensureLeafletMap('catalog-map', 'catalog');
@@ -3853,9 +3808,6 @@ function addEnvironmentalRecordDotLayer(map, rows, options = {}) {
       fillOpacity: 0.55
     });
     marker.bindPopup(popupHtml(row, 'environmental-record', options));
-    marker.on('click', () => {
-      setText('env-selected', selectedText(row, 'environmental-record', options));
-    });
     layer.addLayer(marker);
   });
 

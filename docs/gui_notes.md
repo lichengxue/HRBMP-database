@@ -7,6 +7,7 @@ SPASAM-MSE website structure. It has a homepage and tabbed sections for:
 - Biological Database
 - Environmental Database
 - Sampling Image Catalog
+- Research (Current Research, Previous Research, and Publications)
 - Educational Materials
 - Photo Gallery
 - Issue Report
@@ -24,17 +25,28 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 ## Current GUI behavior
 
 - Displays repository-level counts, export metadata, institutional partner
-  logos, and collaborator logos on the home page.
-- Displays Beta Version 1.2.4. Version Updates presents a dated release with
+  logos, and collaborator logos on the home page. Funding and Support has a
+  separate homepage logo grid with role captions for research, monitoring,
+  archive development, and the collection gift. Normandeau Associates appears
+  under Collaborators. Agency logos do not appear on either research page.
+  All acknowledgement images are local files with source and integrity records
+  in `gui/assets/acknowledgements/README.md`.
+- Displays Beta Version 1.2.5. Version Updates presents a dated release with
   three major-change highlights and expandable earlier updates. HRBMP News
   remains a separate page with official source links.
 - Uses one green uppercase title on each biological, environmental, and
   sampling-image availability page.
 - Organizes Program Description navigation into a Program Overview plus the
   six HRBMP survey subtabs listed on the official HRBMP surveys page.
+- Omits the unused SQLite metadata catalog, empty dataset/variable tables,
+  zero metadata counters, and local Metadata JSON link from the public Program
+  Overview. Live availability continues to use the Supabase archive.
 - Organizes Biological Database and Environmental Database navigation into
   Data Availability and Data Request subtabs.
 - Shows Leaflet-based Hudson River biological and environmental GIS maps.
+- Omits Awaiting Upload and Unmapped Images summary counters from the sampling
+  image catalog. The environmental map omits the explanatory sidebar paragraph
+  and caption strip below the map; map popups retain record details.
 - Supports zooming, panning, popups, marker clustering, layer toggles, and map
   legends.
 - Filters biological map layers by species, life stage, monitoring program,
@@ -60,13 +72,28 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
   Yearling, and Adult stages. Life-stage controls update the Hudson River
   distribution bar, data availability, and image archive in the biologically
   ordered stage sequence.
+- Photo Gallery opens a Fish Species collection with one reviewed left-side
+  specimen photo for each of 20 species, common and scientific names, concise
+  biology, and direct species-reference links. The page has no subtitle.
+  The full frame is retained and each
+  web copy uses EXIF Orientation 1. Other views are not substituted for missing
+  left-side photographs. Image selection and provenance are documented in
+  `gui/assets/photo_gallery/species/README.md` and its adjacent manifest.
 - Provides ribbon dropdown menus under Educational Materials and Photo Gallery.
-  Each dropdown item opens its own page route for HRBMP history, current
-  research, K-12 curriculum, classroom materials, outreach activities, Hudson
-  River photos, field sampling photos, sample warehouse photos, and lab sample
-  processing photos. Current Research includes nested Ongoing Projects and
-  Publications pages; Ongoing Projects is blank for now, and Publications
-  contains linked citation records. The K-12 Curriculum page
+  Each dropdown item opens its own page route for HRBMP history, K-12
+  curriculum, classroom materials, outreach activities, Hudson River photos,
+  field sampling photos, sample warehouse photos, and lab sample processing
+  photos. A separate Research menu opens Current Research, Previous Research, and Publications.
+  Current Research and Previous Research have separate page routes; each
+  orders dated projects newest first, and uses official titles, funding agencies, PI/co-PI roles, and concise objectives. The FJS heading
+  identifies the 2023 restart; its funding text distinguishes NYSDEC in 2023–2024
+  from HRF/HREMP support reported for 2025. No contract-partner field is shown;
+  the microplastics project is labeled only by its known 2025 seed award.
+  Publications includes 14 verified HRBMP papers and one separately labeled
+  monitoring-framework paper, grouped beneath descending year headings and
+  ordered newest first within each year. The old Ongoing Projects URL redirects to
+  Current Research. Sources, dates, and inclusion rules are documented in
+  `docs/hrbmp_research_sources.md`. The K-12 Curriculum page
   organizes Hudson River lessons by K-2, grades 3-5, grades 6-8, grades 9-12,
   and teacher resources. Field
   sampling photos are grouped into people-with-fish, fish, and cruise/vessel
@@ -76,7 +103,10 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
   sample handling / safety sections.
 - Provides a combined team/contact structure with component leads, supporting
   team members, survey equipment organization responsibilities, and lab sample
-  processing responsibilities.
+  processing responsibilities. Ethan Li's Lab Sample Processing entry uses the
+  supplied lab photo stored at `gui/assets/team/ethan-li-lab.png`. The Contact
+  button on Dr. Chengxue Li's Database Development Lead card opens an email draft
+  to the existing database contact address, `chengxue.li@stonybrook.edu`.
 - Provides a static Issue Report tab for comments, issues, questions, and
   feedback.
 - Provides a static User Login tab for future restricted access, including user
@@ -88,6 +118,10 @@ Each biological, environmental, and sampling-image page has an HRBMP River
 Regions panel: a horizontal, equal-width schematic from Battery (downstream) to
 Albany (upstream), separate from its interactive GIS map. All three use the same
 13 region names, codes, numbers, river-mile ranges, and layout.
+Regions are a count-based availability heatmap: darker teal means more records
+or available images, and gray represents zero. Up to five equal-interval count
+ranges are calculated separately for each page and displayed in its legend.
+The exact counts remain visible; unloaded counts are dashes and have no legend.
 
 Counts cover the full loaded catalog, independent of map filters. Biological
 totals represent sample-taxon records, not fish abundance. Environmental totals
@@ -153,6 +187,8 @@ snapshot totals in localStorage, scoped to the Supabase project. Catalog data is
 reused for one hour; older results appear immediately while a live update runs.
 Refresh data or Update totals bypasses the cache. Storage failures fall back to
 live loading, and failed updates retain the saved result set and its timestamp.
+The homepage omits routine cache messages; loading and update failures still
+appear when needed.
 Credentials, admin requests, private measurements, storage paths, download URLs,
 and file contents are excluded from this cache.
 
@@ -165,7 +201,7 @@ The end-user interface shows count records, representative fish photos, and
 environmental data only when metadata_linked is explicitly true. Mismatched or
 unverified metadata never enter public lists, maps, filters, request selections,
 or browser caches, even if an upload already has a public scientific category.
-The public availability menus omit the metadata-pending category. Jar labels,
+The public availability menus omit Metadata pending and Awaiting upload options. Jar labels,
 field/lab sheets, and unclassified uploads are excluded before caching, mapping, grouping, and request selection. The archive
 and uploader retain these files. This display policy does not delete files or
 change Storage permissions. Storage folder placeholders are omitted as well.
