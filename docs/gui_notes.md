@@ -27,7 +27,8 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 - Displays repository-level counts, export metadata, and institutional partner
   logos on the home page. Funding and Support has a separate homepage grid of
   clickable official logos on white cards, without captions. It includes
-  Normandeau Associates as a supporting survey collaborator; there is no
+  Normandeau Associates, Hudson River Park, Billion Oyster Project, and
+  Riverkeeper among the supporting organizations; there is no
   separate Collaborators section. Stony Brook University and the Fast Impact
   Fund are omitted from the funding grid. Agency logos do not appear on either
   research page. All acknowledgement images are local files with source and

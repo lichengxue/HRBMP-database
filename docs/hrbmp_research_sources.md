@@ -116,7 +116,26 @@ original precision. The related framework paper is labeled within its year
 section and uses the publisher’s November 3, 2026 online-first date.
 Citation years use the journal volume when assigned. Accepted/in-press and
 online-first records are marked accordingly. DOI identifiers are unique;
-a DOI's embedded year alone is not a publication date. Private manuscripts
-under review are excluded. An ACS 2026 PFAS presentation is a conference
+a DOI's embedded year alone is not a publication date. Three manuscript citations
+are included at the user's explicit request in a separate section before the
+published year groups. Their titles, author lists, and journal names come from
+the latest user-provided CV. On November 23, 2026, the user confirmed that
+the metal-contamination review is **under revision** and the end-to-end
+ecosystem-model paper and the monitoring-closure manuscript are **under review**. No publication dates or DOIs are
+assigned to these manuscripts; the private CV and manuscript files are not
+published. An ACS 2026 PFAS presentation is a conference
 contribution, not evidence of an additional peer-reviewed journal article.
 Unrelated Gulf of Maine and Chinese-estuary studies were screened out.
+
+### User-authorized manuscripts
+
+1. Li, C., Liu, K. J., Chen, F., Boffetta, P., & Chen, Y. *From Source to biota:
+   An integrated framework for understanding legacy metal contamination in the
+   Hudson River Estuary.* Marine Environmental Research. Under revision.
+2. Yang, X., Huang, Y., Gaichas, S., Oliveros-Ramos, R., Ross, A. C., Li, C.,
+   Caracappa, J., Cerrato, R., Xing, L., & Chen, Y. *Integrating habitat suitability
+   with multispecies dynamics: Development of an end-to-end ecosystem model for
+   the Hudson River Estuary–New York Bight.* Ecological Modelling. Under review.
+3. Chen, Y., Rokosz, K., Arsenault, S., Yin, J., Yang, X., Praisner, S., Li, Y.,
+   & Li, C. *When monitoring stops: environmental risks after industrial closure.*
+   Marine Policy. Under review.
