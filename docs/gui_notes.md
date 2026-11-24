@@ -24,14 +24,15 @@ These files are exported from SQLite by `scripts/03_export_gui_data.R`.
 
 ## Current GUI behavior
 
-- Displays repository-level counts, export metadata, institutional partner
-  logos, and collaborator logos on the home page. Funding and Support has a
-  separate homepage logo grid with role captions for research, monitoring,
-  archive development, and the collection gift. Normandeau Associates appears
-  under Collaborators. Agency logos do not appear on either research page.
-  All acknowledgement images are local files with source and integrity records
-  in `gui/assets/acknowledgements/README.md`.
-- Displays Beta Version 1.2.5. Version Updates presents a dated release with
+- Displays repository-level counts, export metadata, and institutional partner
+  logos on the home page. Funding and Support has a separate homepage grid of
+  clickable official logos on white cards, without captions. It includes
+  Normandeau Associates as a supporting survey collaborator; there is no
+  separate Collaborators section. Stony Brook University and the Fast Impact
+  Fund are omitted from the funding grid. Agency logos do not appear on either
+  research page. All acknowledgement images are local files with source and
+  integrity records in `gui/assets/acknowledgements/README.md`.
+- Displays Beta Version 1.2.6. Version Updates presents a dated release with
   three major-change highlights and expandable earlier updates. HRBMP News
   remains a separate page with official source links.
 - Uses one green uppercase title on each biological, environmental, and
